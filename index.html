@@ -26,6 +26,7 @@
     --g3:#aaaaaa;
     --shadow:rgba(0,0,0,.1);
     --tabh:64px;
+    --appw:480px;
   }
   *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
   [hidden]{display:none !important;}
@@ -40,7 +41,7 @@
 
   /* ---------- App shell ---------- */
   .app{
-    max-width:480px; margin:0 auto; min-height:100%; background:var(--bg);
+    max-width:var(--appw); margin:0 auto; min-height:100%; background:var(--bg);
     position:relative; box-shadow:0 0 40px var(--shadow);
     padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 96px);
   }
@@ -68,7 +69,7 @@
   /* ---------- Bottom tab bar ---------- */
   .tabbar{
     position:fixed; left:50%; transform:translateX(-50%); bottom:0; z-index:30;
-    width:100%; max-width:480px; background:var(--white); border-top:1px solid var(--g1);
+    width:100%; max-width:var(--appw); background:var(--white); border-top:1px solid var(--g1);
     display:grid; grid-template-columns:repeat(4,1fr);
     padding-bottom:env(safe-area-inset-bottom);
     box-shadow:0 -4px 16px var(--shadow);
@@ -310,6 +311,25 @@
   .wdtabs button.on small{color:var(--white);}
   .wdbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
   .wdbar .sm-sel{width:auto; max-width:60%; font-size:14px;}
+  /* ---------- タブレット・PC: 横幅いっぱいの2列レイアウト ---------- */
+  @media (min-width:768px){
+    :root{--appw:100%;}
+    .app{box-shadow:none;}
+    .view{padding:24px 28px 0;}
+    .appbar{padding-left:28px; padding-right:28px;}
+    .cols{display:grid; grid-template-columns:minmax(320px, 2fr) 3fr; gap:28px; align-items:start;}
+    .col{min-width:0;}
+    .col-r > .section-t:first-child{margin-top:0;}
+    #v-today .col-l{position:sticky; top:90px;}
+    .rest{max-width:448px;}
+    .tab{flex-direction:row; gap:8px; font-size:14px;}
+  }
+  @media (min-width:1180px){
+    #exList{display:grid; grid-template-columns:repeat(auto-fill, minmax(380px, 1fr)); gap:10px;}
+    #exList .ex{margin-bottom:0;}
+    #exList .empty{grid-column:1 / -1;}
+    .cols{grid-template-columns:minmax(360px, 1fr) 2fr;}
+  }
   .toast{position:fixed; top:calc(env(safe-area-inset-top) + 14px); left:50%; transform:translate(-50%,-20px); opacity:0; z-index:50; background:var(--black); color:var(--lime); font-weight:700; font-size:13px; padding:10px 16px; transition:all .2s; pointer-events:none; max-width:90%;}
   .toast.show{opacity:1; transform:translate(-50%,0);}
 </style>
@@ -329,6 +349,7 @@
 
   <!-- TODAY -->
   <main class="view active" id="v-today">
+    <div class="cols"><div class="col col-l">
     <div class="hero">
       <div class="label">TODAY'S ACHIEVEMENT <span data-i18n="hero.sub"></span></div>
       <div class="hero-row" style="margin-top:12px;">
@@ -372,6 +393,7 @@
       </div>
     </div>
 
+    </div><div class="col col-r">
     <div class="section-t">Menu <small id="menuCount">0 ITEMS</small></div>
     <div id="exList"></div>
     <div class="row-add">
@@ -384,10 +406,12 @@
 
     <div class="section-t">Memo <small data-i18n="memo.sub"></small></div>
     <textarea id="memo" class="memo" data-i18n-ph="memo.ph" placeholder=""></textarea>
+    </div></div>
   </main>
 
   <!-- BODY -->
   <main class="view" id="v-body">
+    <div class="cols"><div class="col col-l">
     <div class="wcard">
       <div class="wtop">
         <div class="label">BODY WEIGHT <span data-i18n="body.sub"></span></div>
@@ -412,6 +436,7 @@
     </div>
     <div class="chart-box" id="bChart"></div>
     <div class="best" id="bStats" hidden></div>
+    </div><div class="col col-r">
     <div class="section-t">Day Log <small data-i18n="daylog.sub"></small></div>
     <div class="wcard daylog">
       <div class="wtop"><div class="label">DATE <span data-i18n="daylog.date"></span></div><input type="date" id="dDate" class="date-in"></div>
@@ -426,6 +451,7 @@
     </div>
     <div class="section-t">Recent <small>LAST 10</small></div>
     <div id="bList"></div>
+    </div></div>
   </main>
 
   <!-- LOG -->
@@ -435,6 +461,7 @@
 
   <!-- SETUP -->
   <main class="view" id="v-setup">
+    <div class="cols"><div class="col col-l">
     <div class="section-t" style="margin-top:0;">Menu <small data-i18n="setup.menu.sub"></small></div>
     <div class="seg" id="planSeg" style="grid-template-columns:1fr 1fr;">
       <button data-p="weekly" data-i18n="plan.weekly"></button>
@@ -450,6 +477,7 @@
     <div id="rtList"></div>
     <button class="btn line block" id="rtAdd" data-i18n="rtAdd"></button>
 
+    </div><div class="col col-r">
     <div class="section-t">Exercises <small data-i18n="ex.sub"></small></div>
     <div id="exMaster"></div>
     <div class="addbox">
@@ -479,6 +507,7 @@
     </div>
     <div class="msg" id="msg"></div>
     <div class="note" data-i18n="note"></div>
+    </div></div>
   </main>
 
   <div class="rest" id="rest" hidden>
