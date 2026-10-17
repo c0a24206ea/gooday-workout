@@ -235,6 +235,13 @@
   .tl-bar i{display:block; height:100%; background:var(--black);}
   .tl-item.full .tl-bar i{background:var(--lime);}
   .tl-w{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:22px; text-align:right; white-space:nowrap;}
+  .logbar{display:grid; gap:8px; margin-bottom:18px;}
+  .logbar .txt{height:46px;}
+  .tl-memo{font-size:12px; line-height:1.6; margin-top:8px; padding-left:8px; border-left:3px solid var(--lime); white-space:pre-wrap; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .tl-item.open .tl-memo{display:none;}
+  .tl-time{font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;}
+  .tl-detail .acts{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+  .tl-detail .acts .btn{margin-top:0;}
   .tl-detail{grid-column:1 / -1; font-size:13px; line-height:1.9; background:var(--white); border:1px solid var(--g1); padding:10px 12px;}
   .tl-detail .exl{font-family:'JetBrains Mono',monospace; font-size:12px;}
   .tl-detail .exl b{font-family:'Noto Sans JP',sans-serif; font-size:13px; margin-right:6px;}
@@ -311,12 +318,16 @@
   .wdtabs button.on small{color:var(--white);}
   .wdbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
   .wdbar .sm-sel{width:auto; max-width:60%; font-size:14px;}
+  /* iPhone横向きのノッチ・角丸に重ならないよう左右にも安全領域を確保 */
+  .view{padding-left:max(20px, env(safe-area-inset-left)); padding-right:max(20px, env(safe-area-inset-right));}
+  .appbar{padding-left:max(20px, env(safe-area-inset-left)); padding-right:max(20px, env(safe-area-inset-right));}
+  .tabbar{padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right);}
   /* ---------- タブレット・PC: 横幅いっぱいの2列レイアウト ---------- */
   @media (min-width:768px){
     :root{--appw:100%;}
     .app{box-shadow:none;}
-    .view{padding:24px 28px 0;}
-    .appbar{padding-left:28px; padding-right:28px;}
+    .view{padding-top:24px; padding-left:max(28px, env(safe-area-inset-left)); padding-right:max(28px, env(safe-area-inset-right));}
+    .appbar{padding-left:max(28px, env(safe-area-inset-left)); padding-right:max(28px, env(safe-area-inset-right));}
     .cols{display:grid; grid-template-columns:minmax(320px, 2fr) 3fr; gap:28px; align-items:start;}
     .col{min-width:0;}
     .col-r > .section-t:first-child{margin-top:0;}
@@ -330,7 +341,75 @@
     #exList .empty{grid-column:1 / -1;}
     .cols{grid-template-columns:minmax(360px, 1fr) 2fr;}
   }
-  .toast{position:fixed; top:calc(env(safe-area-inset-top) + 14px); left:50%; transform:translate(-50%,-20px); opacity:0; z-index:50; background:var(--black); color:var(--lime); font-weight:700; font-size:13px; padding:10px 16px; transition:all .2s; pointer-events:none; max-width:90%;}
+  /* ---------- スマホ横向き（高さが低い画面）: 見出しとタブを細くして中身を広く ---------- */
+  @media (orientation:landscape) and (max-height:520px){
+    :root{--tabh:46px;}
+    .appbar{position:static; padding-top:calc(env(safe-area-inset-top) + 8px); padding-bottom:8px; align-items:center;}
+    .appbar h1{font-size:24px;}
+    .appbar h1::after{display:none;}
+    .bar-r{flex-direction:row; align-items:center; gap:10px;}
+    .appbar .sub br{display:none;}
+    .appbar .sub b{margin-right:6px;}
+    .lang-top{height:28px;}
+    .view{padding-top:14px;}
+    #v-today .col-l{position:static;}
+    .hero{padding:14px 16px;}
+    .hero-num{font-size:64px;}
+    .hero-num small{font-size:26px;}
+    .hero-bar{margin-top:12px;}
+    .tbig{font-size:54px; margin:4px 0 2px;}
+    .timer{padding:12px 14px;}
+    .tbtns .btn{height:44px;}
+    .tab{flex-direction:row; gap:8px; font-size:13px;}
+    .tab svg{width:18px; height:18px;}
+    .app{padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 70px);}
+  }
+  /* ---------- WORKOUT MODE ---------- */
+  .wm-open-btn{display:none; margin-bottom:10px; height:44px; font-size:16px; background:var(--lime); color:var(--black); border-color:var(--lime);}
+  @media (orientation:landscape) and (max-height:520px){ .wm-open-btn{display:block;} }
+  .wm{position:fixed; inset:0; z-index:60; background:var(--black); color:var(--white); display:grid; grid-template-columns:1fr 1.15fr;
+      padding:max(10px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left)); gap:14px;}
+  .wm-l{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; min-width:0;}
+  .wm-ring{position:relative; width:min(68vh, 40vw); aspect-ratio:1;}
+  .wm-ring svg{width:100%; height:100%; transform:rotate(-90deg);}
+  .wm-ring circle{fill:none; stroke-width:12;}
+  .wm-ring .bg{stroke:#333333;}
+  .wm-ring .fg{stroke:var(--lime); stroke-dasharray:565.5; stroke-dashoffset:0; transition:stroke-dashoffset .25s linear, stroke .2s;}
+  .wm-center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .wm-center .label{color:var(--g3); letter-spacing:.2em;}
+  .wm-time{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:min(21vh, 12vw); line-height:1; color:var(--lime); font-variant-numeric:tabular-nums;}
+  .wm.warn .wm-time{color:var(--white); animation:wmpulse 1s ease-in-out infinite;}
+  .wm.warn .wm-ring .fg{stroke:var(--white);}
+  @keyframes wmpulse{50%{opacity:.55;}}
+  .wm.flash{animation:wmflash .3s steps(2) 6;}
+  @keyframes wmflash{0%{background:var(--lime);} 100%{background:var(--black);}}
+  .wm-tb{display:grid; grid-template-columns:1fr 1.4fr 1fr; gap:8px; width:min(68vh, 40vw); min-width:220px;}
+  .wm-tb button{height:46px; background:var(--black); color:var(--white); border:1px solid var(--g3); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:18px; letter-spacing:.08em; cursor:pointer;}
+  .wm-tb .go{background:var(--lime); color:var(--black); border-color:var(--lime);}
+  .wm.run .wm-tb .go{background:var(--white); border-color:var(--white);}
+  .wm-r{background:var(--white); color:var(--black); padding:12px 16px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; min-width:0;}
+  .wm-top{display:flex; justify-content:space-between; align-items:center;}
+  .wm-top b{background:var(--lime); padding:1px 6px; margin-left:6px;}
+  .wm-x{height:32px; padding:0 12px; background:var(--white); border:1px solid var(--black); font-weight:700; font-size:12px; cursor:pointer;}
+  .wm-ex{display:grid; grid-template-columns:44px 1fr 44px; align-items:center; gap:8px;}
+  .wm-nav{height:44px; background:var(--g1); border:none; font-size:28px; font-weight:800; cursor:pointer;}
+  .wm-nav:disabled{opacity:.3;}
+  .wm-name{font-weight:700; font-size:24px; text-align:center; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .wm-meta{font-family:'JetBrains Mono',monospace; font-size:11px; text-align:center; line-height:1.6;}
+  .wm-meta .ok{background:var(--lime); padding:1px 6px; font-weight:700;}
+  .wm-steps{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .wm-step{display:flex; flex-direction:column; gap:3px; min-width:0;}
+  .wm-row{display:grid; grid-template-columns:44px 1fr 44px; height:52px;}
+  .wm-row button{border:1px solid var(--black); background:var(--white); font-size:24px; font-weight:800; cursor:pointer;}
+  .wm-row button:active{background:var(--lime);}
+  .wm-row input{min-width:0; border:1px solid var(--black); border-left:none; border-right:none; text-align:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:34px; border-radius:0; background:var(--white);}
+  .wm-row input:focus{outline:none; background:var(--lime);}
+  .wm-log{height:58px; background:var(--lime); color:var(--black); border:2px solid var(--black); font-family:'Barlow Condensed','Noto Sans JP',sans-serif; font-weight:800; font-size:22px; letter-spacing:.06em; cursor:pointer; flex:none;}
+  .wm-log:active{background:var(--black); color:var(--lime);}
+  .wm-log:disabled{opacity:.3;}
+  .wm-done{font-family:'JetBrains Mono',monospace; font-size:12px; text-align:center; min-height:16px;}
+  .wm.empty .wm-steps,.wm.empty .wm-log,.wm.empty .wm-nav{visibility:hidden;}
+  .toast{position:fixed; top:calc(env(safe-area-inset-top) + 14px); left:50%; transform:translate(-50%,-20px); opacity:0; z-index:80; background:var(--black); color:var(--lime); font-weight:700; font-size:13px; padding:10px 16px; transition:all .2s; pointer-events:none; max-width:90%;}
   .toast.show{opacity:1; transform:translate(-50%,0);}
 </style>
 </head>
@@ -350,6 +429,7 @@
   <!-- TODAY -->
   <main class="view active" id="v-today">
     <div class="cols"><div class="col col-l">
+    <button class="btn block wm-open-btn" id="wmOpen" data-i18n="wm.open"></button>
     <div class="hero">
       <div class="label">TODAY'S ACHIEVEMENT <span data-i18n="hero.sub"></span></div>
       <div class="hero-row" style="margin-top:12px;">
@@ -456,6 +536,16 @@
 
   <!-- LOG -->
   <main class="view" id="v-log">
+    <div class="logbar">
+      <input id="logQ" class="txt" type="search" data-i18n-ph="log.q" placeholder="" autocomplete="off">
+      <div class="seg" id="logSeg" style="grid-template-columns:repeat(4,1fr); margin-bottom:0;">
+        <button data-f="all" class="on" data-i18n="log.fAll"></button>
+        <button data-f="train" data-i18n="log.fTrain"></button>
+        <button data-f="memo" data-i18n="log.fMemo"></button>
+        <button data-f="pr" data-i18n="log.fPr"></button>
+      </div>
+      <div class="label dim" id="logCount"></div>
+    </div>
     <div id="tl"></div>
   </main>
 
@@ -533,6 +623,35 @@
     </button>
   </nav>
 </div>
+<!-- WORKOUT MODE（スマホ横向き専用） -->
+<div class="wm" id="wm" hidden>
+  <div class="wm-l">
+    <div class="wm-ring">
+      <svg viewBox="0 0 200 200" aria-hidden="true"><circle class="bg" cx="100" cy="100" r="90"/><circle class="fg" id="wmArc" cx="100" cy="100" r="90"/></svg>
+      <div class="wm-center"><div class="label" id="wmState">READY</div><div class="wm-time" id="wmTime">1:30</div></div>
+    </div>
+    <div class="wm-tb">
+      <button id="wmMinus">−10s</button>
+      <button id="wmStart" class="go">START</button>
+      <button id="wmPlus">+10s</button>
+    </div>
+  </div>
+  <div class="wm-r">
+    <div class="wm-top"><span class="label">WORKOUT MODE <b id="wmPos"></b></span><button class="wm-x" id="wmExit" data-i18n="wm.exit"></button></div>
+    <div class="wm-ex">
+      <button class="wm-nav" id="wmPrev" aria-label="prev">‹</button>
+      <div class="wm-name" id="wmName"></div>
+      <button class="wm-nav" id="wmNext" aria-label="next">›</button>
+    </div>
+    <div class="wm-meta" id="wmMeta"></div>
+    <div class="wm-steps" id="wmSteps">
+      <div class="wm-step"><span class="label dim">KG</span><div class="wm-row"><button data-k="w" data-d="-2.5">−</button><input id="wmW" type="number" step="0.5" min="0" inputmode="decimal" placeholder="BW"><button data-k="w" data-d="2.5">＋</button></div></div>
+      <div class="wm-step"><span class="label dim">REP</span><div class="wm-row"><button data-k="r" data-d="-1">−</button><input id="wmR" type="number" step="1" min="0" inputmode="numeric"><button data-k="r" data-d="1">＋</button></div></div>
+    </div>
+    <button class="wm-log" id="wmLog" data-i18n="wm.log"></button>
+    <div class="wm-done" id="wmDone"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -553,7 +672,7 @@
   const sd = d => d.slice(5).replace('-','/');
   const WD = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
   /* ---------- i18n ---------- */
-  const I18N = {"timer.hint": {"ja": "数字をタップすると時間を入力できます", "en": "Tap the time to type it in", "ko": "숫자를 탭하면 시간을 입력할 수 있습니다", "zh": "点击数字即可输入时间"}, "timer.min": {"ja": "分", "en": "MIN", "ko": "분", "zh": "分"}, "timer.sec": {"ja": "秒", "en": "SEC", "ko": "초", "zh": "秒"}, "timer.set": {"ja": "セット", "en": "Set", "ko": "설정", "zh": "设定"}, "timer.cancel": {"ja": "キャンセル", "en": "Cancel", "ko": "취소", "zh": "取消"}, "log.empty": {"ja": "まだ記録がありません — Todayでセットを記録するか、Chartsで体重を記録すると、ここに日ごとの履歴が表示されます", "en": "No records yet — log a set on Today or your weight on Charts, and your daily history will appear here", "ko": "아직 기록이 없습니다 — Today에서 세트를 기록하거나 Charts에서 체중을 기록하면 여기에 일별 기록이 표시됩니다", "zh": "还没有记录 — 在 Today 记录训练组或在 Charts 记录体重后，这里会显示每日记录"}, "hero.sub": {"ja": "今日の達成率", "en": "", "ko": "오늘의 달성률", "zh": "今日完成率"}, "unit.day": {"ja": " 日", "en": " d", "ko": " 일", "zh": " 天"}, "timer.sub": {"ja": "インターバル", "en": "", "ko": "인터벌", "zh": "组间休息"}, "opt.sound": {"ja": "終了音（音楽と重ねて鳴らす）", "en": "End sound (plays over music)", "ko": "종료음 (음악과 함께 재생)", "zh": "结束提示音（与音乐同时播放）"}, "opt.wake": {"ja": "画面を消さない", "en": "Keep screen on", "ko": "화면 꺼짐 방지", "zh": "保持屏幕常亮"}, "spotify": {"ja": "Spotifyを開く", "en": "Open Spotify", "ko": "Spotify 열기", "zh": "打开 Spotify"}, "adhoc.ph": {"ja": "種目名を入力（新しい種目もOK）", "en": "Exercise name (new ones OK)", "ko": "종목명 입력 (새 종목도 가능)", "zh": "输入动作名称（可新建）"}, "btn.add": {"ja": "追加", "en": "Add", "ko": "추가", "zh": "添加"}, "memo.sub": {"ja": "今日のメモ", "en": "Notes", "ko": "오늘의 메모", "zh": "今日笔记"}, "memo.ph": {"ja": "調子、睡眠、フォームの気づきなど", "en": "Condition, sleep, form notes…", "ko": "컨디션, 수면, 자세 메모 등", "zh": "状态、睡眠、动作要点等"}, "body.sub": {"ja": "体重", "en": "", "ko": "체중", "zh": "体重"}, "btn.record": {"ja": "記録する", "en": "Save", "ko": "기록하기", "zh": "记录"}, "latest.sub": {"ja": "最新の記録", "en": "", "ko": "최근 기록", "zh": "最新记录"}, "trend.sub": {"ja": "日ごとの体重", "en": "Daily weight", "ko": "일별 체중", "zh": "每日体重"}, "r30": {"ja": "30日", "en": "30D", "ko": "30일", "zh": "30天"}, "r90": {"ja": "90日", "en": "90D", "ko": "90일", "zh": "90天"}, "r365": {"ja": "1年", "en": "1Y", "ko": "1년", "zh": "1年"}, "rAll": {"ja": "全期間", "en": "All", "ko": "전체", "zh": "全部"}, "setup.menu.sub": {"ja": "トレーニングメニュー", "en": "Training menu", "ko": "트레이닝 메뉴", "zh": "训练计划"}, "rtAdd": {"ja": "+ メニューに種目を追加", "en": "+ Add exercise", "ko": "+ 종목 추가", "zh": "+ 添加动作"}, "ex.sub": {"ja": "種目マスタ", "en": "Exercise list", "ko": "종목 목록", "zh": "动作库"}, "newex.sub": {"ja": "新しい種目", "en": "", "ko": "새 종목", "zh": "新动作"}, "nx.ph": {"ja": "種目名（例：ダンベルプレス）", "en": "Name (e.g. Dumbbell Press)", "ko": "종목명 (예: 덤벨 프레스)", "zh": "名称（例：哑铃卧推）"}, "nx.add": {"ja": "種目を登録", "en": "Register exercise", "ko": "종목 등록", "zh": "添加动作"}, "settings.sub": {"ja": "設定", "en": "", "ko": "설정", "zh": "设置"}, "set.rest": {"ja": "インターバル（秒）", "en": "Rest interval (sec)", "ko": "인터벌 (초)", "zh": "休息时间（秒）"}, "set.day": {"ja": "日付の切り替え時刻", "en": "New day starts at", "ko": "날짜 변경 시각", "zh": "日期切换时间"}, "set.lang": {"ja": "言語", "en": "Language", "ko": "언어", "zh": "语言"}, "dlBtn": {"ja": "ファイル保存", "en": "Save file", "ko": "파일 저장", "zh": "保存文件"}, "ulBtn": {"ja": "ファイル復元", "en": "Restore file", "ko": "파일 복원", "zh": "从文件恢复"}, "exportBtn": {"ja": "表示", "en": "Show", "ko": "표시", "zh": "显示"}, "copyBtn": {"ja": "コピー", "en": "Copy", "ko": "복사", "zh": "复制"}, "importBtn": {"ja": "貼り付けから復元", "en": "Restore pasted", "ko": "붙여넣기로 복원", "zh": "从粘贴恢复"}, "backup.ph": {"ja": "「表示」でJSONがここに出ます。復元するときはJSONを貼り付けて「貼り付けから復元」を押してください。旧バージョンのバックアップも読み込めます。", "en": "Press \"Show\" to display JSON here. To restore, paste JSON and press \"Restore pasted\". Old-version backups are also supported.", "ko": "\"표시\"를 누르면 여기에 JSON이 나옵니다. 복원하려면 JSON을 붙여넣고 \"붙여넣기로 복원\"을 누르세요. 이전 버전 백업도 읽을 수 있습니다.", "zh": "点击\"显示\"后 JSON 会出现在这里。恢复时请粘贴 JSON 并点击\"从粘贴恢复\"。也支持旧版本的备份。"}, "note": {"ja": "データはこの端末のブラウザ内にのみ保存されます。機種変更やキャッシュ削除の前に「ファイル保存」でバックアップを取っておくと安心です。", "en": "Data is stored only in this browser on this device. Use \"Save file\" to back up before changing phones or clearing the cache.", "ko": "데이터는 이 기기의 브라우저에만 저장됩니다. 기기 변경이나 캐시 삭제 전에 \"파일 저장\"으로 백업해 두세요.", "zh": "数据仅保存在本设备的浏览器中。更换手机或清除缓存前，请先用\"保存文件\"备份。"}, "toast.migrated": {"ja": "旧バージョンのデータを移行しました", "en": "Migrated data from the old version", "ko": "이전 버전 데이터를 이전했습니다", "zh": "已迁移旧版本数据"}, "toast.saveFail": {"ja": "保存できませんでした（容量・プライベートモードを確認）", "en": "Could not save (check storage / private mode)", "ko": "저장하지 못했습니다 (용량·시크릿 모드 확인)", "zh": "无法保存（请检查存储空间或隐私模式）"}, "unknownEx": {"ja": "不明な種目", "en": "Unknown exercise", "ko": "알 수 없는 종목", "zh": "未知动作"}, "bw": {"ja": "自重", "en": "BW", "ko": "맨몸", "zh": "自重"}, "today.empty1": {"ja": "{wd}のメニューはありません（休養日）", "en": "No menu for {wd} (rest day)", "ko": "{wd} 메뉴가 없습니다 (휴식일)", "zh": "{wd}没有训练计划（休息日）"}, "today.empty2": {"ja": "下から種目を追加するか、SETUPで作成できます", "en": "Add an exercise below, or create a menu in SETUP", "ko": "아래에서 종목을 추가하거나 SETUP에서 만들 수 있습니다", "zh": "可在下方添加动作，或在 SETUP 中创建"}, "adhoc.save": {"ja": "{wd}のメニューにも保存する", "en": "Also save to the {wd} menu", "ko": "{wd} 메뉴에도 저장", "zh": "同时保存到{wd}的计划"}, "free": {"ja": "フリー", "en": "Free", "ko": "자유", "zh": "自由"}, "target": {"ja": "目標 {t}", "en": "Target {t}", "ko": "목표 {t}", "zh": "目标 {t}"}, "prev": {"ja": "前回", "en": "Last", "ko": "지난번", "zh": "上次"}, "addSet": {"ja": "+ セット記録", "en": "+ Log set", "ko": "+ 세트 기록", "zh": "+ 记录一组"}, "copyPrev": {"ja": "前回をコピー", "en": "Copy last", "ko": "지난번 복사", "zh": "复制上次"}, "a.weight": {"ja": "重量", "en": "Weight", "ko": "무게", "zh": "重量"}, "a.reps": {"ja": "回数", "en": "Reps", "ko": "횟수", "zh": "次数"}, "a.warm": {"ja": "ウォームアップ", "en": "Warm-up", "ko": "워밍업", "zh": "热身"}, "a.warmT": {"ja": "ウォームアップ（集計から除外）", "en": "Warm-up (excluded from stats)", "ko": "워밍업 (집계 제외)", "zh": "热身（不计入统计）"}, "a.del": {"ja": "削除", "en": "Delete", "ko": "삭제", "zh": "删除"}, "a.up": {"ja": "上へ", "en": "Up", "ko": "위로", "zh": "上移"}, "a.down": {"ja": "下へ", "en": "Down", "ko": "아래로", "zh": "下移"}, "a.remove": {"ja": "メニューから外す", "en": "Remove from menu", "ko": "메뉴에서 제외", "zh": "从计划中移除"}, "a.name": {"ja": "種目名", "en": "Exercise name", "ko": "종목명", "zh": "动作名称"}, "toast.copiedPrev": {"ja": "前回のセットをコピーしました", "en": "Copied last session's sets", "ko": "지난번 세트를 복사했습니다", "zh": "已复制上次的组"}, "toast.needName": {"ja": "種目名を入力してください", "en": "Enter an exercise name", "ko": "종목명을 입력하세요", "zh": "请输入动作名称"}, "toast.createdEx": {"ja": "「{name}」を新しい種目として登録しました", "en": "Registered \"{name}\" as a new exercise", "ko": "\"{name}\"을(를) 새 종목으로 등록했습니다", "zh": "已将\"{name}\"添加为新动作"}, "toast.addedEx": {"ja": "「{name}」を追加しました", "en": "Added \"{name}\"", "ko": "\"{name}\"을(를) 추가했습니다", "zh": "已添加\"{name}\""}, "toast.wakeNA": {"ja": "この端末のブラウザは「画面を消さない」に未対応です", "en": "This browser does not support \"Keep screen on\"", "ko": "이 브라우저는 \"화면 꺼짐 방지\"를 지원하지 않습니다", "zh": "此浏览器不支持\"保持屏幕常亮\""}, "toast.needWeight": {"ja": "体重を入力してください", "en": "Enter your weight", "ko": "체중을 입력하세요", "zh": "请输入体重"}, "toast.recorded": {"ja": "記録しました", "en": "Saved", "ko": "기록했습니다", "zh": "已记录"}, "prevDiff": {"ja": "前回比", "en": "vs last", "ko": "지난번 대비", "zh": "较上次"}, "confirm.delBw": {"ja": "この体重記録を削除しますか？", "en": "Delete this weight entry?", "ko": "이 체중 기록을 삭제할까요?", "zh": "删除这条体重记录吗？"}, "stat.min": {"ja": "最小", "en": "Min", "ko": "최소", "zh": "最低"}, "stat.max": {"ja": "最大", "en": "Max", "ko": "최대", "zh": "最高"}, "stat.chg": {"ja": "変化", "en": "Change", "ko": "변화", "zh": "变化"}, "log.delBtn": {"ja": "この日のトレーニング記録を削除", "en": "Delete this day's workout", "ko": "이날 운동 기록 삭제", "zh": "删除当天训练记录"}, "log.free": {"ja": "フリートレーニング", "en": "Free training", "ko": "자유 트레이닝", "zh": "自由训练"}, "log.rate": {"ja": "達成率 {p}%", "en": "Achieved {p}%", "ko": "달성률 {p}%", "zh": "完成率 {p}%"}, "log.rest": {"ja": "休養日", "en": "Rest day", "ko": "휴식일", "zh": "休息日"}, "log.sets": {"ja": "{n}セット", "en": "{n} set(s)", "ko": "{n}세트", "zh": "{n}组"}, "confirm.delDay": {"ja": "この日のトレーニング記録を削除しますか？（体重の記録は残ります）", "en": "Delete this day's workout? (Weight entries are kept)", "ko": "이날 운동 기록을 삭제할까요? (체중 기록은 유지됩니다)", "zh": "删除当天训练记录吗？（体重记录会保留）"}, "toast.deleted": {"ja": "削除しました", "en": "Deleted", "ko": "삭제했습니다", "zh": "已删除"}, "restShort": {"ja": "休", "en": "Rest", "ko": "휴", "zh": "休"}, "wdTitle": {"ja": "{wd}のメニュー", "en": "{wd} menu", "ko": "{wd} 메뉴", "zh": "{wd}的计划"}, "todayMark": {"ja": "（今日）", "en": " (today)", "ko": " (오늘)", "zh": "（今天）"}, "copyFrom": {"ja": "コピーして作る…", "en": "Copy from…", "ko": "복사해서 만들기…", "zh": "从…复制"}, "copyOpt": {"ja": "{wd}のメニューをコピー", "en": "Copy {wd} menu", "ko": "{wd} 메뉴 복사", "zh": "复制{wd}的计划"}, "nxLabel": {"ja": "{wd}のメニューにも追加する", "en": "Also add to the {wd} menu", "ko": "{wd} 메뉴에도 추가", "zh": "同时添加到{wd}的计划"}, "confirm.replace": {"ja": "{to}のメニューを{from}の内容で置き換えます。よろしいですか？", "en": "Replace the {to} menu with {from}'s?", "ko": "{to} 메뉴를 {from} 내용으로 바꿀까요?", "zh": "用{from}的内容替换{to}的计划吗？"}, "toast.copiedWd": {"ja": "{wd}のメニューをコピーしました", "en": "Copied the {wd} menu", "ko": "{wd} 메뉴를 복사했습니다", "zh": "已复制{wd}的计划"}, "wdRest": {"ja": "{wd}は休養日（メニューなし）", "en": "{wd} is a rest day (no menu)", "ko": "{wd}은(는) 휴식일 (메뉴 없음)", "zh": "{wd}为休息日（无计划）"}, "muscle": {"ja": "部位", "en": "Muscle", "ko": "부위", "zh": "部位"}, "equip": {"ja": "器具", "en": "Equipment", "ko": "기구", "zh": "器械"}, "restore": {"ja": "戻す", "en": "Show", "ko": "복원", "zh": "恢复"}, "hide": {"ja": "隠す", "en": "Hide", "ko": "숨기기", "zh": "隐藏"}, "confirm.delEx": {"ja": "「{name}」を削除しますか？", "en": "Delete \"{name}\"?", "ko": "\"{name}\"을(를) 삭제할까요?", "zh": "删除\"{name}\"吗？"}, "confirm.archive": {"ja": "「{name}」をメニューからも外します。記録は残ります。よろしいですか？", "en": "\"{name}\" will also be removed from menus. Records are kept. Continue?", "ko": "\"{name}\"을(를) 메뉴에서도 제외합니다. 기록은 유지됩니다. 계속할까요?", "zh": "\"{name}\"也会从计划中移除，记录会保留。确定吗？"}, "toast.needExFirst": {"ja": "先に種目マスタで種目を登録してください", "en": "Register an exercise in the exercise list first", "ko": "먼저 종목 목록에 종목을 등록하세요", "zh": "请先在动作库中添加动作"}, "toast.dupName": {"ja": "同じ名前の種目があります", "en": "An exercise with that name already exists", "ko": "같은 이름의 종목이 있습니다", "zh": "已存在同名动作"}, "toast.registered": {"ja": "「{name}」を登録しました", "en": "Registered \"{name}\"", "ko": "\"{name}\"을(를) 등록했습니다", "zh": "已添加\"{name}\""}, "say.exported": {"ja": "表示しました。コピーして安全な場所に保存してください。", "en": "Shown. Copy it and keep it somewhere safe.", "ko": "표시했습니다. 복사해서 안전한 곳에 보관하세요.", "zh": "已显示。请复制并保存到安全的地方。"}, "say.copied": {"ja": "コピーしました。", "en": "Copied.", "ko": "복사했습니다.", "zh": "已复制。"}, "say.copyManual": {"ja": "手動で選択してコピーしてください。", "en": "Please select and copy manually.", "ko": "직접 선택해서 복사하세요.", "zh": "请手动选择并复制。"}, "say.fileSaved": {"ja": "バックアップファイルを保存しました。", "en": "Backup file saved.", "ko": "백업 파일을 저장했습니다.", "zh": "已保存备份文件。"}, "say.fileFail": {"ja": "保存できませんでした。「表示」→「コピー」をお使いください。", "en": "Could not save. Use \"Show\" → \"Copy\" instead.", "ko": "저장하지 못했습니다. \"표시\" → \"복사\"를 이용하세요.", "zh": "无法保存。请使用\"显示\"→\"复制\"。"}, "say.needJson": {"ja": "復元するJSONを貼り付けてください。", "en": "Paste the JSON to restore.", "ko": "복원할 JSON을 붙여넣으세요.", "zh": "请粘贴要恢复的 JSON。"}, "say.badFormat": {"ja": "形式が正しくありません", "en": "Invalid format", "ko": "형식이 올바르지 않습니다", "zh": "格式不正确"}, "confirm.restore": {"ja": "現在のデータを上書きして復元します。よろしいですか？", "en": "This will overwrite your current data. Continue?", "ko": "현재 데이터를 덮어쓰고 복원합니다. 계속할까요?", "zh": "将覆盖当前数据并恢复。确定吗？"}, "say.restoredOld": {"ja": "旧バージョンのデータを変換して復元しました。", "en": "Converted and restored old-version data.", "ko": "이전 버전 데이터를 변환해 복원했습니다.", "zh": "已转换并恢复旧版本数据。"}, "say.restored": {"ja": "復元が完了しました。", "en": "Restore complete.", "ko": "복원이 완료되었습니다.", "zh": "恢复完成。"}, "say.loadFail": {"ja": "読み込みに失敗しました：", "en": "Failed to load: ", "ko": "불러오기에 실패했습니다: ", "zh": "读取失败："}, "dayOpt": {"ja": "午前{i}時", "en": "{i}:00 AM", "ko": "오전 {i}시", "zh": "凌晨{i}点"}, "seed.bench": {"ja": "ベンチプレス", "en": "Bench Press", "ko": "벤치프레스", "zh": "卧推"}, "seed.squat": {"ja": "スクワット", "en": "Squat", "ko": "스쿼트", "zh": "深蹲"}, "seed.pullup": {"ja": "懸垂", "en": "Pull-up", "ko": "턱걸이", "zh": "引体向上"}, "c.胸": {"ja": "胸", "en": "Chest", "ko": "가슴", "zh": "胸"}, "c.背中": {"ja": "背中", "en": "Back", "ko": "등", "zh": "背"}, "c.脚": {"ja": "脚", "en": "Legs", "ko": "하체", "zh": "腿"}, "c.肩": {"ja": "肩", "en": "Shoulders", "ko": "어깨", "zh": "肩"}, "c.腕": {"ja": "腕", "en": "Arms", "ko": "팔", "zh": "手臂"}, "c.腹": {"ja": "腹", "en": "Abs", "ko": "복근", "zh": "腹"}, "c.全身": {"ja": "全身", "en": "Full body", "ko": "전신", "zh": "全身"}, "c.有酸素": {"ja": "有酸素", "en": "Cardio", "ko": "유산소", "zh": "有氧"}, "c.フリーウェイト": {"ja": "フリーウェイト", "en": "Free weights", "ko": "프리웨이트", "zh": "自由重量"}, "c.マシン": {"ja": "マシン", "en": "Machine", "ko": "머신", "zh": "器械"}, "c.ケーブル": {"ja": "ケーブル", "en": "Cable", "ko": "케이블", "zh": "绳索"}, "c.自重": {"ja": "自重", "en": "Bodyweight", "ko": "맨몸", "zh": "自重"}, "c.その他": {"ja": "その他", "en": "Other", "ko": "기타", "zh": "其他"}, "plan.weekly": {"ja": "曜日ごとに固定", "en": "Fixed by weekday", "ko": "요일별 고정", "zh": "按星期固定"}, "plan.daily": {"ja": "日ごとに決める", "en": "Plan by date", "ko": "날짜별로 정하기", "zh": "按日期安排"}, "plan.hint.weekly": {"ja": "毎週、同じ曜日に同じメニューをくり返します", "en": "Repeats the same menu on the same weekday every week", "ko": "매주 같은 요일에 같은 메뉴를 반복합니다", "zh": "每周同一天重复相同的计划"}, "plan.hint.daily": {"ja": "日付ごとに好きなメニューを決めます。決めていない日も、Todayで自由に種目を追加できます", "en": "Plan a menu for any date. On unplanned days you can still add exercises freely on Today", "ko": "날짜마다 원하는 메뉴를 정합니다. 정하지 않은 날도 Today에서 자유롭게 종목을 추가할 수 있습니다", "zh": "可按日期安排任意计划。未安排的日子也能在 Today 自由添加动作"}, "copyLast": {"ja": "前回のトレーニング内容をコピー", "en": "Copy last workout", "ko": "지난 운동 내용 복사", "zh": "复制上次训练"}, "copyWd": {"ja": "{wd}のメニューをコピー", "en": "Copy {wd} menu", "ko": "{wd} 메뉴 복사", "zh": "复制{wd}的计划"}, "dateRest": {"ja": "{wd}のメニューはまだありません", "en": "No menu for {wd} yet", "ko": "{wd} 메뉴가 아직 없습니다", "zh": "{wd}还没有计划"}, "adhoc.saveDate": {"ja": "今日のメニューとして保存する", "en": "Save to today's menu", "ko": "오늘 메뉴로 저장", "zh": "保存为今天的计划"}, "today.emptyDaily": {"ja": "今日のメニューはまだありません", "en": "No menu for today yet", "ko": "오늘 메뉴가 아직 없습니다", "zh": "今天还没有计划"}, "today.emptyDaily2": {"ja": "下から種目を追加するか、「前回の種目を呼び出す」が使えます", "en": "Add an exercise below, or use \"Recall last exercises\"", "ko": "아래에서 종목을 추가하거나 \"지난 종목 불러오기\"를 사용하세요", "zh": "可在下方添加动作，或使用\"调出上次的动作\""}, "recall": {"ja": "↺ 前回の種目を呼び出す", "en": "↺ Recall last exercises", "ko": "↺ 지난 종목 불러오기", "zh": "↺ 调出上次的动作"}, "toast.noPrev": {"ja": "前回のトレーニング記録がありません", "en": "No previous workout found", "ko": "지난 운동 기록이 없습니다", "zh": "没有上次的训练记录"}, "toast.recalled": {"ja": "前回の種目を呼び出しました", "en": "Recalled your last exercises", "ko": "지난 종목을 불러왔습니다", "zh": "已调出上次的动作"}, "daylog.sub": {"ja": "その日の種目・時間・メモ", "en": "Exercises, time & notes", "ko": "그날의 종목·시간·메모", "zh": "当天动作·时间·笔记"}, "daylog.date": {"ja": "日付", "en": "", "ko": "날짜", "zh": "日期"}, "daylog.ex": {"ja": "やった種目", "en": "Exercises done", "ko": "한 종목", "zh": "完成的动作"}, "daylog.start": {"ja": "開始時刻", "en": "Start time", "ko": "시작 시각", "zh": "开始时间"}, "daylog.dur": {"ja": "時間（分）", "en": "Duration (min)", "ko": "운동 시간 (분)", "zh": "时长（分钟）"}, "daylog.memo": {"ja": "メモ", "en": "Notes", "ko": "메모", "zh": "笔记"}, "daylog.save": {"ja": "保存する", "en": "Save", "ko": "저장", "zh": "保存"}, "daylog.none": {"ja": "この日のセット記録はありません（セットはTodayで記録できます）", "en": "No sets logged this day (log sets on Today)", "ko": "이날 세트 기록이 없습니다 (세트는 Today에서 기록)", "zh": "当天没有训练组记录（可在 Today 记录）"}, "daylog.empty": {"ja": "入力されていません", "en": "Nothing to save", "ko": "입력된 내용이 없습니다", "zh": "没有输入内容"}, "daylog.min": {"ja": "{n}分", "en": "{n} min", "ko": "{n}분", "zh": "{n}分钟"}};
+  const I18N = {"timer.hint": {"ja": "数字をタップすると時間を入力できます", "en": "Tap the time to type it in", "ko": "숫자를 탭하면 시간을 입력할 수 있습니다", "zh": "点击数字即可输入时间"}, "timer.min": {"ja": "分", "en": "MIN", "ko": "분", "zh": "分"}, "timer.sec": {"ja": "秒", "en": "SEC", "ko": "초", "zh": "秒"}, "timer.set": {"ja": "セット", "en": "Set", "ko": "설정", "zh": "设定"}, "timer.cancel": {"ja": "キャンセル", "en": "Cancel", "ko": "취소", "zh": "取消"}, "log.empty": {"ja": "まだ記録がありません — Todayでセットを記録するか、Chartsで体重を記録すると、ここに日ごとの履歴が表示されます", "en": "No records yet — log a set on Today or your weight on Charts, and your daily history will appear here", "ko": "아직 기록이 없습니다 — Today에서 세트를 기록하거나 Charts에서 체중을 기록하면 여기에 일별 기록이 표시됩니다", "zh": "还没有记录 — 在 Today 记录训练组或在 Charts 记录体重后，这里会显示每日记录"}, "hero.sub": {"ja": "今日の達成率", "en": "", "ko": "오늘의 달성률", "zh": "今日完成率"}, "unit.day": {"ja": " 日", "en": " d", "ko": " 일", "zh": " 天"}, "timer.sub": {"ja": "インターバル", "en": "", "ko": "인터벌", "zh": "组间休息"}, "opt.sound": {"ja": "終了音（音楽と重ねて鳴らす）", "en": "End sound (plays over music)", "ko": "종료음 (음악과 함께 재생)", "zh": "结束提示音（与音乐同时播放）"}, "opt.wake": {"ja": "画面を消さない", "en": "Keep screen on", "ko": "화면 꺼짐 방지", "zh": "保持屏幕常亮"}, "spotify": {"ja": "Spotifyを開く", "en": "Open Spotify", "ko": "Spotify 열기", "zh": "打开 Spotify"}, "adhoc.ph": {"ja": "種目名を入力（新しい種目もOK）", "en": "Exercise name (new ones OK)", "ko": "종목명 입력 (새 종목도 가능)", "zh": "输入动作名称（可新建）"}, "btn.add": {"ja": "追加", "en": "Add", "ko": "추가", "zh": "添加"}, "memo.sub": {"ja": "今日のメモ", "en": "Notes", "ko": "오늘의 메모", "zh": "今日笔记"}, "memo.ph": {"ja": "調子、睡眠、フォームの気づきなど", "en": "Condition, sleep, form notes…", "ko": "컨디션, 수면, 자세 메모 등", "zh": "状态、睡眠、动作要点等"}, "body.sub": {"ja": "体重", "en": "", "ko": "체중", "zh": "体重"}, "btn.record": {"ja": "記録する", "en": "Save", "ko": "기록하기", "zh": "记录"}, "latest.sub": {"ja": "最新の記録", "en": "", "ko": "최근 기록", "zh": "最新记录"}, "trend.sub": {"ja": "日ごとの体重", "en": "Daily weight", "ko": "일별 체중", "zh": "每日体重"}, "r30": {"ja": "30日", "en": "30D", "ko": "30일", "zh": "30天"}, "r90": {"ja": "90日", "en": "90D", "ko": "90일", "zh": "90天"}, "r365": {"ja": "1年", "en": "1Y", "ko": "1년", "zh": "1年"}, "rAll": {"ja": "全期間", "en": "All", "ko": "전체", "zh": "全部"}, "setup.menu.sub": {"ja": "トレーニングメニュー", "en": "Training menu", "ko": "트레이닝 메뉴", "zh": "训练计划"}, "rtAdd": {"ja": "+ メニューに種目を追加", "en": "+ Add exercise", "ko": "+ 종목 추가", "zh": "+ 添加动作"}, "ex.sub": {"ja": "種目マスタ", "en": "Exercise list", "ko": "종목 목록", "zh": "动作库"}, "newex.sub": {"ja": "新しい種目", "en": "", "ko": "새 종목", "zh": "新动作"}, "nx.ph": {"ja": "種目名（例：ダンベルプレス）", "en": "Name (e.g. Dumbbell Press)", "ko": "종목명 (예: 덤벨 프레스)", "zh": "名称（例：哑铃卧推）"}, "nx.add": {"ja": "種目を登録", "en": "Register exercise", "ko": "종목 등록", "zh": "添加动作"}, "settings.sub": {"ja": "設定", "en": "", "ko": "설정", "zh": "设置"}, "set.rest": {"ja": "インターバル（秒）", "en": "Rest interval (sec)", "ko": "인터벌 (초)", "zh": "休息时间（秒）"}, "set.day": {"ja": "日付の切り替え時刻", "en": "New day starts at", "ko": "날짜 변경 시각", "zh": "日期切换时间"}, "set.lang": {"ja": "言語", "en": "Language", "ko": "언어", "zh": "语言"}, "dlBtn": {"ja": "ファイル保存", "en": "Save file", "ko": "파일 저장", "zh": "保存文件"}, "ulBtn": {"ja": "ファイル復元", "en": "Restore file", "ko": "파일 복원", "zh": "从文件恢复"}, "exportBtn": {"ja": "表示", "en": "Show", "ko": "표시", "zh": "显示"}, "copyBtn": {"ja": "コピー", "en": "Copy", "ko": "복사", "zh": "复制"}, "importBtn": {"ja": "貼り付けから復元", "en": "Restore pasted", "ko": "붙여넣기로 복원", "zh": "从粘贴恢复"}, "backup.ph": {"ja": "「表示」でJSONがここに出ます。復元するときはJSONを貼り付けて「貼り付けから復元」を押してください。旧バージョンのバックアップも読み込めます。", "en": "Press \"Show\" to display JSON here. To restore, paste JSON and press \"Restore pasted\". Old-version backups are also supported.", "ko": "\"표시\"를 누르면 여기에 JSON이 나옵니다. 복원하려면 JSON을 붙여넣고 \"붙여넣기로 복원\"을 누르세요. 이전 버전 백업도 읽을 수 있습니다.", "zh": "点击\"显示\"后 JSON 会出现在这里。恢复时请粘贴 JSON 并点击\"从粘贴恢复\"。也支持旧版本的备份。"}, "note": {"ja": "データはこの端末のブラウザ内にのみ保存されます。機種変更やキャッシュ削除の前に「ファイル保存」でバックアップを取っておくと安心です。", "en": "Data is stored only in this browser on this device. Use \"Save file\" to back up before changing phones or clearing the cache.", "ko": "데이터는 이 기기의 브라우저에만 저장됩니다. 기기 변경이나 캐시 삭제 전에 \"파일 저장\"으로 백업해 두세요.", "zh": "数据仅保存在本设备的浏览器中。更换手机或清除缓存前，请先用\"保存文件\"备份。"}, "toast.migrated": {"ja": "旧バージョンのデータを移行しました", "en": "Migrated data from the old version", "ko": "이전 버전 데이터를 이전했습니다", "zh": "已迁移旧版本数据"}, "toast.saveFail": {"ja": "保存できませんでした（容量・プライベートモードを確認）", "en": "Could not save (check storage / private mode)", "ko": "저장하지 못했습니다 (용량·시크릿 모드 확인)", "zh": "无法保存（请检查存储空间或隐私模式）"}, "unknownEx": {"ja": "不明な種目", "en": "Unknown exercise", "ko": "알 수 없는 종목", "zh": "未知动作"}, "bw": {"ja": "自重", "en": "BW", "ko": "맨몸", "zh": "自重"}, "today.empty1": {"ja": "{wd}のメニューはありません（休養日）", "en": "No menu for {wd} (rest day)", "ko": "{wd} 메뉴가 없습니다 (휴식일)", "zh": "{wd}没有训练计划（休息日）"}, "today.empty2": {"ja": "下から種目を追加するか、SETUPで作成できます", "en": "Add an exercise below, or create a menu in SETUP", "ko": "아래에서 종목을 추가하거나 SETUP에서 만들 수 있습니다", "zh": "可在下方添加动作，或在 SETUP 中创建"}, "adhoc.save": {"ja": "{wd}のメニューにも保存する", "en": "Also save to the {wd} menu", "ko": "{wd} 메뉴에도 저장", "zh": "同时保存到{wd}的计划"}, "free": {"ja": "フリー", "en": "Free", "ko": "자유", "zh": "自由"}, "target": {"ja": "目標 {t}", "en": "Target {t}", "ko": "목표 {t}", "zh": "目标 {t}"}, "prev": {"ja": "前回", "en": "Last", "ko": "지난번", "zh": "上次"}, "addSet": {"ja": "+ セット記録", "en": "+ Log set", "ko": "+ 세트 기록", "zh": "+ 记录一组"}, "copyPrev": {"ja": "前回をコピー", "en": "Copy last", "ko": "지난번 복사", "zh": "复制上次"}, "a.weight": {"ja": "重量", "en": "Weight", "ko": "무게", "zh": "重量"}, "a.reps": {"ja": "回数", "en": "Reps", "ko": "횟수", "zh": "次数"}, "a.warm": {"ja": "ウォームアップ", "en": "Warm-up", "ko": "워밍업", "zh": "热身"}, "a.warmT": {"ja": "ウォームアップ（集計から除外）", "en": "Warm-up (excluded from stats)", "ko": "워밍업 (집계 제외)", "zh": "热身（不计入统计）"}, "a.del": {"ja": "削除", "en": "Delete", "ko": "삭제", "zh": "删除"}, "a.up": {"ja": "上へ", "en": "Up", "ko": "위로", "zh": "上移"}, "a.down": {"ja": "下へ", "en": "Down", "ko": "아래로", "zh": "下移"}, "a.remove": {"ja": "メニューから外す", "en": "Remove from menu", "ko": "메뉴에서 제외", "zh": "从计划中移除"}, "a.name": {"ja": "種目名", "en": "Exercise name", "ko": "종목명", "zh": "动作名称"}, "toast.copiedPrev": {"ja": "前回のセットをコピーしました", "en": "Copied last session's sets", "ko": "지난번 세트를 복사했습니다", "zh": "已复制上次的组"}, "toast.needName": {"ja": "種目名を入力してください", "en": "Enter an exercise name", "ko": "종목명을 입력하세요", "zh": "请输入动作名称"}, "toast.createdEx": {"ja": "「{name}」を新しい種目として登録しました", "en": "Registered \"{name}\" as a new exercise", "ko": "\"{name}\"을(를) 새 종목으로 등록했습니다", "zh": "已将\"{name}\"添加为新动作"}, "toast.addedEx": {"ja": "「{name}」を追加しました", "en": "Added \"{name}\"", "ko": "\"{name}\"을(를) 추가했습니다", "zh": "已添加\"{name}\""}, "toast.wakeNA": {"ja": "この端末のブラウザは「画面を消さない」に未対応です", "en": "This browser does not support \"Keep screen on\"", "ko": "이 브라우저는 \"화면 꺼짐 방지\"를 지원하지 않습니다", "zh": "此浏览器不支持\"保持屏幕常亮\""}, "toast.needWeight": {"ja": "体重を入力してください", "en": "Enter your weight", "ko": "체중을 입력하세요", "zh": "请输入体重"}, "toast.recorded": {"ja": "記録しました", "en": "Saved", "ko": "기록했습니다", "zh": "已记录"}, "prevDiff": {"ja": "前回比", "en": "vs last", "ko": "지난번 대비", "zh": "较上次"}, "confirm.delBw": {"ja": "この体重記録を削除しますか？", "en": "Delete this weight entry?", "ko": "이 체중 기록을 삭제할까요?", "zh": "删除这条体重记录吗？"}, "stat.min": {"ja": "最小", "en": "Min", "ko": "최소", "zh": "最低"}, "stat.max": {"ja": "最大", "en": "Max", "ko": "최대", "zh": "最高"}, "stat.chg": {"ja": "変化", "en": "Change", "ko": "변화", "zh": "变化"}, "log.delBtn": {"ja": "この日のトレーニング記録を削除", "en": "Delete this day's workout", "ko": "이날 운동 기록 삭제", "zh": "删除当天训练记录"}, "log.free": {"ja": "フリートレーニング", "en": "Free training", "ko": "자유 트레이닝", "zh": "自由训练"}, "log.rate": {"ja": "達成率 {p}%", "en": "Achieved {p}%", "ko": "달성률 {p}%", "zh": "完成率 {p}%"}, "log.rest": {"ja": "休養日", "en": "Rest day", "ko": "휴식일", "zh": "休息日"}, "log.sets": {"ja": "{n}セット", "en": "{n} set(s)", "ko": "{n}세트", "zh": "{n}组"}, "confirm.delDay": {"ja": "この日のトレーニング記録を削除しますか？（体重の記録は残ります）", "en": "Delete this day's workout? (Weight entries are kept)", "ko": "이날 운동 기록을 삭제할까요? (체중 기록은 유지됩니다)", "zh": "删除当天训练记录吗？（体重记录会保留）"}, "toast.deleted": {"ja": "削除しました", "en": "Deleted", "ko": "삭제했습니다", "zh": "已删除"}, "restShort": {"ja": "休", "en": "Rest", "ko": "휴", "zh": "休"}, "wdTitle": {"ja": "{wd}のメニュー", "en": "{wd} menu", "ko": "{wd} 메뉴", "zh": "{wd}的计划"}, "todayMark": {"ja": "（今日）", "en": " (today)", "ko": " (오늘)", "zh": "（今天）"}, "copyFrom": {"ja": "コピーして作る…", "en": "Copy from…", "ko": "복사해서 만들기…", "zh": "从…复制"}, "copyOpt": {"ja": "{wd}のメニューをコピー", "en": "Copy {wd} menu", "ko": "{wd} 메뉴 복사", "zh": "复制{wd}的计划"}, "nxLabel": {"ja": "{wd}のメニューにも追加する", "en": "Also add to the {wd} menu", "ko": "{wd} 메뉴에도 추가", "zh": "同时添加到{wd}的计划"}, "confirm.replace": {"ja": "{to}のメニューを{from}の内容で置き換えます。よろしいですか？", "en": "Replace the {to} menu with {from}'s?", "ko": "{to} 메뉴를 {from} 내용으로 바꿀까요?", "zh": "用{from}的内容替换{to}的计划吗？"}, "toast.copiedWd": {"ja": "{wd}のメニューをコピーしました", "en": "Copied the {wd} menu", "ko": "{wd} 메뉴를 복사했습니다", "zh": "已复制{wd}的计划"}, "wdRest": {"ja": "{wd}は休養日（メニューなし）", "en": "{wd} is a rest day (no menu)", "ko": "{wd}은(는) 휴식일 (메뉴 없음)", "zh": "{wd}为休息日（无计划）"}, "muscle": {"ja": "部位", "en": "Muscle", "ko": "부위", "zh": "部位"}, "equip": {"ja": "器具", "en": "Equipment", "ko": "기구", "zh": "器械"}, "restore": {"ja": "戻す", "en": "Show", "ko": "복원", "zh": "恢复"}, "hide": {"ja": "隠す", "en": "Hide", "ko": "숨기기", "zh": "隐藏"}, "confirm.delEx": {"ja": "「{name}」を削除しますか？", "en": "Delete \"{name}\"?", "ko": "\"{name}\"을(를) 삭제할까요?", "zh": "删除\"{name}\"吗？"}, "confirm.archive": {"ja": "「{name}」をメニューからも外します。記録は残ります。よろしいですか？", "en": "\"{name}\" will also be removed from menus. Records are kept. Continue?", "ko": "\"{name}\"을(를) 메뉴에서도 제외합니다. 기록은 유지됩니다. 계속할까요?", "zh": "\"{name}\"也会从计划中移除，记录会保留。确定吗？"}, "toast.needExFirst": {"ja": "先に種目マスタで種目を登録してください", "en": "Register an exercise in the exercise list first", "ko": "먼저 종목 목록에 종목을 등록하세요", "zh": "请先在动作库中添加动作"}, "toast.dupName": {"ja": "同じ名前の種目があります", "en": "An exercise with that name already exists", "ko": "같은 이름의 종목이 있습니다", "zh": "已存在同名动作"}, "toast.registered": {"ja": "「{name}」を登録しました", "en": "Registered \"{name}\"", "ko": "\"{name}\"을(를) 등록했습니다", "zh": "已添加\"{name}\""}, "say.exported": {"ja": "表示しました。コピーして安全な場所に保存してください。", "en": "Shown. Copy it and keep it somewhere safe.", "ko": "표시했습니다. 복사해서 안전한 곳에 보관하세요.", "zh": "已显示。请复制并保存到安全的地方。"}, "say.copied": {"ja": "コピーしました。", "en": "Copied.", "ko": "복사했습니다.", "zh": "已复制。"}, "say.copyManual": {"ja": "手動で選択してコピーしてください。", "en": "Please select and copy manually.", "ko": "직접 선택해서 복사하세요.", "zh": "请手动选择并复制。"}, "say.fileSaved": {"ja": "バックアップファイルを保存しました。", "en": "Backup file saved.", "ko": "백업 파일을 저장했습니다.", "zh": "已保存备份文件。"}, "say.fileFail": {"ja": "保存できませんでした。「表示」→「コピー」をお使いください。", "en": "Could not save. Use \"Show\" → \"Copy\" instead.", "ko": "저장하지 못했습니다. \"표시\" → \"복사\"를 이용하세요.", "zh": "无法保存。请使用\"显示\"→\"复制\"。"}, "say.needJson": {"ja": "復元するJSONを貼り付けてください。", "en": "Paste the JSON to restore.", "ko": "복원할 JSON을 붙여넣으세요.", "zh": "请粘贴要恢复的 JSON。"}, "say.badFormat": {"ja": "形式が正しくありません", "en": "Invalid format", "ko": "형식이 올바르지 않습니다", "zh": "格式不正确"}, "confirm.restore": {"ja": "現在のデータを上書きして復元します。よろしいですか？", "en": "This will overwrite your current data. Continue?", "ko": "현재 데이터를 덮어쓰고 복원합니다. 계속할까요?", "zh": "将覆盖当前数据并恢复。确定吗？"}, "say.restoredOld": {"ja": "旧バージョンのデータを変換して復元しました。", "en": "Converted and restored old-version data.", "ko": "이전 버전 데이터를 변환해 복원했습니다.", "zh": "已转换并恢复旧版本数据。"}, "say.restored": {"ja": "復元が完了しました。", "en": "Restore complete.", "ko": "복원이 완료되었습니다.", "zh": "恢复完成。"}, "say.loadFail": {"ja": "読み込みに失敗しました：", "en": "Failed to load: ", "ko": "불러오기에 실패했습니다: ", "zh": "读取失败："}, "dayOpt": {"ja": "午前{i}時", "en": "{i}:00 AM", "ko": "오전 {i}시", "zh": "凌晨{i}点"}, "seed.bench": {"ja": "ベンチプレス", "en": "Bench Press", "ko": "벤치프레스", "zh": "卧推"}, "seed.squat": {"ja": "スクワット", "en": "Squat", "ko": "스쿼트", "zh": "深蹲"}, "seed.pullup": {"ja": "懸垂", "en": "Pull-up", "ko": "턱걸이", "zh": "引体向上"}, "c.胸": {"ja": "胸", "en": "Chest", "ko": "가슴", "zh": "胸"}, "c.背中": {"ja": "背中", "en": "Back", "ko": "등", "zh": "背"}, "c.脚": {"ja": "脚", "en": "Legs", "ko": "하체", "zh": "腿"}, "c.肩": {"ja": "肩", "en": "Shoulders", "ko": "어깨", "zh": "肩"}, "c.腕": {"ja": "腕", "en": "Arms", "ko": "팔", "zh": "手臂"}, "c.腹": {"ja": "腹", "en": "Abs", "ko": "복근", "zh": "腹"}, "c.全身": {"ja": "全身", "en": "Full body", "ko": "전신", "zh": "全身"}, "c.有酸素": {"ja": "有酸素", "en": "Cardio", "ko": "유산소", "zh": "有氧"}, "c.フリーウェイト": {"ja": "フリーウェイト", "en": "Free weights", "ko": "프리웨이트", "zh": "自由重量"}, "c.マシン": {"ja": "マシン", "en": "Machine", "ko": "머신", "zh": "器械"}, "c.ケーブル": {"ja": "ケーブル", "en": "Cable", "ko": "케이블", "zh": "绳索"}, "c.自重": {"ja": "自重", "en": "Bodyweight", "ko": "맨몸", "zh": "自重"}, "c.その他": {"ja": "その他", "en": "Other", "ko": "기타", "zh": "其他"}, "plan.weekly": {"ja": "曜日ごとに固定", "en": "Fixed by weekday", "ko": "요일별 고정", "zh": "按星期固定"}, "plan.daily": {"ja": "日ごとに決める", "en": "Plan by date", "ko": "날짜별로 정하기", "zh": "按日期安排"}, "plan.hint.weekly": {"ja": "毎週、同じ曜日に同じメニューをくり返します", "en": "Repeats the same menu on the same weekday every week", "ko": "매주 같은 요일에 같은 메뉴를 반복합니다", "zh": "每周同一天重复相同的计划"}, "plan.hint.daily": {"ja": "日付ごとに好きなメニューを決めます。決めていない日も、Todayで自由に種目を追加できます", "en": "Plan a menu for any date. On unplanned days you can still add exercises freely on Today", "ko": "날짜마다 원하는 메뉴를 정합니다. 정하지 않은 날도 Today에서 자유롭게 종목을 추가할 수 있습니다", "zh": "可按日期安排任意计划。未安排的日子也能在 Today 自由添加动作"}, "copyLast": {"ja": "前回のトレーニング内容をコピー", "en": "Copy last workout", "ko": "지난 운동 내용 복사", "zh": "复制上次训练"}, "copyWd": {"ja": "{wd}のメニューをコピー", "en": "Copy {wd} menu", "ko": "{wd} 메뉴 복사", "zh": "复制{wd}的计划"}, "dateRest": {"ja": "{wd}のメニューはまだありません", "en": "No menu for {wd} yet", "ko": "{wd} 메뉴가 아직 없습니다", "zh": "{wd}还没有计划"}, "adhoc.saveDate": {"ja": "今日のメニューとして保存する", "en": "Save to today's menu", "ko": "오늘 메뉴로 저장", "zh": "保存为今天的计划"}, "today.emptyDaily": {"ja": "今日のメニューはまだありません", "en": "No menu for today yet", "ko": "오늘 메뉴가 아직 없습니다", "zh": "今天还没有计划"}, "today.emptyDaily2": {"ja": "下から種目を追加するか、「前回の種目を呼び出す」が使えます", "en": "Add an exercise below, or use \"Recall last exercises\"", "ko": "아래에서 종목을 추가하거나 \"지난 종목 불러오기\"를 사용하세요", "zh": "可在下方添加动作，或使用\"调出上次的动作\""}, "recall": {"ja": "↺ 前回の種目を呼び出す", "en": "↺ Recall last exercises", "ko": "↺ 지난 종목 불러오기", "zh": "↺ 调出上次的动作"}, "toast.noPrev": {"ja": "前回のトレーニング記録がありません", "en": "No previous workout found", "ko": "지난 운동 기록이 없습니다", "zh": "没有上次的训练记录"}, "toast.recalled": {"ja": "前回の種目を呼び出しました", "en": "Recalled your last exercises", "ko": "지난 종목을 불러왔습니다", "zh": "已调出上次的动作"}, "daylog.sub": {"ja": "その日の種目・時間・メモ", "en": "Exercises, time & notes", "ko": "그날의 종목·시간·메모", "zh": "当天动作·时间·笔记"}, "daylog.date": {"ja": "日付", "en": "", "ko": "날짜", "zh": "日期"}, "daylog.ex": {"ja": "やった種目", "en": "Exercises done", "ko": "한 종목", "zh": "完成的动作"}, "daylog.start": {"ja": "開始時刻", "en": "Start time", "ko": "시작 시각", "zh": "开始时间"}, "daylog.dur": {"ja": "時間（分）", "en": "Duration (min)", "ko": "운동 시간 (분)", "zh": "时长（分钟）"}, "daylog.memo": {"ja": "メモ", "en": "Notes", "ko": "메모", "zh": "笔记"}, "daylog.save": {"ja": "保存する", "en": "Save", "ko": "저장", "zh": "保存"}, "daylog.none": {"ja": "この日のセット記録はありません（セットはTodayで記録できます）", "en": "No sets logged this day (log sets on Today)", "ko": "이날 세트 기록이 없습니다 (세트는 Today에서 기록)", "zh": "当天没有训练组记录（可在 Today 记录）"}, "daylog.empty": {"ja": "入力されていません", "en": "Nothing to save", "ko": "입력된 내용이 없습니다", "zh": "没有输入内容"}, "daylog.min": {"ja": "{n}分", "en": "{n} min", "ko": "{n}분", "zh": "{n}分钟"}, "log.q": {"ja": "メモや種目名で検索", "en": "Search notes or exercises", "ko": "메모나 종목명 검색", "zh": "搜索笔记或动作"}, "log.fAll": {"ja": "すべて", "en": "All", "ko": "전체", "zh": "全部"}, "log.fTrain": {"ja": "トレーニング", "en": "Workouts", "ko": "운동", "zh": "训练"}, "log.fMemo": {"ja": "メモ・時間", "en": "Notes & time", "ko": "메모·시간", "zh": "笔记·时间"}, "log.fPr": {"ja": "PR", "en": "PR", "ko": "PR", "zh": "PR"}, "log.none": {"ja": "条件に合う記録がありません", "en": "No matching records", "ko": "조건에 맞는 기록이 없습니다", "zh": "没有符合条件的记录"}, "log.count": {"ja": "{n}日分の記録", "en": "{n} days of records", "ko": "{n}일분의 기록", "zh": "共 {n} 天的记录"}, "log.edit": {"ja": "Day Logで編集", "en": "Edit in Day Log", "ko": "Day Log에서 편집", "zh": "在 Day Log 中编辑"}, "wm.exit": {"ja": "通常表示", "en": "Normal view", "ko": "일반 화면", "zh": "普通视图"}, "wm.open": {"ja": "▶ ワークアウトモード", "en": "▶ Workout mode", "ko": "▶ 워크아웃 모드", "zh": "▶ 训练模式"}, "wm.log": {"ja": "＋ セット記録 → タイマー", "en": "+ Log set → Timer", "ko": "+ 세트 기록 → 타이머", "zh": "+ 记录一组 → 计时"}, "wm.none": {"ja": "今日の種目がありません", "en": "No exercises for today", "ko": "오늘 종목이 없습니다", "zh": "今天没有动作"}, "wm.noneHint": {"ja": "「通常表示」に戻って種目を追加してください", "en": "Go back to Normal view to add exercises", "ko": "\"일반 화면\"으로 돌아가 종목을 추가하세요", "zh": "请回到\"普通视图\"添加动作"}, "wm.needReps": {"ja": "回数を入力してください", "en": "Enter reps", "ko": "횟수를 입력하세요", "zh": "请输入次数"}, "wm.next": {"ja": "次は「{name}」", "en": "Next: {name}", "ko": "다음: {name}", "zh": "下一个：{name}"}, "wm.done": {"ja": "✓ 目標達成", "en": "✓ Target met", "ko": "✓ 목표 달성", "zh": "✓ 已达成目标"}};
   const LANGS = ['ja','en','ko','zh'];
   const detectLang = () => { const l = (navigator.language || 'ja').toLowerCase(); return l.startsWith('ko') ? 'ko' : l.startsWith('zh') ? 'zh' : l.startsWith('ja') ? 'ja' : l.startsWith('en') ? 'en' : 'ja'; };
   let LANG = detectLang();
@@ -745,7 +864,7 @@
     $('viewTitle').textContent = TITLES[v];
     window.scrollTo(0,0);
     ({today:renderToday, body:renderBody, log:renderLog, setup:renderSetup})[v]();
-    renderTimer();
+    renderWM(); renderTimer();
   }
   document.querySelectorAll('.tab').forEach(t => t.onclick = () => go(t.dataset.view));
 
@@ -781,6 +900,7 @@
 
     if(document.activeElement !== $('memo')) $('memo').value = log ? (log.memo || '') : '';
     updateStats();
+    renderWM();
   }
 
   function exCard(exId, item, log){
@@ -1008,7 +1128,8 @@
     $('tState').textContent = running ? 'RUNNING' : fin ? 'TIME UP' : 'READY';
     $('timerCard').classList.toggle('run', running); $('timerCard').classList.toggle('fin', fin);
     $('rest').classList.toggle('fin', fin);
-    $('rest').hidden = !(running || fin) || (current === 'today' && cardVisible);
+    $('rest').hidden = !(running || fin) || (current === 'today' && cardVisible) || !$('wm').hidden;
+    renderWMTimer();
   }
   let timerScr = false;
   function scrambleTimer(){
@@ -1022,7 +1143,7 @@
     sec = sec || (+db.settings.rest_sec || 0);
     if(sec <= 0) return;
     unlockAudio();
-    restEnd = Date.now() + sec*1000; finUntil = 0;
+    restEnd = Date.now() + sec*1000; finUntil = 0; restTotal = sec;
     clearInterval(restTimer); restTimer = setInterval(tick, 250); tick();
     scrambleTimer();
   }
@@ -1030,6 +1151,7 @@
   function tick(){
     if(restTimer && Date.now() >= restEnd){
       clearInterval(restTimer); restTimer = null; finUntil = Date.now() + 4000;
+      const wmEl = $('wm'); wmEl.classList.remove('flash'); void wmEl.offsetWidth; wmEl.classList.add('flash');
       beep();
       try{ navigator.vibrate && navigator.vibrate([200,100,200]); }catch(e){}
       setTimeout(renderTimer, 4100);
@@ -1039,7 +1161,7 @@
   }
   // 動作中は残り時間を、停止中は次回の秒数（設定値）を ±10秒
   function adjTimer(d){
-    if(restTimer){ restEnd += d*1000; tick(); }
+    if(restTimer){ restEnd += d*1000; restTotal = Math.max(10, restTotal + d); tick(); }
     else { db.settings.rest_sec = Math.min(3600, Math.max(10, (+db.settings.rest_sec || 0) + d)); save(); renderTimer(); }
   }
   // タイマーの手入力（数字をタップ → 分・秒を入力）
@@ -1053,7 +1175,7 @@
   function applyTimerEdit(sec){
     sec = Math.min(3600, Math.max(5, Math.round(sec) || 0));
     closeTimerEdit();
-    if(restTimer){ restEnd = Date.now() + sec*1000; }
+    if(restTimer){ restEnd = Date.now() + sec*1000; restTotal = sec; }
     else { db.settings.rest_sec = sec; save(); finUntil = 0; }
     renderTimer(); scrambleTimer();
   }
@@ -1084,6 +1206,116 @@
     if(db.settings.keep_awake && !navigator.wakeLock) toast(t('toast.wakeNA'));
     applyWake();
   };
+
+  /* ---------- WORKOUT MODE（スマホ横向き: 左に大型タイマー、右に今の種目と記録） ---------- */
+  const mqLand = window.matchMedia ? window.matchMedia('(orientation: landscape) and (max-height: 520px)') : null;
+  let wmOff = false, restTotal = 0;
+  const wm = {exId:null, w:null, r:0};
+  const RING = 2 * Math.PI * 90;
+  const wmOn = () => !!(mqLand && mqLand.matches) && current === 'today' && !wmOff;
+  function todayIds(){
+    const log = todayLog(false), items = todayItems(log), ids = items.map(i => i.exercise_id);
+    if(log) setsOf(log.id).forEach(s => { if(!ids.includes(s.exercise_id)) ids.push(s.exercise_id); });
+    extraEx.forEach(id => { if(!ids.includes(id)) ids.push(id); });
+    return {log, items, ids};
+  }
+  function wmDefaults(exId){
+    const {log, items} = todayIds(), item = items.find(i => i.exercise_id === exId);
+    const cur = log ? setsFor(log.id, exId) : [], last = cur[cur.length-1];
+    if(last) return {w:last.weight, r:last.reps};
+    const p = prevSession(exId, log ? log.executed_at : now()), ws = p && p.sets.find(isWork);
+    if(ws) return {w:ws.weight, r:ws.reps};
+    if(item) return {w:item.target_weight > 0 ? item.target_weight : null, r:item.target_reps || 0};
+    return {w:null, r:0};
+  }
+  function wmPick(exId){ wm.exId = exId; const d = wmDefaults(exId); wm.w = d.w; wm.r = d.r; }
+  function wmFirstOpen(ids, log, items){
+    for(const id of ids){
+      const it = items.find(i => i.exercise_id === id), n = log ? setsFor(log.id, id).filter(isWork).length : 0;
+      if(!it || !(it.target_sets > 0) || n < it.target_sets) return id;
+    }
+    return ids[0];
+  }
+  function renderWM(){
+    const show = wmOn(), el = $('wm');
+    el.hidden = !show;
+    if(!show) return;
+    const {log, items, ids} = todayIds();
+    el.classList.toggle('empty', !ids.length);
+    if(!ids.length){
+      wm.exId = null; $('wmName').textContent = t('wm.none'); $('wmMeta').textContent = t('wm.noneHint');
+      $('wmDone').textContent = ''; $('wmPos').textContent = ''; renderWMTimer(); return;
+    }
+    if(!ids.includes(wm.exId)) wmPick(wmFirstOpen(ids, log, items));
+    const item = items.find(i => i.exercise_id === wm.exId);
+    const sets = log ? setsFor(log.id, wm.exId) : [], work = sets.filter(isWork).length;
+    const hasT = item && item.target_sets > 0;
+    $('wmName').textContent = exName(wm.exId);
+    $('wmPos').textContent = `${ids.indexOf(wm.exId) + 1}/${ids.length}`;
+    const tgt = hasT ? `${item.target_sets}×${item.target_reps}${item.target_weight > 0 ? ' @' + kg(item.target_weight) + 'kg' : ''}` : t('free');
+    const prev = prevSession(wm.exId, log ? log.executed_at : now());
+    const meta = $('wmMeta'); meta.innerHTML = '';
+    meta.append(`SET ${work + 1}${hasT ? ' / ' + item.target_sets : ''} · ${t('target', {t:tgt})}`);
+    if(hasT && work >= item.target_sets) meta.append(' ', h('span', {class:'ok'}, t('wm.done')));
+    if(prev) meta.append(h('br'), `${t('prev')} ${prev.sets.filter(isWork).map(fmtSet).join(' · ')}`);
+    if(document.activeElement !== $('wmW')) $('wmW').value = wm.w > 0 ? wm.w : '';
+    if(document.activeElement !== $('wmR')) $('wmR').value = wm.r || '';
+    $('wmDone').textContent = sets.map(fmtSet).join(' · ');
+    $('wmPrev').disabled = $('wmNext').disabled = ids.length < 2;
+    renderWMTimer();
+  }
+  function renderWMTimer(){
+    const el = $('wm');
+    if(el.hidden) return;
+    const running = !!restTimer, fin = !running && Date.now() < finUntil;
+    const leftMs = running ? Math.max(0, restEnd - Date.now()) : 0;
+    const left = running ? Math.ceil(leftMs/1000) : (+db.settings.rest_sec || 0);
+    $('wmTime').textContent = fin ? 'GO!' : fmtT(left);
+    const total = Math.max(restTotal, left, 1);
+    const prog = running ? leftMs/1000/total : (fin ? 0 : 1);
+    $('wmArc').style.strokeDashoffset = (RING * (1 - Math.max(0, Math.min(1, prog)))).toFixed(1);
+    $('wmStart').textContent = running ? 'STOP' : 'START';
+    $('wmState').textContent = running ? 'REST' : fin ? 'TIME UP' : 'READY';
+    el.classList.toggle('warn', running && left <= 10);
+    el.classList.toggle('run', running);
+  }
+  const wmMove = d => { const {ids} = todayIds(); if(!ids.length) return; const i = ids.indexOf(wm.exId); wmPick(ids[(i + d + ids.length) % ids.length]); renderWM(); };
+  $('wmPrev').onclick = () => wmMove(-1);
+  $('wmNext').onclick = () => wmMove(1);
+  document.querySelectorAll('#wm [data-k]').forEach(b => b.onclick = () => {
+    const d = +b.dataset.d;
+    if(b.dataset.k === 'w') wm.w = Math.max(0, Math.round(((wm.w || 0) + d)*10)/10) || null;
+    else wm.r = Math.max(0, (wm.r || 0) + d);
+    renderWM();
+  });
+  $('wmW').onchange = () => { const v = num($('wmW').value); wm.w = v && v > 0 ? v : null; };
+  $('wmR').onchange = () => { wm.r = Math.max(0, parseInt($('wmR').value) || 0); };
+  $('wmLog').onclick = () => {
+    if(!wm.exId) return;
+    const v = num($('wmW').value); wm.w = v && v > 0 ? v : null;
+    wm.r = Math.max(0, parseInt($('wmR').value) || 0);
+    if(!(wm.r > 0)){ toast(t('wm.needReps')); return; }
+    const log = todayLog(true), cur = setsFor(log.id, wm.exId);
+    db.workout_sets.push({id:uid('ws'), workout_log_id:log.id, exercise_id:wm.exId, set_number:cur.length + 1, weight:wm.w, reps:wm.r, rpe:null, is_warmup:false});
+    save(); startRest();
+    // 目標セット数に届いたら、次の未完了の種目へ自動で移動
+    const {items, ids} = todayIds(), it = items.find(i => i.exercise_id === wm.exId);
+    const n = setsFor(log.id, wm.exId).filter(isWork).length;
+    if(it && it.target_sets > 0 && n >= it.target_sets){
+      const nx = wmFirstOpen(ids, log, items);
+      if(nx !== wm.exId){ wmPick(nx); toast(t('wm.next', {name:exName(nx)})); }
+    }
+    renderToday();
+  };
+  $('wmMinus').onclick = () => adjTimer(-10);
+  $('wmPlus').onclick = () => adjTimer(10);
+  $('wmStart').onclick = () => { restTimer ? stopRest() : startRest(); };
+  $('wmExit').onclick = () => { wmOff = true; renderWM(); renderTimer(); };
+  $('wmOpen').onclick = () => { wmOff = false; renderWM(); renderTimer(); };
+  if(mqLand){
+    const onMq = () => { if(!mqLand.matches) wmOff = false; renderWM(); renderTimer(); };
+    mqLand.addEventListener ? mqLand.addEventListener('change', onMq) : mqLand.addListener(onMq);
+  }
 
   /* ---------- BODY ---------- */
   $('bBtn').onclick = () => {
@@ -1214,13 +1446,40 @@
     renderBodyChart();
   });
   /* ---------- LOG ---------- */
+  let logFilter = 'all', logQT;
+  document.querySelectorAll('#logSeg button').forEach(b => b.onclick = () => {
+    logFilter = b.dataset.f;
+    document.querySelectorAll('#logSeg button').forEach(x => x.classList.toggle('on', x === b));
+    renderLog();
+  });
+  $('logQ').addEventListener('input', () => { clearTimeout(logQT); logQT = setTimeout(renderLog, 200); });
+  function openDayLog(d){
+    go('body');
+    $('dDate').value = d; renderDayLog();
+    try{ $('dDate').closest('.daylog').scrollIntoView({behavior:'smooth', block:'start'}); }catch(e){}
+  }
   function renderLog(){
     const box = $('tl'); box.innerHTML = '';
     const bw = bwMap(), by = {};
     db.workout_logs.forEach(l => { const k = dayKey(l.executed_at); (by[k] = by[k] || []).push(l); });
     Object.keys(bw).forEach(k => { by[k] = by[k] || []; });
-    const days = Object.keys(by).sort().reverse().slice(0,180);
-    if(!days.length){ box.append(h('div', {class:'empty', style:'line-height:2; letter-spacing:.06em;'}, 'NO DATA', h('br'), t('log.empty'))); return; }
+    const all = Object.keys(by).sort().reverse();
+    if(!all.length){ $('logCount').textContent = ''; box.append(h('div', {class:'empty', style:'line-height:2; letter-spacing:.06em;'}, 'NO DATA', h('br'), t('log.empty'))); return; }
+    // 振り返り用の絞り込み（種類）と検索（メモ・種目名）
+    const q = ($('logQ').value || '').trim().toLowerCase();
+    const days = all.filter(d => {
+      const logs = by[d], sets = logs.flatMap(l => setsOf(l.id));
+      if(logFilter === 'train' && !sets.some(isWork)) return false;
+      if(logFilter === 'memo' && !logs.some(l => (l.memo && l.memo.trim()) || l.start_time || l.duration_min)) return false;
+      if(logFilter === 'pr'){ const ids = [...new Set(sets.map(s => s.exercise_id))]; if(!logs.some(l => ids.some(id => isPR(l, id)))) return false; }
+      if(q){
+        const text = (logs.map(l => l.memo || '').join(' ') + ' ' + [...new Set(sets.map(s => exName(s.exercise_id)))].join(' ')).toLowerCase();
+        if(!text.includes(q)) return false;
+      }
+      return true;
+    }).slice(0, 365);
+    $('logCount').textContent = t('log.count', {n:days.length});
+    if(!days.length){ box.append(h('div', {class:'empty'}, t('log.none'))); return; }
     const months = {};
     days.forEach(d => (months[d.slice(0,7)] = months[d.slice(0,7)] || []).push(d));
     Object.keys(months).sort().reverse().forEach(m => {
@@ -1249,19 +1508,22 @@
     const times = logs.filter(l => l.start_time || l.duration_min).map(l => '⏱ ' + [l.start_time ? l.start_time + '〜' : '', l.duration_min ? t('daylog.min', {n:l.duration_min}) : ''].filter(Boolean).join(' '));
     const detail = h('div', {class:'tl-detail', hidden:true},
       exIds.map(id => h('div', {class:'exl'}, h('b', null, exName(id)), logs.flatMap(l => setsFor(l.id, id)).map(fmtSet).join(' · '))),
-      times.map(x => h('div', {class:'exl'}, x)),
       memos.map(l => h('div', {class:'memo-v'}, l.memo)),
-      logs.length > 0 && h('button', {class:'btn sm line', onclick:ev => { ev.stopPropagation(); delDay(logs); }}, t('log.delBtn')));
+      h('div', {class:'acts'},
+        h('button', {class:'btn sm', onclick:ev => { ev.stopPropagation(); openDayLog(d); }}, t('log.edit')),
+        logs.length > 0 && h('button', {class:'btn sm line', onclick:ev => { ev.stopPropagation(); delDay(logs); }}, t('log.delBtn'))));
     const it = h('div', {class:'tl-item' + (pct >= 100 ? ' full' : '')},
       h('div', null,
         h('div', {class:'tl-d'}, `${d.slice(5,7)}.${d.slice(8)} ${WD[new Date(d + 'T12:00:00').getDay()]}`),
         h('div', {class:'tl-t'}, work.length ? (pct == null ? t('log.free') : t('log.rate', {p:pct})) : t('log.rest'),
           work.length > 0 && h('span', null, t('log.sets', {n:work.length}) + (volOf(sets) > 0 ? ` · ${kg(volOf(sets))}kg` : ''))),
         pct != null && h('div', {class:'tl-bar'}, h('i', {style:`width:${pct}%`})),
-        h('div', {class:'tags'}, tags.map(([t,c]) => h('span', {class:'tg ' + c}, t)))),
+        h('div', {class:'tags'}, tags.map(([t,c]) => h('span', {class:'tg ' + c}, t))),
+        times.length > 0 && h('div', {class:'tl-time'}, times.join(' / ')),
+        memos.length > 0 && h('div', {class:'tl-memo'}, memos.map(l => l.memo.trim()).join(' / '))),
       h('div', {class:'tl-w', html: w != null ? `${w.toFixed(1)}<span style="font-size:12px"> kg</span>` : '—'}),
       detail);
-    if(sets.length || memos.length || times.length){ it.classList.add('tap'); it.onclick = () => { detail.hidden = !detail.hidden; }; }
+    if(true){ it.classList.add('tap'); it.onclick = () => { detail.hidden = !detail.hidden; it.classList.toggle('open', !detail.hidden); }; }
     return it;
   }
   function delDay(logs){

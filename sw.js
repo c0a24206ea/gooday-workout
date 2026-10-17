@@ -1,6 +1,6 @@
 // TRAINING DIVISION - offline support
 // 更新したら CACHE の番号を上げると、利用者の端末で新しい版に切り替わります
-const CACHE = 'tdiv-v6';
+const CACHE = 'tdiv-v9';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
