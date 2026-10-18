@@ -86,6 +86,9 @@
   .opt{display:flex; align-items:center; gap:10px; margin-top:12px; font-size:13px;}
   .opt input{width:20px; height:20px; accent-color:var(--black);}
   .note{font-size:12px; color:var(--g3); margin-top:8px; line-height:1.6;}
+  .warn{margin-top:12px; border:2px solid var(--black); border-left:8px solid var(--lime); background:var(--white); padding:10px 12px;}
+  .warn b{display:block; font-size:14px; font-weight:700;}
+  .warn p{font-size:12px; color:#555; line-height:1.7; margin-top:4px;}
 
   .splits{border-top:2px solid var(--black);}
   .sp{display:grid; grid-template-columns:56px 1fr auto; gap:10px; align-items:center; padding:10px 2px; border-bottom:1px solid var(--g1); font-family:'JetBrains Mono',monospace; font-size:13px;}
@@ -160,7 +163,7 @@
   .goalrow .in{max-width:140px;}
 
   .toast{position:fixed; left:50%; bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 16px); transform:translate(-50%, 20px); background:var(--black); color:var(--lime);
-    padding:12px 18px; font-family:'JetBrains Mono',monospace; font-size:13px; z-index:60; opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap;}
+    padding:12px 18px; font-family:'JetBrains Mono',monospace; font-size:13px; z-index:60; opacity:0; transition:all .3s; pointer-events:none; width:max-content; max-width:calc(100vw - 40px); text-align:center; line-height:1.5;}
   .toast.on{opacity:1; transform:translate(-50%, 0);}
 
   @media (min-width:768px){
@@ -194,7 +197,7 @@
     <h1 id="viewTitle">Run</h1>
     <div class="bar-r">
       <div class="sub" id="barSub">—</div>
-      <div data-menu-slot></div>
+      <div data-menu-slot data-spotify></div>
     </div>
   </header>
 
@@ -212,7 +215,7 @@
       </div>
       <div class="ctrl" id="ctrl"></div>
       <label class="opt" id="gpsOpt"><input type="checkbox" id="optGps"><span data-i18n="useGps"></span></label>
-      <p class="note" data-i18n="gpsNote"></p>
+      <div class="warn" role="note"><b data-i18n="gpsLock"></b><p data-i18n="gpsNote"></p></div>
 
       <!-- 終了後の保存 -->
       <div class="card hl" id="finish" hidden>
@@ -274,7 +277,7 @@
       <div class="goalrow"><input class="in big" id="goalIn" type="number" inputmode="decimal" min="0" step="1"><b style="font-family:'Barlow Condensed';font-size:22px;">km</b><button class="btn dark" id="goalSave" data-i18n="save"></button></div>
       <div class="section-t"><span>GPS</span></div>
       <label class="opt" style="margin-top:0;"><input type="checkbox" id="optGps2"><span data-i18n="useGps"></span></label>
-      <p class="note" data-i18n="gpsNote"></p>
+      <div class="warn" role="note"><b data-i18n="gpsLock"></b><p data-i18n="gpsNote"></p></div>
     </div><div class="col col-r">
       <div class="section-t"><span>Backup</span><small data-i18n="bkNote"></small></div>
       <textarea class="in" id="bkArea" style="height:160px; font-family:'JetBrains Mono',monospace; font-size:12px;" data-i18n-ph="bkPh"></textarea>
@@ -327,7 +330,9 @@
     discard:{ja:'破棄', en:'Discard', ko:'삭제', zh:'放弃'},
     discardSure:{ja:'もう一度で破棄', en:'Tap again', ko:'한 번 더', zh:'再点一次'},
     useGps:{ja:'GPSで距離を測る', en:'Measure distance with GPS', ko:'GPS로 거리 측정', zh:'使用GPS测距离'},
-    gpsNote:{ja:'GPSは画面をつけている間だけ正確に測れます。画面ロック中は直線距離で補います。時間だけ測ってあとで距離を入れることもできます。', en:'GPS is most accurate while the screen is on; while locked, distance is filled in as a straight line. You can also time only and enter the distance later.', ko:'GPS는 화면이 켜져 있을 때 가장 정확합니다. 잠금 중에는 직선 거리로 보정합니다. 시간만 재고 나중에 거리를 입력할 수도 있습니다.', zh:'屏幕亮着时GPS最准确，锁屏期间以直线距离补足。也可以只计时，之后再输入距离。'},
+    gpsLock:{ja:'⚠ 画面ロック中はGPSが使えません', en:'⚠ GPS does not work while the screen is locked', ko:'⚠ 화면 잠금 중에는 GPS를 사용할 수 없습니다', zh:'⚠ 锁屏期间无法使用GPS'},
+    gpsNote:{ja:'スマホの仕様で、画面がオフ（ロック・スリープ中）の間は位置情報を取得できません。その間の距離は、ロックを解除したときに「ロック前の地点からの直線距離」で補うため、実際より短くなることがあります。時間は正しく測れます。正確に測るには画面をつけたまま走ってください（計測中は画面が自動で消えないようにしています）。', en:'Phones do not allow web apps to read your location while the screen is off (locked or asleep). Distance covered during that time is filled in as a straight line from where you locked it, so it may come out shorter than actual. Time is always measured correctly. For accurate distance, keep the screen on (it stays on automatically while running).', ko:'휴대폰 사양상 화면이 꺼진 동안(잠금·절전 중)에는 위치 정보를 받을 수 없습니다. 그동안의 거리는 잠금을 해제할 때 "잠금 전 지점에서의 직선 거리"로 보정하므로 실제보다 짧게 나올 수 있습니다. 시간은 정확하게 측정됩니다. 정확하게 측정하려면 화면을 켠 채로 달려 주세요(측정 중에는 화면이 자동으로 꺼지지 않게 합니다).', zh:'受手机限制，屏幕关闭（锁屏或休眠）期间无法获取位置信息。这段时间的距离会在解锁时按“锁屏前位置到当前位置的直线距离”补足，因此可能比实际短。时间始终准确。若要准确测距，请保持屏幕常亮跑步（计时中会自动保持屏幕常亮）。'},
+    gpsBack:{ja:'画面ロック中はGPSが止まっていました（直線距離で補正）', en:'GPS was paused while locked (filled in as a straight line)', ko:'잠금 중 GPS가 멈춰 있었습니다 (직선 거리로 보정)', zh:'锁屏期间GPS已暂停（已按直线距离补足）'},
     saveRun:{ja:'記録を保存', en:'Save run', ko:'기록 저장', zh:'保存记录'},
     memo:{ja:'メモ', en:'Notes', ko:'메모', zh:'备注'},
     memoPh:{ja:'コース・体調・天気など', en:'Route, how you felt, weather…', ko:'코스, 컨디션, 날씨 등', zh:'路线、状态、天气等'},
@@ -439,7 +444,16 @@
       if(!on && wakeLock){ await wakeLock.release(); wakeLock = null; }
     }catch(e){}
   }
-  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && cur && cur.state === 'run') wake(true); });
+  // 画面ロック・スリープから戻ったとき: 画面オンを再設定し、GPSが止まっていたことを知らせる
+  let hiddenAt = 0;
+  document.addEventListener('visibilitychange', () => {
+    if(document.visibilityState === 'hidden'){ hiddenAt = Date.now(); return; }
+    if(cur && cur.state === 'run'){
+      wake(true);
+      if(cur.gps && hiddenAt && Date.now() - hiddenAt > 5000) toast(t('gpsBack'));
+    }
+    hiddenAt = 0;
+  });
 
   function startTick(){ if(!tick) tick = setInterval(renderClock, 250); }
   function stopTick(){ clearInterval(tick); tick = null; }

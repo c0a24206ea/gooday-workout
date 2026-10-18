@@ -12,13 +12,14 @@
     active:  {ja:'ヨガ・ウォーキング', en:'Yoga & walking', ko:'요가·걷기', zh:'瑜伽·散步'},
     lang:    {ja:'言語', en:'Language', ko:'언어', zh:'语言'},
     menu:    {ja:'メニュー', en:'Menu', ko:'메뉴', zh:'菜单'},
-    close:   {ja:'閉じる', en:'Close', ko:'닫기', zh:'关闭'}
+    close:   {ja:'閉じる', en:'Close', ko:'닫기', zh:'关闭'},
+    spotify: {ja:'Spotifyを開く', en:'Open Spotify', ko:'Spotify 열기', zh:'打开 Spotify'}
   };
   const PAGES = [
-    {key:'home', href:'./', en:'HOME', files:['', 'index.html']},
-    {key:'workout', href:'workout.html', en:'WORKOUT', files:['workout.html']},
-    {key:'run', href:'run.html', en:'RUNNING', files:['run.html']},
-    {key:'active', href:'active.html', en:'ACTIVE', files:['active.html']}
+    {key:'home', href:'./', en:'HOME', files:['', 'index']},
+    {key:'workout', href:'workout.html', en:'WORKOUT', files:['workout']},
+    {key:'run', href:'run.html', en:'RUNNING', files:['run']},
+    {key:'active', href:'active.html', en:'ACTIVE', files:['active']}
   ];
 
   const get = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
@@ -48,6 +49,15 @@
   .tm-btn i{display:block; width:20px; height:2px; background:var(--black,#000); transition:transform .4s ease, opacity .3s;}
   .tm-btn:hover i:nth-child(2){transform:translateX(3px);}
   .tm-btn:focus-visible{outline:none; box-shadow:inset 0 0 0 3px var(--lime,#ceff00);}
+  .tm-slot{display:flex; align-items:center; gap:8px; flex:none;}
+  .tm-sp{height:44px; min-width:44px; flex:none; border:1px solid var(--black,#000); background:var(--black,#000); color:var(--lime,#ceff00); display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:0 10px; text-decoration:none;
+    font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:15px; letter-spacing:.08em; text-transform:uppercase; transition:background .3s, color .3s;}
+  .tm-sp svg{width:20px; height:20px; flex:none;}
+  .tm-sp span{display:none;}
+  .tm-sp:hover{background:var(--lime,#ceff00); color:var(--black,#000);}
+  .tm-sp:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime,#ceff00);}
+  @media (min-width:600px){ .tm-sp span{display:inline;} .tm-sp{padding:0 14px;} }
+  @media (max-width:400px){ .appbar .sub{font-size:10px; letter-spacing:.04em; white-space:nowrap;} .appbar h1{font-size:30px;} }
   .tm-ov{position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity .45s ease;}
   .tm-ov.open{opacity:1; pointer-events:auto;}
   .tm-panel{position:fixed; top:0; right:0; bottom:0; z-index:201; width:min(340px, 86vw); background:#000; color:#fff;
@@ -79,14 +89,16 @@
   .tm-foot::before{content:''; display:block; width:30px; height:4px; background:var(--lime,#ceff00); transform:skewX(-20deg); margin-bottom:8px;}
   body.tm-lock{overflow:hidden;}
   @media (prefers-reduced-motion: reduce){ .tm-ov,.tm-panel,.tm-nav a,.tm-btn i{transition:none !important;} }
-  @media (orientation:landscape) and (max-height:520px){ .tm-btn{width:38px; height:38px;} .tm-nav a{padding:10px 2px;} .tm-nav b{font-size:26px;} .tm-lang{margin-top:16px;} }
+  @media (orientation:landscape) and (max-height:520px){ .tm-btn{width:38px; height:38px;} .tm-sp{height:38px; min-width:38px;} .tm-nav a{padding:10px 2px;} .tm-nav b{font-size:26px;} .tm-lang{margin-top:16px;} }
   `;
 
-  let ov, panel, btn, lastFocus;
+  let ov, panel, btn, sp, lastFocus;
+  // 今いるページ。ホスティングによって /workout.html・/workout・/workout/ のどれでも開くので、
+  // 末尾の / と .html を外した名前で見分ける（分からないときは null = どれも「現在地」にしない）
   function here(){
-    const f = location.pathname.split('/').pop();
+    const f = location.pathname.replace(/\/+$/, '').split('/').pop().replace(/\.html?$/i, '');
     const p = PAGES.find(p => p.files.includes(f));
-    return p ? p.key : 'home';
+    return p ? p.key : (location.pathname.endsWith('/') ? 'home' : null);
   }
   function build(){
     const st = document.createElement('style'); st.textContent = css; document.head.append(st);
@@ -95,6 +107,16 @@
     btn.className = 'tm-btn'; btn.type = 'button';
     btn.setAttribute('aria-haspopup', 'dialog'); btn.setAttribute('aria-expanded', 'false');
     btn.innerHTML = '<i></i><i></i><i></i>';
+    // data-spotify が付いたページ（workout / run / active）は ≡ の左に Spotify ボタン
+    if(slot){
+      slot.classList.add('tm-slot');
+      if(slot.hasAttribute('data-spotify')){
+        sp = document.createElement('a');
+        sp.className = 'tm-sp'; sp.href = 'https://open.spotify.com/'; sp.target = '_blank'; sp.rel = 'noopener';
+        sp.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><span>Spotify</span>';
+        slot.append(sp);
+      }
+    }
     (slot || document.body).append(btn);
 
     ov = document.createElement('div'); ov.className = 'tm-ov';
@@ -120,6 +142,7 @@
     if(!panel) return;
     const l = lang();
     btn.setAttribute('aria-label', tr('menu'));
+    if(sp){ sp.setAttribute('aria-label', tr('spotify')); sp.title = tr('spotify'); }
     panel.setAttribute('aria-label', tr('menu'));
     panel.querySelector('.tm-x').setAttribute('aria-label', tr('close'));
     panel.querySelectorAll('.tm-nav a').forEach(a => a.querySelector('small').textContent = tr(a.dataset.k));
