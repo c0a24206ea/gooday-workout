@@ -36,12 +36,9 @@
   .bar-r{display:flex; align-items:center; gap:12px;}
   .appbar .sub{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.1em; text-align:right; line-height:1.5;}
   .appbar .sub b{display:inline-block; background:var(--lime); padding:1px 6px; font-weight:700;}
-
   .view{display:none; padding:20px 20px 0; animation:in .5s ease;}
   .view.active{display:block;}
   @keyframes in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
-
-  /* 下タブ（workout / run と同じデザイン） */
   .tabbar{position:fixed; left:50%; transform:translateX(-50%); bottom:0; z-index:30; width:100%; max-width:var(--appw); background:var(--white);
     border-top:1px solid var(--g1); display:grid; grid-template-columns:repeat(4,1fr); padding-bottom:env(safe-area-inset-bottom); box-shadow:0 -4px 16px var(--shadow);}
   .tab{position:relative; height:var(--tabh); background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
@@ -50,7 +47,6 @@
   .tab::before{content:''; position:absolute; top:-1px; left:20%; right:20%; height:3px; background:var(--lime); transform:scaleX(0); transition:transform .5s;}
   .tab.active{color:var(--black);}
   .tab.active::before{transform:scaleX(1);}
-
   .label{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase;}
   .dim{color:var(--g3);}
   .section-t{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase; font-size:24px; margin:26px 0 12px; display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
@@ -72,8 +68,6 @@
   .field{display:block; margin-top:14px;}
   .field > .label{display:block; margin-bottom:8px;}
   .note{font-size:12px; color:#777; margin-top:8px; line-height:1.6;}
-
-  /* ---------- 週のリング ---------- */
   .week{background:var(--black); color:var(--white); padding:18px 20px; display:grid; grid-template-columns:auto 1fr; gap:18px; align-items:center; position:relative; overflow:hidden;}
   .week::after{content:''; position:absolute; right:-30px; top:0; bottom:0; width:90px; background:var(--lime); transform:skewX(-20deg); opacity:.08;}
   .ring{width:128px; height:128px; position:relative;}
@@ -90,8 +84,6 @@
   .days i{display:block; width:100%; background:#333; min-height:3px;}
   .days i.on{background:var(--lime);}
   .days div.today span{color:var(--lime);}
-
-  /* ---------- かんたん記録 ---------- */
   .chips{display:flex; flex-wrap:wrap; gap:6px;}
   .chip{height:40px; padding:0 14px; border:1px solid var(--g2); background:var(--white); cursor:pointer; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:6px;}
   .chip.on{background:var(--black); color:var(--white); border-color:var(--black);}
@@ -104,7 +96,6 @@
   .mood button{font-size:22px; font-family:inherit;}
   .minrow{display:grid; grid-template-columns:repeat(5,1fr) 1.2fr; gap:6px;}
   .minrow .in{height:44px; text-align:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:18px; padding:0 4px;}
-
   .ent{display:grid; grid-template-columns:auto 1fr auto auto; gap:12px; align-items:center; padding:12px 2px; border-bottom:1px solid var(--g1);}
   .ent .k{width:8px; height:30px; transform:skewX(-20deg); background:var(--lime);}
   .ent .m{min-width:0; font-size:14px; font-weight:700;}
@@ -113,8 +104,6 @@
   .ent .v small{font-size:13px; margin-left:2px;}
   .ent .x{width:34px; height:34px; border:1px solid var(--g2); background:none; cursor:pointer; color:#777; font-size:14px;}
   .ent .x.arm{background:var(--black); color:var(--lime); border-color:var(--black);}
-
-  /* ---------- FLOW ---------- */
   .flow{background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--black); margin-bottom:10px; display:grid; grid-template-columns:1fr auto; align-items:center;}
   .flow .bd{padding:14px 14px 12px; min-width:0;}
   .flow h3{font-size:16px; font-weight:700;}
@@ -127,15 +116,12 @@
   .opts{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:12px; font-size:13px;}
   .opts label{display:flex; align-items:center; gap:8px;}
   .opts input{width:20px; height:20px; accent-color:var(--black);}
-
   .editor .pr{display:grid; grid-template-columns:1fr 78px auto auto auto; gap:6px; align-items:center; margin-top:6px;}
   .editor .pr .in{height:42px;}
   .editor .pr .sec{text-align:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:18px; padding:0 4px;}
   .editor .pr button{width:34px; height:42px; border:1px solid var(--g2); background:var(--white); cursor:pointer; font-size:14px;}
   .editor .tot{font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:10px; text-align:right;}
   .row2{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px;}
-
-  /* ---------- フロー再生（全画面） ---------- */
   .player{position:fixed; inset:0; z-index:100; background:var(--black); color:var(--white); display:flex; flex-direction:column;
     padding:calc(env(safe-area-inset-top) + 16px) calc(env(safe-area-inset-right) + 20px) calc(env(safe-area-inset-bottom) + 18px) calc(env(safe-area-inset-left) + 20px);}
   .pl-top{display:flex; justify-content:space-between; align-items:center; gap:10px;}
@@ -172,8 +158,6 @@
     .pl-ring{width:min(30vw, 52vh);}
     .pl-ctrl button{height:48px;}
   }
-
-  /* ---------- BREATH ---------- */
   .br{background:var(--black); color:var(--white); padding:18px 16px 20px; text-align:center; position:relative; overflow:hidden;}
   .br-stage{height:280px; display:flex; align-items:center; justify-content:center; position:relative;}
   .br-guide{position:absolute; width:240px; height:240px; border-radius:50%; border:1px dashed #444;}
@@ -189,8 +173,6 @@
   .pat button small{display:block; font-size:11px; color:#555; margin-top:2px;}
   .pat button.on{background:var(--lime); border-color:var(--black); box-shadow:inset 0 0 0 1px var(--black);}
   .pat button:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime);}
-
-  /* ---------- LOG ---------- */
   .chart{background:var(--black); color:var(--white); padding:16px 14px 10px;}
   .chart svg{display:block; width:100%; height:auto; overflow:visible;}
   .chart .ax{font-family:'JetBrains Mono',monospace; font-size:10px; fill:var(--g3);}
@@ -203,11 +185,9 @@
   .day-h small{font-weight:500; color:#777;}
   .goalrow{display:flex; gap:8px; align-items:center;}
   .goalrow .in{max-width:130px; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;}
-
   .toast{position:fixed; left:50%; bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 16px); transform:translate(-50%, 20px); background:var(--black); color:var(--lime);
     padding:12px 18px; font-family:'JetBrains Mono',monospace; font-size:13px; z-index:150; opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap;}
   .toast.on{opacity:1; transform:translate(-50%, 0);}
-
   @media (min-width:768px){
     :root{--appw:100%;}
     .app{box-shadow:none;}
@@ -243,7 +223,6 @@
     </div>
   </header>
 
-  <!-- TODAY: 週のリング + かんたん記録 -->
   <main class="view active" id="v-today">
     <div class="cols"><div class="col col-l">
       <div class="week">
@@ -279,7 +258,6 @@
     </div></div>
   </main>
 
-  <!-- FLOW: ガイド付きセッション -->
   <main class="view" id="v-flow">
     <div id="flowHome">
       <a class="sp-big" style="margin:0 0 6px;" data-spotify-btn href="https://open.spotify.com/" target="_blank" rel="noopener"></a>
@@ -307,7 +285,6 @@
     </div>
   </main>
 
-  <!-- BREATH: 呼吸ガイド -->
   <main class="view" id="v-breath">
     <div class="cols"><div class="col col-l">
       <div class="br">
@@ -326,7 +303,6 @@
     </div></div>
   </main>
 
-  <!-- LOG -->
   <main class="view" id="v-log">
     <div class="cols"><div class="col col-l">
       <div class="section-t" style="margin-top:0;"><span>Weekly min</span><small data-i18n="last8"></small></div>
@@ -365,7 +341,6 @@
   </nav>
 </div>
 
-<!-- フロー再生（全画面） -->
 <div class="player" id="player" hidden role="dialog" aria-modal="true" aria-label="Flow player">
   <div class="pl-top"><div class="label" id="plTitle" style="flex:1; min-width:0;"></div><a class="sp-big" data-spotify-btn="mini" href="https://open.spotify.com/" target="_blank" rel="noopener"></a><button class="pl-x" id="plStop"></button></div>
   <div class="pl-prog" id="plProg"></div>
@@ -388,12 +363,7 @@
 <script>
 (function(){
   'use strict';
-  /* ===== データ（localStorage: tdiv_active_v1）=====
-   * logs : [{id, at, type, min, intensity(1-3), mood(1-5|null), memo, source:'manual'|'flow'|'breath'}]
-   * flows: [{id, name, type, poses:[{name, sec}]}]
-   * types: [自分で追加した種目名]
-   * settings: {week_goal_min, voice, sound, wake, br_pat, br_min}
-   */
+
   const KEY = 'tdiv_active_v1';
   const $ = id => document.getElementById(id);
   const pad = n => String(n).padStart(2, '0');
@@ -403,7 +373,6 @@
   const lsGet = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
   const lsSet = (k, v) => { try{ localStorage.setItem(k, v); }catch(e){} };
 
-  /* ===== 言語 ===== */
   const I18N = {
     yoga:{ja:'ヨガ', en:'Yoga', ko:'요가', zh:'瑜伽'},
     walk:{ja:'ウォーキング', en:'Walking', ko:'걷기', zh:'散步'},
@@ -497,8 +466,8 @@
   const mmss = s => { s = Math.max(0, Math.round(s)); return `${Math.floor(s / 60)}:${pad(s % 60)}`; };
   const minTxt = s => { const m = Math.round(s / 60); return m >= 60 ? `${Math.floor(m / 60)}h${pad(m % 60)}` : `${m}min`; };
 
-  /* 初回だけ入れておくフロー（その時の言語で作成。あとで自由に編集できます） */
   const P = (ja, en, ko, zh) => ({ja, en, ko, zh});
+
   const PRESETS = [
     {name:P('朝のヨガ 10分','Morning yoga 10 min','아침 요가 10분','晨间瑜伽 10分钟'), type:'yoga', poses:[
       [P('あぐらで深呼吸','Seated breathing','책상다리로 심호흡','盘坐深呼吸'), 60],
@@ -542,12 +511,11 @@
   let toastT;
   function toast(m){ const el = $('toast'); el.textContent = m; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), 1900); }
 
-  /* ===== 音・読み上げ・画面オン ===== */
   let actx = null;
   function beep(freq = 880, dur = .15, vol = .25){
     if(!db.settings.sound) return;
     try{
-      if(navigator.audioSession) navigator.audioSession.type = 'ambient'; // 音楽を止めずに重ねて鳴らす（iOS）
+      if(navigator.audioSession) navigator.audioSession.type = 'ambient';
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
       if(actx.state === 'suspended') actx.resume();
       const o = actx.createOscillator(), g = actx.createGain();
@@ -569,7 +537,6 @@
     }catch(e){}
   }
 
-  /* ===== 共通計算 ===== */
   const weekStart = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; };
   const logsIn = (a, b) => db.logs.filter(l => { const d = new Date(l.at); return d >= a && d < b; });
   const sumMin = ls => ls.reduce((a, l) => a + (+l.min || 0), 0);
@@ -580,7 +547,6 @@
     save();
   }
 
-  /* ===== TODAY ===== */
   const q = {type:null, min:null, intensity:2, mood:null};
   function renderWeek(){
     const ws = weekStart(new Date()), we = new Date(ws); we.setDate(we.getDate() + 7);
@@ -614,7 +580,7 @@
     $('todaySum').textContent = ls.length ? `${sumMin(ls)} min` : '';
     const box = $('todayList'); box.innerHTML = '';
     if(!ls.length){ box.innerHTML = `<div class="empty">${t('nothingToday')}</div>`; return; }
-    const wrap = document.createElement('div'); wrap.style.borderTop = '2px solid #000';
+    const wrap = document.createElement('div'); wrap.style.borderTop = '2px solid var(--black)';
     ls.forEach(l => wrap.append(entRow(l)));
     box.append(wrap);
   }
@@ -660,7 +626,6 @@
   };
   function renderToday(){ renderWeek(); renderTodayList(); renderQuick(); }
 
-  /* ===== FLOW ===== */
   const flowSecs = f => f.poses.reduce((a, p) => a + (+p.sec || 0), 0);
   function renderFlowList(){
     const box = $('flowList'); box.innerHTML = '';
@@ -679,7 +644,6 @@
   $('optSound').onchange = () => { db.settings.sound = $('optSound').checked; save(); beep(); };
   $('optWake').onchange = () => { db.settings.wake = $('optWake').checked; save(); };
 
-  // エディタ
   let ed = null, delArm = false;
   function openEditor(f){
     ed = f ? JSON.parse(JSON.stringify(f)) : {id:null, name:'', type:'yoga', poses:[{name:'', sec:30}]};
@@ -726,8 +690,6 @@
   };
   $('flowNew').onclick = () => openEditor(null);
 
-  // 再生
-  // pl = {f, idx(-1=準備), end(ms), left(ms, 一時停止中), paused, active(実際に動いた秒), lastTick, mood}
   let pl = null, plTimer = null;
   const PREP = 5;
   function startFlow(f){
@@ -760,7 +722,7 @@
     pl.lastTick = now;
     if(pl.paused) return;
     const rem = (pl.end - now) / 1000;
-    // 残り3秒でカウント音
+
     const s = Math.ceil(rem);
     if(s <= 3 && s >= 1 && pl.warned !== s){ pl.warned = s; beep(523, .08, .18); }
     if(rem <= 0){ goPose(pl.idx + 1); return; }
@@ -831,7 +793,6 @@
     if(e.key === 'Escape') $('plStop').click();
   });
 
-  /* ===== BREATH ===== */
   const PATS = {
     box:{name:'box', sub:'boxS', ph:[['inhale', 4], ['hold', 4], ['exhale', 4], ['hold', 4]]},
     p478:{name:'p478', sub:'p478S', ph:[['inhale', 4], ['hold', 7], ['exhale', 8]]},
@@ -895,9 +856,8 @@
     if(!br){ $('brWord').textContent = t('brReady'); $('brCount').textContent = ''; $('brLeft').textContent = `${db.settings.br_min}:00`; }
   }
 
-  /* ===== LOG ===== */
   function renderLog(){
-    // 週ごとの合計（8週）
+
     const W = 340, H = 160, L = 30, B = 22, T = 16;
     const ws0 = weekStart(new Date()), weeks = [];
     for(let i = 7; i >= 0; i--){ const s = new Date(ws0); s.setDate(s.getDate() - 7 * i); const e = new Date(s); e.setDate(e.getDate() + 7); weeks.push({s, v:sumMin(logsIn(s, e))}); }
@@ -913,14 +873,12 @@
     if(goal) s += `<line x1="${L}" x2="${W}" y1="${y(goal)}" y2="${y(goal)}" stroke="#ceff00" stroke-dasharray="4 4"/><text class="ax" x="${L + 4}" y="${y(goal) - 4}" style="fill:#ceff00">GOAL ${goal}</text>`;
     $('chWeek').innerHTML = s + '</svg>';
 
-    // 今月の種目別
     const now = new Date(), ms = new Date(now.getFullYear(), now.getMonth(), 1), me = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     const by = {};
     logsIn(ms, me).forEach(l => { by[l.type] = (by[l.type] || 0) + (+l.min || 0); });
     const arr = Object.entries(by).sort((a, b) => b[1] - a[1]), mx = Math.max(1, ...arr.map(a => a[1]));
     $('brk').innerHTML = arr.length ? arr.map(([k, v]) => `<div><span>${esc(typeLabel(k))}</span><i style="width:${Math.max(4, v / mx * 100)}%"></i><b>${v} min</b></div>`).join('') : `<div class="empty" style="display:block">${t('noLogs')}</div>`;
 
-    // 履歴
     const all = db.logs.slice().sort((a, b) => a.at < b.at ? 1 : -1);
     $('histSum').textContent = t('nEntries', {n:all.length, m:sumMin(all)});
     const h = $('hist'); h.innerHTML = '';
@@ -933,7 +891,7 @@
         const dayMin = sumMin(all.filter(x => fmtD(new Date(x.at)) === k));
         const hd = document.createElement('div'); hd.className = 'day-h'; hd.innerHTML = `<span>${k.replace(/-/g, '.')} ${WD[LANG][d.getDay()]}</span><small>${dayMin} min</small>`;
         h.append(hd);
-        wrap = document.createElement('div'); wrap.style.borderTop = '2px solid #000'; h.append(wrap);
+        wrap = document.createElement('div'); wrap.style.borderTop = '2px solid var(--black)'; h.append(wrap);
       }
       wrap.append(entRow(l));
     });
@@ -952,7 +910,6 @@
     save(); toast(t('bkDone', {n:add.length})); render();
   };
 
-  /* ===== タブ ===== */
   let current = 'today';
   const TITLES = {today:'Active', flow:'Flow', breath:'Breath', log:'Log'};
   function go(v){

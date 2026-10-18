@@ -16,7 +16,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  /* Palette: only colors used on zetadivision.com */
   :root{
     --bg:#fdfdfd;
     --white:#ffffff;
@@ -39,8 +38,6 @@
   }
   button{font-family:inherit; color:var(--black);}
   input,select,textarea{font-family:inherit; color:var(--black);}
-
-  /* ---------- App shell ---------- */
   .app{
     max-width:var(--appw); margin:0 auto; min-height:100%; background:var(--bg);
     position:relative; box-shadow:0 0 40px var(--shadow);
@@ -62,12 +59,9 @@
   .bar-r{display:flex; flex-direction:row; align-items:center; gap:12px;}
   .lang-top{height:30px; border:1px solid var(--black); background:var(--white); font-size:13px; font-weight:700; padding:0 6px; border-radius:0; color:var(--black); cursor:pointer;}
   .lang-top:focus{outline:none; box-shadow:inset 0 0 0 2px var(--lime);}
-
   .view{display:none; padding:20px 20px 0; animation:in .5s ease;}
   .view.active{display:block;}
   @keyframes in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
-
-  /* ---------- Bottom tab bar ---------- */
   .tabbar{
     position:fixed; left:50%; transform:translateX(-50%); bottom:0; z-index:30;
     width:100%; max-width:var(--appw); background:var(--white); border-top:1px solid var(--g1);
@@ -84,8 +78,6 @@
   .tab::before{content:''; position:absolute; top:-1px; left:20%; right:20%; height:3px; background:var(--lime); transform:scaleX(0); transition:transform .5s;}
   .tab.active{color:var(--black);}
   .tab.active::before{transform:scaleX(1);}
-
-  /* ---------- Common ---------- */
   .label{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase;}
   .label.dim{color:var(--g3);}
   .section-t{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase; font-size:24px; margin:26px 0 12px; display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
@@ -95,7 +87,6 @@
   .tg{font-family:'JetBrains Mono',monospace; font-size:10px; background:var(--lime); color:var(--black); padding:2px 7px; font-weight:700; white-space:nowrap;}
   .tg.plain{background:var(--g1);}
   .tg.pr{background:var(--black); color:var(--lime);}
-
   .btn{
     font-family:'Barlow Condensed','Noto Sans JP',sans-serif; font-weight:800; font-size:18px; letter-spacing:.12em; text-transform:uppercase;
     background:var(--black); color:var(--white); border:1px solid var(--black); padding:0 24px; height:50px; cursor:pointer; border-radius:0; transition:background .12s, color .12s;
@@ -105,15 +96,12 @@
   .btn.line:active, .btn.line:hover{background:var(--lime);}
   .btn.block{width:100%;}
   .btn.sm{height:40px; font-size:15px; padding:0 14px; letter-spacing:.06em;}
-
-  /* ---------- Today ---------- */
-  .hero{background:var(--lime); padding:20px 20px 18px; position:relative; overflow:hidden;}
+  .hero{background:var(--lime); color:var(--black); padding:20px 20px 18px; position:relative; overflow:hidden;}
   .hero::after{content:''; position:absolute; right:-30px; top:-20px; width:120px; height:200px; background:var(--white); opacity:.35; transform:skewX(-18deg);}
   .hero-row{display:flex; align-items:flex-end; justify-content:space-between; position:relative; z-index:1;}
   .hero-num{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:96px; line-height:.8;}
   .hero-num small{font-size:36px; margin-left:2px;}
   #rateNum{display:inline-block; font-variant-numeric:tabular-nums;}
-  /* 達成率のグリッチ演出（ジジジ…と数字が乱れてから確定） */
   .hero-num.glitch{transform:translateX(var(--gx,0)) skewX(var(--gs,0)); text-shadow:3px 0 0 #ffffff, -3px 0 0 rgba(0,0,0,.28);}
   .hero-num.glitch #rateNum{animation:flick .08s steps(2) infinite;}
   .hero-num.lock{animation:lockin .28s ease-out;}
@@ -127,12 +115,10 @@
   .hero-side .big{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:30px; line-height:1;}
   .hero-bar{height:10px; background:var(--white); margin-top:18px; position:relative; z-index:1; transform:skewX(-20deg); overflow:hidden;}
   .hero-bar i{position:absolute; left:0; top:0; bottom:0; background:var(--black); transition:width .5s ease;}
-
   .minis{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;}
   .mini{background:var(--white); border:1px solid var(--g1); padding:12px 12px 10px; min-width:0;}
   .mini .n{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:30px; line-height:1; margin-top:4px; white-space:nowrap;}
   .mini .n small{font-size:14px; font-weight:700;}
-
   .ex{background:var(--white); border:1px solid var(--g1); margin-bottom:10px; position:relative; transition:border-color .15s;}
   .ex::before{content:''; position:absolute; left:0; top:0; bottom:0; width:6px; background:var(--g1); transition:background .2s;}
   .ex.done::before{background:var(--lime);}
@@ -168,16 +154,12 @@
   .ex-bar{height:4px; background:var(--g1);}
   .ex-bar i{display:block; height:100%; width:0; background:var(--black); transition:width .3s;}
   .ex.done .ex-bar i{background:var(--lime);}
-
   .row-add{display:flex; margin-top:14px;}
   .row-add select,.row-add input{flex:1; min-width:0; border:1px solid var(--black); border-right:none; padding:0 12px; height:50px; font-size:16px; font-weight:700; background:var(--white); border-radius:0;}
   .row-add select:focus,.row-add input:focus{outline:none; box-shadow:inset 0 0 0 2px var(--lime);}
-
   textarea{width:100%; border:1px solid var(--g2); background:var(--white); padding:12px; resize:vertical; border-radius:0; font-size:16px;}
   textarea:focus{outline:none; border-color:var(--black);}
   .memo{height:90px;}
-
-  /* Rest timer */
   .rest{
     position:fixed; left:50%; transform:translateX(-50%); z-index:25;
     bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 10px);
@@ -190,8 +172,6 @@
   .rest.fin{background:var(--lime);}
   .rest.fin .t,.rest.fin .label{color:var(--black);}
   .rest.fin button{color:var(--black); border-color:var(--black);}
-
-  /* ---------- Body ---------- */
   .wcard{background:var(--white); border:1px solid var(--g1); padding:20px;}
   .wtop{display:flex; justify-content:space-between; align-items:center; gap:10px;}
   .date-in{height:36px; border:1px solid var(--g2); background:var(--white); font-family:'JetBrains Mono',monospace; font-size:14px; padding:0 8px; border-radius:0;}
@@ -207,8 +187,6 @@
   .wlatest .d b{display:inline-block; background:var(--lime); color:var(--black); padding:1px 7px; margin-top:4px;}
   .wl-item{display:flex; align-items:center; gap:10px; padding:10px 8px 10px 16px; background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--lime); margin-bottom:8px;}
   .wl-item .tl-d{flex:1;}
-
-  /* ---------- Charts ---------- */
   .chart-box{background:var(--white); border:1px solid var(--g1); padding:16px 10px 6px;}
   .sel{width:100%; border:1px solid var(--black); background:var(--white); font-weight:700; font-size:16px; padding:0 12px; height:48px; margin-bottom:10px; border-radius:0;}
   .sel:focus{outline:none; box-shadow:inset 0 0 0 2px var(--lime);}
@@ -219,8 +197,6 @@
   .best{margin-top:10px; padding:12px 14px; background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--black); font-family:'JetBrains Mono',monospace; font-size:12px;}
   .best b{font-family:'Barlow Condensed',sans-serif; font-size:24px; margin:0 4px;}
   svg.chart{display:block; width:100%; height:auto; overflow:visible;}
-
-  /* ---------- Log ---------- */
   .tl-month{margin-bottom:26px;}
   .tl-month h3{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:28px; text-transform:uppercase; display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px;}
   .tl-month h3 small{font-family:'JetBrains Mono',monospace; font-style:normal; font-weight:500; font-size:11px; letter-spacing:.1em;}
@@ -248,8 +224,6 @@
   .tl-detail .exl b{font-family:'Noto Sans JP',sans-serif; font-size:13px; margin-right:6px;}
   .tl-detail .memo-v{margin-top:4px; white-space:pre-wrap; border-left:3px solid var(--lime); padding-left:8px;}
   .tl-detail .btn{margin-top:10px;}
-
-  /* ---------- Setup ---------- */
   .srow{background:var(--white); border:1px solid var(--g1); padding:10px 12px; margin-bottom:8px; display:grid; gap:8px;}
   .srow.arch{opacity:.5;}
   .srow-top{display:grid; grid-template-columns:24px 1fr; gap:8px; align-items:center;}
@@ -273,7 +247,6 @@
   #backupArea{height:180px; font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:4px;}
   .msg{margin-top:10px; min-height:20px; font-size:13px; font-weight:700;}
   .note{margin-top:16px; padding:14px; background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--lime); font-size:12px; line-height:1.8;}
-
   .timer{background:var(--black); color:var(--white); margin-top:10px; padding:16px 16px 14px;}
   .timer .label{color:var(--white);}
   .timer .label.dim{color:var(--g3);}
@@ -319,11 +292,9 @@
   .wdtabs button.on small{color:var(--white);}
   .wdbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
   .wdbar .sm-sel{width:auto; max-width:60%; font-size:14px;}
-  /* iPhone横向きのノッチ・角丸に重ならないよう左右にも安全領域を確保 */
   .view{padding-left:max(20px, env(safe-area-inset-left)); padding-right:max(20px, env(safe-area-inset-right));}
   .appbar{padding-left:max(20px, env(safe-area-inset-left)); padding-right:max(20px, env(safe-area-inset-right));}
   .tabbar{padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right);}
-  /* ---------- タブレット・PC: 横幅いっぱいの2列レイアウト ---------- */
   @media (min-width:768px){
     :root{--appw:100%;}
     .app{box-shadow:none;}
@@ -342,7 +313,6 @@
     #exList .empty{grid-column:1 / -1;}
     .cols{grid-template-columns:minmax(360px, 1fr) 2fr;}
   }
-  /* ---------- スマホ横向き（高さが低い画面）: 見出しとタブを細くして中身を広く ---------- */
   @media (orientation:landscape) and (max-height:520px){
     :root{--tabh:46px;}
     .appbar{position:static; padding-top:calc(env(safe-area-inset-top) + 8px); padding-bottom:8px; align-items:center;}
@@ -365,7 +335,6 @@
     .tab svg{width:18px; height:18px;}
     .app{padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 70px);}
   }
-  /* ---------- WORKOUT MODE ---------- */
   .wm-open-btn{display:none; margin-bottom:10px; height:44px; font-size:16px; background:var(--lime); color:var(--black); border-color:var(--lime);}
   @media (orientation:landscape) and (max-height:520px){ .wm-open-btn{display:block;} }
   .wm{position:fixed; inset:0; z-index:60; background:var(--black); color:var(--white); display:grid; grid-template-columns:1fr 1.15fr;
@@ -425,7 +394,6 @@
     </div>
   </header>
 
-  <!-- TODAY -->
   <main class="view active" id="v-today">
     <div class="cols"><div class="col col-l">
     <button class="btn block wm-open-btn" id="wmOpen" data-i18n="wm.open"></button>
@@ -488,7 +456,6 @@
     </div></div>
   </main>
 
-  <!-- BODY -->
   <main class="view" id="v-body">
     <div class="cols"><div class="col col-l">
     <div class="wcard">
@@ -533,7 +500,6 @@
     </div></div>
   </main>
 
-  <!-- LOG -->
   <main class="view" id="v-log">
     <div class="logbar">
       <input id="logQ" class="txt" type="search" data-i18n-ph="log.q" placeholder="" autocomplete="off">
@@ -548,7 +514,6 @@
     <div id="tl"></div>
   </main>
 
-  <!-- SETUP -->
   <main class="view" id="v-setup">
     <div class="cols"><div class="col col-l">
     <div class="section-t" style="margin-top:0;">Menu <small data-i18n="setup.menu.sub"></small></div>
@@ -622,7 +587,6 @@
     </button>
   </nav>
 </div>
-<!-- WORKOUT MODE（スマホ横向き専用） -->
 <div class="wm" id="wm" hidden>
   <div class="wm-l">
     <div class="wm-ring">
@@ -656,21 +620,14 @@
 <script>
 (function(){
   'use strict';
-  /*
-   * データ構造（将来DBへ移すときのテーブルと1対1対応）
-   *   exercises      : {id, name, muscle_group, equipment, archived_at, created_at}
-   *   routine_items  : {id, weekday(0=日〜6=土) または date(YYYY-MM-DD), exercise_id, target_sets, target_reps, target_weight, order}
-   *   workout_logs   : {id, executed_at, memo, start_time, duration_min, routine_snapshot[]}
-   *   workout_sets   : {id, workout_log_id, exercise_id, set_number, weight, reps, rpe, is_warmup}
-   *   body_weights   : {id, measured_at, weight_kg}
-   */
+
   const KEY = 'tdiv_v2', OLD_PLAN = 'tdiv_plan', OLD_LOGS = 'tdiv_logs';
   const $ = id => document.getElementById(id);
   const pad = n => String(n).padStart(2,'0');
   const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
   const sd = d => d.slice(5).replace('-','/');
   const WD = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  /* ---------- i18n ---------- */
+
   const I18N = {"timer.hint": {"ja": "数字をタップすると時間を入力できます", "en": "Tap the time to type it in", "ko": "숫자를 탭하면 시간을 입력할 수 있습니다", "zh": "点击数字即可输入时间"}, "timer.min": {"ja": "分", "en": "MIN", "ko": "분", "zh": "分"}, "timer.sec": {"ja": "秒", "en": "SEC", "ko": "초", "zh": "秒"}, "timer.set": {"ja": "セット", "en": "Set", "ko": "설정", "zh": "设定"}, "timer.cancel": {"ja": "キャンセル", "en": "Cancel", "ko": "취소", "zh": "取消"}, "log.empty": {"ja": "まだ記録がありません — Todayでセットを記録するか、Chartsで体重を記録すると、ここに日ごとの履歴が表示されます", "en": "No records yet — log a set on Today or your weight on Charts, and your daily history will appear here", "ko": "아직 기록이 없습니다 — Today에서 세트를 기록하거나 Charts에서 체중을 기록하면 여기에 일별 기록이 표시됩니다", "zh": "还没有记录 — 在 Today 记录训练组或在 Charts 记录体重后，这里会显示每日记录"}, "hero.sub": {"ja": "今日の達成率", "en": "", "ko": "오늘의 달성률", "zh": "今日完成率"}, "unit.day": {"ja": " 日", "en": " d", "ko": " 일", "zh": " 天"}, "timer.sub": {"ja": "インターバル", "en": "", "ko": "인터벌", "zh": "组间休息"}, "opt.sound": {"ja": "終了音（音楽と重ねて鳴らす）", "en": "End sound (plays over music)", "ko": "종료음 (음악과 함께 재생)", "zh": "结束提示音（与音乐同时播放）"}, "opt.wake": {"ja": "画面を消さない", "en": "Keep screen on", "ko": "화면 꺼짐 방지", "zh": "保持屏幕常亮"}, "spotify": {"ja": "Spotifyを開く", "en": "Open Spotify", "ko": "Spotify 열기", "zh": "打开 Spotify"}, "adhoc.ph": {"ja": "種目名を入力（新しい種目もOK）", "en": "Exercise name (new ones OK)", "ko": "종목명 입력 (새 종목도 가능)", "zh": "输入动作名称（可新建）"}, "btn.add": {"ja": "追加", "en": "Add", "ko": "추가", "zh": "添加"}, "memo.sub": {"ja": "今日のメモ", "en": "Notes", "ko": "오늘의 메모", "zh": "今日笔记"}, "memo.ph": {"ja": "調子、睡眠、フォームの気づきなど", "en": "Condition, sleep, form notes…", "ko": "컨디션, 수면, 자세 메모 등", "zh": "状态、睡眠、动作要点等"}, "body.sub": {"ja": "体重", "en": "", "ko": "체중", "zh": "体重"}, "btn.record": {"ja": "記録する", "en": "Save", "ko": "기록하기", "zh": "记录"}, "latest.sub": {"ja": "最新の記録", "en": "", "ko": "최근 기록", "zh": "最新记录"}, "trend.sub": {"ja": "日ごとの体重", "en": "Daily weight", "ko": "일별 체중", "zh": "每日体重"}, "r30": {"ja": "30日", "en": "30D", "ko": "30일", "zh": "30天"}, "r90": {"ja": "90日", "en": "90D", "ko": "90일", "zh": "90天"}, "r365": {"ja": "1年", "en": "1Y", "ko": "1년", "zh": "1年"}, "rAll": {"ja": "全期間", "en": "All", "ko": "전체", "zh": "全部"}, "setup.menu.sub": {"ja": "トレーニングメニュー", "en": "Training menu", "ko": "트레이닝 메뉴", "zh": "训练计划"}, "rtAdd": {"ja": "+ メニューに種目を追加", "en": "+ Add exercise", "ko": "+ 종목 추가", "zh": "+ 添加动作"}, "ex.sub": {"ja": "種目マスタ", "en": "Exercise list", "ko": "종목 목록", "zh": "动作库"}, "newex.sub": {"ja": "新しい種目", "en": "", "ko": "새 종목", "zh": "新动作"}, "nx.ph": {"ja": "種目名（例：ダンベルプレス）", "en": "Name (e.g. Dumbbell Press)", "ko": "종목명 (예: 덤벨 프레스)", "zh": "名称（例：哑铃卧推）"}, "nx.add": {"ja": "種目を登録", "en": "Register exercise", "ko": "종목 등록", "zh": "添加动作"}, "settings.sub": {"ja": "設定", "en": "", "ko": "설정", "zh": "设置"}, "set.rest": {"ja": "インターバル（秒）", "en": "Rest interval (sec)", "ko": "인터벌 (초)", "zh": "休息时间（秒）"}, "set.day": {"ja": "日付の切り替え時刻", "en": "New day starts at", "ko": "날짜 변경 시각", "zh": "日期切换时间"}, "set.lang": {"ja": "言語", "en": "Language", "ko": "언어", "zh": "语言"}, "dlBtn": {"ja": "ファイル保存", "en": "Save file", "ko": "파일 저장", "zh": "保存文件"}, "ulBtn": {"ja": "ファイル復元", "en": "Restore file", "ko": "파일 복원", "zh": "从文件恢复"}, "exportBtn": {"ja": "表示", "en": "Show", "ko": "표시", "zh": "显示"}, "copyBtn": {"ja": "コピー", "en": "Copy", "ko": "복사", "zh": "复制"}, "importBtn": {"ja": "貼り付けから復元", "en": "Restore pasted", "ko": "붙여넣기로 복원", "zh": "从粘贴恢复"}, "backup.ph": {"ja": "「表示」でJSONがここに出ます。復元するときはJSONを貼り付けて「貼り付けから復元」を押してください。旧バージョンのバックアップも読み込めます。", "en": "Press \"Show\" to display JSON here. To restore, paste JSON and press \"Restore pasted\". Old-version backups are also supported.", "ko": "\"표시\"를 누르면 여기에 JSON이 나옵니다. 복원하려면 JSON을 붙여넣고 \"붙여넣기로 복원\"을 누르세요. 이전 버전 백업도 읽을 수 있습니다.", "zh": "点击\"显示\"后 JSON 会出现在这里。恢复时请粘贴 JSON 并点击\"从粘贴恢复\"。也支持旧版本的备份。"}, "note": {"ja": "データはこの端末のブラウザ内にのみ保存されます。機種変更やキャッシュ削除の前に「ファイル保存」でバックアップを取っておくと安心です。", "en": "Data is stored only in this browser on this device. Use \"Save file\" to back up before changing phones or clearing the cache.", "ko": "데이터는 이 기기의 브라우저에만 저장됩니다. 기기 변경이나 캐시 삭제 전에 \"파일 저장\"으로 백업해 두세요.", "zh": "数据仅保存在本设备的浏览器中。更换手机或清除缓存前，请先用\"保存文件\"备份。"}, "toast.migrated": {"ja": "旧バージョンのデータを移行しました", "en": "Migrated data from the old version", "ko": "이전 버전 데이터를 이전했습니다", "zh": "已迁移旧版本数据"}, "toast.saveFail": {"ja": "保存できませんでした（容量・プライベートモードを確認）", "en": "Could not save (check storage / private mode)", "ko": "저장하지 못했습니다 (용량·시크릿 모드 확인)", "zh": "无法保存（请检查存储空间或隐私模式）"}, "unknownEx": {"ja": "不明な種目", "en": "Unknown exercise", "ko": "알 수 없는 종목", "zh": "未知动作"}, "bw": {"ja": "自重", "en": "BW", "ko": "맨몸", "zh": "自重"}, "today.empty1": {"ja": "{wd}のメニューはありません（休養日）", "en": "No menu for {wd} (rest day)", "ko": "{wd} 메뉴가 없습니다 (휴식일)", "zh": "{wd}没有训练计划（休息日）"}, "today.empty2": {"ja": "下から種目を追加するか、SETUPで作成できます", "en": "Add an exercise below, or create a menu in SETUP", "ko": "아래에서 종목을 추가하거나 SETUP에서 만들 수 있습니다", "zh": "可在下方添加动作，或在 SETUP 中创建"}, "adhoc.save": {"ja": "{wd}のメニューにも保存する", "en": "Also save to the {wd} menu", "ko": "{wd} 메뉴에도 저장", "zh": "同时保存到{wd}的计划"}, "free": {"ja": "フリー", "en": "Free", "ko": "자유", "zh": "自由"}, "target": {"ja": "目標 {t}", "en": "Target {t}", "ko": "목표 {t}", "zh": "目标 {t}"}, "prev": {"ja": "前回", "en": "Last", "ko": "지난번", "zh": "上次"}, "addSet": {"ja": "+ セット記録", "en": "+ Log set", "ko": "+ 세트 기록", "zh": "+ 记录一组"}, "copyPrev": {"ja": "前回をコピー", "en": "Copy last", "ko": "지난번 복사", "zh": "复制上次"}, "a.weight": {"ja": "重量", "en": "Weight", "ko": "무게", "zh": "重量"}, "a.reps": {"ja": "回数", "en": "Reps", "ko": "횟수", "zh": "次数"}, "a.warm": {"ja": "ウォームアップ", "en": "Warm-up", "ko": "워밍업", "zh": "热身"}, "a.warmT": {"ja": "ウォームアップ（集計から除外）", "en": "Warm-up (excluded from stats)", "ko": "워밍업 (집계 제외)", "zh": "热身（不计入统计）"}, "a.del": {"ja": "削除", "en": "Delete", "ko": "삭제", "zh": "删除"}, "a.up": {"ja": "上へ", "en": "Up", "ko": "위로", "zh": "上移"}, "a.down": {"ja": "下へ", "en": "Down", "ko": "아래로", "zh": "下移"}, "a.remove": {"ja": "メニューから外す", "en": "Remove from menu", "ko": "메뉴에서 제외", "zh": "从计划中移除"}, "a.name": {"ja": "種目名", "en": "Exercise name", "ko": "종목명", "zh": "动作名称"}, "toast.copiedPrev": {"ja": "前回のセットをコピーしました", "en": "Copied last session's sets", "ko": "지난번 세트를 복사했습니다", "zh": "已复制上次的组"}, "toast.needName": {"ja": "種目名を入力してください", "en": "Enter an exercise name", "ko": "종목명을 입력하세요", "zh": "请输入动作名称"}, "toast.createdEx": {"ja": "「{name}」を新しい種目として登録しました", "en": "Registered \"{name}\" as a new exercise", "ko": "\"{name}\"을(를) 새 종목으로 등록했습니다", "zh": "已将\"{name}\"添加为新动作"}, "toast.addedEx": {"ja": "「{name}」を追加しました", "en": "Added \"{name}\"", "ko": "\"{name}\"을(를) 추가했습니다", "zh": "已添加\"{name}\""}, "toast.wakeNA": {"ja": "この端末のブラウザは「画面を消さない」に未対応です", "en": "This browser does not support \"Keep screen on\"", "ko": "이 브라우저는 \"화면 꺼짐 방지\"를 지원하지 않습니다", "zh": "此浏览器不支持\"保持屏幕常亮\""}, "toast.needWeight": {"ja": "体重を入力してください", "en": "Enter your weight", "ko": "체중을 입력하세요", "zh": "请输入体重"}, "toast.recorded": {"ja": "記録しました", "en": "Saved", "ko": "기록했습니다", "zh": "已记录"}, "prevDiff": {"ja": "前回比", "en": "vs last", "ko": "지난번 대비", "zh": "较上次"}, "confirm.delBw": {"ja": "この体重記録を削除しますか？", "en": "Delete this weight entry?", "ko": "이 체중 기록을 삭제할까요?", "zh": "删除这条体重记录吗？"}, "stat.min": {"ja": "最小", "en": "Min", "ko": "최소", "zh": "最低"}, "stat.max": {"ja": "最大", "en": "Max", "ko": "최대", "zh": "最高"}, "stat.chg": {"ja": "変化", "en": "Change", "ko": "변화", "zh": "变化"}, "log.delBtn": {"ja": "この日のトレーニング記録を削除", "en": "Delete this day's workout", "ko": "이날 운동 기록 삭제", "zh": "删除当天训练记录"}, "log.free": {"ja": "フリートレーニング", "en": "Free training", "ko": "자유 트레이닝", "zh": "自由训练"}, "log.rate": {"ja": "達成率 {p}%", "en": "Achieved {p}%", "ko": "달성률 {p}%", "zh": "完成率 {p}%"}, "log.rest": {"ja": "休養日", "en": "Rest day", "ko": "휴식일", "zh": "休息日"}, "log.sets": {"ja": "{n}セット", "en": "{n} set(s)", "ko": "{n}세트", "zh": "{n}组"}, "confirm.delDay": {"ja": "この日のトレーニング記録を削除しますか？（体重の記録は残ります）", "en": "Delete this day's workout? (Weight entries are kept)", "ko": "이날 운동 기록을 삭제할까요? (체중 기록은 유지됩니다)", "zh": "删除当天训练记录吗？（体重记录会保留）"}, "toast.deleted": {"ja": "削除しました", "en": "Deleted", "ko": "삭제했습니다", "zh": "已删除"}, "restShort": {"ja": "休", "en": "Rest", "ko": "휴", "zh": "休"}, "wdTitle": {"ja": "{wd}のメニュー", "en": "{wd} menu", "ko": "{wd} 메뉴", "zh": "{wd}的计划"}, "todayMark": {"ja": "（今日）", "en": " (today)", "ko": " (오늘)", "zh": "（今天）"}, "copyFrom": {"ja": "コピーして作る…", "en": "Copy from…", "ko": "복사해서 만들기…", "zh": "从…复制"}, "copyOpt": {"ja": "{wd}のメニューをコピー", "en": "Copy {wd} menu", "ko": "{wd} 메뉴 복사", "zh": "复制{wd}的计划"}, "nxLabel": {"ja": "{wd}のメニューにも追加する", "en": "Also add to the {wd} menu", "ko": "{wd} 메뉴에도 추가", "zh": "同时添加到{wd}的计划"}, "confirm.replace": {"ja": "{to}のメニューを{from}の内容で置き換えます。よろしいですか？", "en": "Replace the {to} menu with {from}'s?", "ko": "{to} 메뉴를 {from} 내용으로 바꿀까요?", "zh": "用{from}的内容替换{to}的计划吗？"}, "toast.copiedWd": {"ja": "{wd}のメニューをコピーしました", "en": "Copied the {wd} menu", "ko": "{wd} 메뉴를 복사했습니다", "zh": "已复制{wd}的计划"}, "wdRest": {"ja": "{wd}は休養日（メニューなし）", "en": "{wd} is a rest day (no menu)", "ko": "{wd}은(는) 휴식일 (메뉴 없음)", "zh": "{wd}为休息日（无计划）"}, "muscle": {"ja": "部位", "en": "Muscle", "ko": "부위", "zh": "部位"}, "equip": {"ja": "器具", "en": "Equipment", "ko": "기구", "zh": "器械"}, "restore": {"ja": "戻す", "en": "Show", "ko": "복원", "zh": "恢复"}, "hide": {"ja": "隠す", "en": "Hide", "ko": "숨기기", "zh": "隐藏"}, "confirm.delEx": {"ja": "「{name}」を削除しますか？", "en": "Delete \"{name}\"?", "ko": "\"{name}\"을(를) 삭제할까요?", "zh": "删除\"{name}\"吗？"}, "confirm.archive": {"ja": "「{name}」をメニューからも外します。記録は残ります。よろしいですか？", "en": "\"{name}\" will also be removed from menus. Records are kept. Continue?", "ko": "\"{name}\"을(를) 메뉴에서도 제외합니다. 기록은 유지됩니다. 계속할까요?", "zh": "\"{name}\"也会从计划中移除，记录会保留。确定吗？"}, "toast.needExFirst": {"ja": "先に種目マスタで種目を登録してください", "en": "Register an exercise in the exercise list first", "ko": "먼저 종목 목록에 종목을 등록하세요", "zh": "请先在动作库中添加动作"}, "toast.dupName": {"ja": "同じ名前の種目があります", "en": "An exercise with that name already exists", "ko": "같은 이름의 종목이 있습니다", "zh": "已存在同名动作"}, "toast.registered": {"ja": "「{name}」を登録しました", "en": "Registered \"{name}\"", "ko": "\"{name}\"을(를) 등록했습니다", "zh": "已添加\"{name}\""}, "say.exported": {"ja": "表示しました。コピーして安全な場所に保存してください。", "en": "Shown. Copy it and keep it somewhere safe.", "ko": "표시했습니다. 복사해서 안전한 곳에 보관하세요.", "zh": "已显示。请复制并保存到安全的地方。"}, "say.copied": {"ja": "コピーしました。", "en": "Copied.", "ko": "복사했습니다.", "zh": "已复制。"}, "say.copyManual": {"ja": "手動で選択してコピーしてください。", "en": "Please select and copy manually.", "ko": "직접 선택해서 복사하세요.", "zh": "请手动选择并复制。"}, "say.fileSaved": {"ja": "バックアップファイルを保存しました。", "en": "Backup file saved.", "ko": "백업 파일을 저장했습니다.", "zh": "已保存备份文件。"}, "say.fileFail": {"ja": "保存できませんでした。「表示」→「コピー」をお使いください。", "en": "Could not save. Use \"Show\" → \"Copy\" instead.", "ko": "저장하지 못했습니다. \"표시\" → \"복사\"를 이용하세요.", "zh": "无法保存。请使用\"显示\"→\"复制\"。"}, "say.needJson": {"ja": "復元するJSONを貼り付けてください。", "en": "Paste the JSON to restore.", "ko": "복원할 JSON을 붙여넣으세요.", "zh": "请粘贴要恢复的 JSON。"}, "say.badFormat": {"ja": "形式が正しくありません", "en": "Invalid format", "ko": "형식이 올바르지 않습니다", "zh": "格式不正确"}, "confirm.restore": {"ja": "現在のデータを上書きして復元します。よろしいですか？", "en": "This will overwrite your current data. Continue?", "ko": "현재 데이터를 덮어쓰고 복원합니다. 계속할까요?", "zh": "将覆盖当前数据并恢复。确定吗？"}, "say.restoredOld": {"ja": "旧バージョンのデータを変換して復元しました。", "en": "Converted and restored old-version data.", "ko": "이전 버전 데이터를 변환해 복원했습니다.", "zh": "已转换并恢复旧版本数据。"}, "say.restored": {"ja": "復元が完了しました。", "en": "Restore complete.", "ko": "복원이 완료되었습니다.", "zh": "恢复完成。"}, "say.loadFail": {"ja": "読み込みに失敗しました：", "en": "Failed to load: ", "ko": "불러오기에 실패했습니다: ", "zh": "读取失败："}, "dayOpt": {"ja": "午前{i}時", "en": "{i}:00 AM", "ko": "오전 {i}시", "zh": "凌晨{i}点"}, "seed.bench": {"ja": "ベンチプレス", "en": "Bench Press", "ko": "벤치프레스", "zh": "卧推"}, "seed.squat": {"ja": "スクワット", "en": "Squat", "ko": "스쿼트", "zh": "深蹲"}, "seed.pullup": {"ja": "懸垂", "en": "Pull-up", "ko": "턱걸이", "zh": "引体向上"}, "c.胸": {"ja": "胸", "en": "Chest", "ko": "가슴", "zh": "胸"}, "c.背中": {"ja": "背中", "en": "Back", "ko": "등", "zh": "背"}, "c.脚": {"ja": "脚", "en": "Legs", "ko": "하체", "zh": "腿"}, "c.肩": {"ja": "肩", "en": "Shoulders", "ko": "어깨", "zh": "肩"}, "c.腕": {"ja": "腕", "en": "Arms", "ko": "팔", "zh": "手臂"}, "c.腹": {"ja": "腹", "en": "Abs", "ko": "복근", "zh": "腹"}, "c.全身": {"ja": "全身", "en": "Full body", "ko": "전신", "zh": "全身"}, "c.有酸素": {"ja": "有酸素", "en": "Cardio", "ko": "유산소", "zh": "有氧"}, "c.フリーウェイト": {"ja": "フリーウェイト", "en": "Free weights", "ko": "프리웨이트", "zh": "自由重量"}, "c.マシン": {"ja": "マシン", "en": "Machine", "ko": "머신", "zh": "器械"}, "c.ケーブル": {"ja": "ケーブル", "en": "Cable", "ko": "케이블", "zh": "绳索"}, "c.自重": {"ja": "自重", "en": "Bodyweight", "ko": "맨몸", "zh": "自重"}, "c.その他": {"ja": "その他", "en": "Other", "ko": "기타", "zh": "其他"}, "plan.weekly": {"ja": "曜日ごとに固定", "en": "Fixed by weekday", "ko": "요일별 고정", "zh": "按星期固定"}, "plan.daily": {"ja": "日ごとに決める", "en": "Plan by date", "ko": "날짜별로 정하기", "zh": "按日期安排"}, "plan.hint.weekly": {"ja": "毎週、同じ曜日に同じメニューをくり返します", "en": "Repeats the same menu on the same weekday every week", "ko": "매주 같은 요일에 같은 메뉴를 반복합니다", "zh": "每周同一天重复相同的计划"}, "plan.hint.daily": {"ja": "日付ごとに好きなメニューを決めます。決めていない日も、Todayで自由に種目を追加できます", "en": "Plan a menu for any date. On unplanned days you can still add exercises freely on Today", "ko": "날짜마다 원하는 메뉴를 정합니다. 정하지 않은 날도 Today에서 자유롭게 종목을 추가할 수 있습니다", "zh": "可按日期安排任意计划。未安排的日子也能在 Today 自由添加动作"}, "copyLast": {"ja": "前回のトレーニング内容をコピー", "en": "Copy last workout", "ko": "지난 운동 내용 복사", "zh": "复制上次训练"}, "copyWd": {"ja": "{wd}のメニューをコピー", "en": "Copy {wd} menu", "ko": "{wd} 메뉴 복사", "zh": "复制{wd}的计划"}, "dateRest": {"ja": "{wd}のメニューはまだありません", "en": "No menu for {wd} yet", "ko": "{wd} 메뉴가 아직 없습니다", "zh": "{wd}还没有计划"}, "adhoc.saveDate": {"ja": "今日のメニューとして保存する", "en": "Save to today's menu", "ko": "오늘 메뉴로 저장", "zh": "保存为今天的计划"}, "today.emptyDaily": {"ja": "今日のメニューはまだありません", "en": "No menu for today yet", "ko": "오늘 메뉴가 아직 없습니다", "zh": "今天还没有计划"}, "today.emptyDaily2": {"ja": "下から種目を追加するか、「前回の種目を呼び出す」が使えます", "en": "Add an exercise below, or use \"Recall last exercises\"", "ko": "아래에서 종목을 추가하거나 \"지난 종목 불러오기\"를 사용하세요", "zh": "可在下方添加动作，或使用\"调出上次的动作\""}, "recall": {"ja": "↺ 前回の種目を呼び出す", "en": "↺ Recall last exercises", "ko": "↺ 지난 종목 불러오기", "zh": "↺ 调出上次的动作"}, "toast.noPrev": {"ja": "前回のトレーニング記録がありません", "en": "No previous workout found", "ko": "지난 운동 기록이 없습니다", "zh": "没有上次的训练记录"}, "toast.recalled": {"ja": "前回の種目を呼び出しました", "en": "Recalled your last exercises", "ko": "지난 종목을 불러왔습니다", "zh": "已调出上次的动作"}, "daylog.sub": {"ja": "その日の種目・時間・メモ", "en": "Exercises, time & notes", "ko": "그날의 종목·시간·메모", "zh": "当天动作·时间·笔记"}, "daylog.date": {"ja": "日付", "en": "", "ko": "날짜", "zh": "日期"}, "daylog.ex": {"ja": "やった種目", "en": "Exercises done", "ko": "한 종목", "zh": "完成的动作"}, "daylog.start": {"ja": "開始時刻", "en": "Start time", "ko": "시작 시각", "zh": "开始时间"}, "daylog.dur": {"ja": "時間（分）", "en": "Duration (min)", "ko": "운동 시간 (분)", "zh": "时长（分钟）"}, "daylog.memo": {"ja": "メモ", "en": "Notes", "ko": "메모", "zh": "笔记"}, "daylog.save": {"ja": "保存する", "en": "Save", "ko": "저장", "zh": "保存"}, "daylog.none": {"ja": "この日のセット記録はありません（セットはTodayで記録できます）", "en": "No sets logged this day (log sets on Today)", "ko": "이날 세트 기록이 없습니다 (세트는 Today에서 기록)", "zh": "当天没有训练组记录（可在 Today 记录）"}, "daylog.empty": {"ja": "入力されていません", "en": "Nothing to save", "ko": "입력된 내용이 없습니다", "zh": "没有输入内容"}, "daylog.min": {"ja": "{n}分", "en": "{n} min", "ko": "{n}분", "zh": "{n}分钟"}, "log.q": {"ja": "メモや種目名で検索", "en": "Search notes or exercises", "ko": "메모나 종목명 검색", "zh": "搜索笔记或动作"}, "log.fAll": {"ja": "すべて", "en": "All", "ko": "전체", "zh": "全部"}, "log.fTrain": {"ja": "トレーニング", "en": "Workouts", "ko": "운동", "zh": "训练"}, "log.fMemo": {"ja": "メモ・時間", "en": "Notes & time", "ko": "메모·시간", "zh": "笔记·时间"}, "log.fPr": {"ja": "PR", "en": "PR", "ko": "PR", "zh": "PR"}, "log.none": {"ja": "条件に合う記録がありません", "en": "No matching records", "ko": "조건에 맞는 기록이 없습니다", "zh": "没有符合条件的记录"}, "log.count": {"ja": "{n}日分の記録", "en": "{n} days of records", "ko": "{n}일분의 기록", "zh": "共 {n} 天的记录"}, "log.edit": {"ja": "Day Logで編集", "en": "Edit in Day Log", "ko": "Day Log에서 편집", "zh": "在 Day Log 中编辑"}, "wm.exit": {"ja": "通常表示", "en": "Normal view", "ko": "일반 화면", "zh": "普通视图"}, "wm.open": {"ja": "▶ ワークアウトモード", "en": "▶ Workout mode", "ko": "▶ 워크아웃 모드", "zh": "▶ 训练模式"}, "wm.log": {"ja": "＋ セット記録 → タイマー", "en": "+ Log set → Timer", "ko": "+ 세트 기록 → 타이머", "zh": "+ 记录一组 → 计时"}, "wm.none": {"ja": "今日の種目がありません", "en": "No exercises for today", "ko": "오늘 종목이 없습니다", "zh": "今天没有动作"}, "wm.noneHint": {"ja": "「通常表示」に戻って種目を追加してください", "en": "Go back to Normal view to add exercises", "ko": "\"일반 화면\"으로 돌아가 종목을 추가하세요", "zh": "请回到\"普通视图\"添加动作"}, "wm.needReps": {"ja": "回数を入力してください", "en": "Enter reps", "ko": "횟수를 입력하세요", "zh": "请输入次数"}, "wm.next": {"ja": "次は「{name}」", "en": "Next: {name}", "ko": "다음: {name}", "zh": "下一个：{name}"}, "wm.done": {"ja": "✓ 目標達成", "en": "✓ Target met", "ko": "✓ 목표 달성", "zh": "✓ 已达成目标"}};
   const LANGS = ['ja','en','ko','zh'];
   const detectLang = () => { const l = (navigator.language || 'ja').toLowerCase(); return l.startsWith('ko') ? 'ko' : l.startsWith('zh') ? 'zh' : l.startsWith('ja') ? 'ja' : l.startsWith('en') ? 'en' : 'ja'; };
@@ -684,6 +641,7 @@
   const EQUIP = ['フリーウェイト','マシン','ケーブル','自重','その他'];
   const RPES = ['',6,6.5,7,7.5,8,8.5,9,9.5,10];
   const uid = p => p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
   const now = () => new Date().toISOString();
   const num = v => { const n = parseFloat(v); return isFinite(n) ? n : null; };
   const kg = v => (Math.round(v*10)/10).toLocaleString('ja-JP',{maximumFractionDigits:1});
@@ -706,15 +664,15 @@
   let toastT;
   function toast(s){ const t = $('toast'); t.textContent = s; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
 
-  /* ---------- DB ---------- */
   let db;
   const TABLES = ['exercises','routine_items','workout_logs','workout_sets','body_weights'];
+
   function emptyDB(){ return {version:2, exercises:[], routine_items:[], workout_logs:[], workout_sets:[], body_weights:[], settings:{rest_sec:90, day_start_hour:4, sound:true, keep_awake:false, plan_mode:'weekly'}}; }
   function normalize(d){
     const e = emptyDB();
     TABLES.forEach(k => { if(Array.isArray(d[k])) e[k] = d[k]; });
     e.settings = Object.assign(e.settings, d.settings || {});
-    // 曜日なしのメニュー（旧形式）は全曜日へ展開
+
     const flat = e.routine_items.filter(r => typeof r.weekday !== 'number' && !r.date);
     if(flat.length){
       e.routine_items = e.routine_items.filter(r => typeof r.weekday === 'number' || r.date);
@@ -767,16 +725,16 @@
   }
   function save(){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast(t('toast.saveFail')); } }
 
-  /* ---------- queries ---------- */
   const exById = id => db.exercises.find(e => e.id === id);
   const exName = id => { const e = exById(id); return e ? e.name : t('unknownEx'); };
   const logById = id => db.workout_logs.find(l => l.id === id);
   const dayKey = ts => { const hh = +db.settings.day_start_hour || 0; return fmt(new Date(new Date(ts).getTime() - hh*3600000)); };
+
   const todayKey = () => dayKey(Date.now());
   const wdOf = k => new Date(k + 'T12:00:00').getDay();
   const todayWd = () => wdOf(todayKey());
   const routine = (wd = todayWd()) => db.routine_items.filter(r => r.weekday === wd && !r.date).sort((a,b) => a.order - b.order);
-  // メニューの決め方: weekly=曜日ごとに固定 / daily=日付ごとに決める（日付指定のメニューはどちらのモードでも優先）
+
   const isDaily = () => db.settings.plan_mode === 'daily';
   const dateItems = k => db.routine_items.filter(r => r.date === k).sort((a,b) => a.order - b.order);
   const planFor = k => { const d = dateItems(k); return d.length || isDaily() ? d : routine(wdOf(k)); };
@@ -852,8 +810,8 @@
     return m;
   }
 
-  /* ---------- tabs ---------- */
   const TITLES = {today:'Today', body:'Charts', log:'Log', setup:'Setup'};
+
   let current = 'today';
   function go(v){
     current = v;
@@ -877,7 +835,6 @@
     if(k !== lastDay){ lastDay = k; extraEx = []; renderBar(); if(current === 'today') renderToday(); }
   }
 
-  /* ---------- TODAY ---------- */
   let extraEx = [], cardRefs = {};
   const todayItems = log => log ? (log.routine_snapshot || []) : snapshot();
 
@@ -1000,8 +957,8 @@
     save(); renderToday();
   }
 
-  // ジジジ演出: 数字だけをランダムに乱し、左の桁から確定させる（記号や文字はそのまま）
   const anims = new Map();
+
   const reduceMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function scramble(el, host, key, dur, done){
     if(reduceMotion() || typeof requestAnimationFrame !== 'function'){ el.textContent = key; done && done(); return; }
@@ -1093,13 +1050,12 @@
     }, 400);
   });
 
-  /* ---------- rest timer ---------- */
   let restEnd = 0, restTimer = null, finUntil = 0, cardVisible = true, actx = null, wakeLock = null;
   const fmtT = sec => `${Math.floor(sec/60)}:${pad(sec%60)}`;
   function unlockAudio(){
     if(!db.settings.sound) return;
     try{
-      // iOS 17+: 'ambient' にするとSpotifyなどの再生を止めずに音を重ねる
+
       if(navigator.audioSession) navigator.audioSession.type = 'ambient';
       if(!actx){ const AC = window.AudioContext || window.webkitAudioContext; if(AC) actx = new AC(); }
       if(actx && actx.state === 'suspended') actx.resume();
@@ -1158,12 +1114,12 @@
     }
     renderTimer();
   }
-  // 動作中は残り時間を、停止中は次回の秒数（設定値）を ±10秒
+
   function adjTimer(d){
     if(restTimer){ restEnd += d*1000; restTotal = Math.max(10, restTotal + d); tick(); }
     else { db.settings.rest_sec = Math.min(3600, Math.max(10, (+db.settings.rest_sec || 0) + d)); save(); renderTimer(); }
   }
-  // タイマーの手入力（数字をタップ → 分・秒を入力）
+
   function openTimerEdit(){
     const cur = restTimer ? Math.max(0, Math.ceil((restEnd - Date.now())/1000)) : (+db.settings.rest_sec || 0);
     $('tMin').value = Math.floor(cur/60); $('tSec').value = pad(cur % 60);
@@ -1206,7 +1162,6 @@
     applyWake();
   };
 
-  /* ---------- WORKOUT MODE（スマホ横向き: 左に大型タイマー、右に今の種目と記録） ---------- */
   const mqLand = window.matchMedia ? window.matchMedia('(orientation: landscape) and (max-height: 520px)') : null;
   let wmOff = false, restTotal = 0;
   const wm = {exId:null, w:null, r:0};
@@ -1297,7 +1252,7 @@
     const log = todayLog(true), cur = setsFor(log.id, wm.exId);
     db.workout_sets.push({id:uid('ws'), workout_log_id:log.id, exercise_id:wm.exId, set_number:cur.length + 1, weight:wm.w, reps:wm.r, rpe:null, is_warmup:false});
     save(); startRest();
-    // 目標セット数に届いたら、次の未完了の種目へ自動で移動
+
     const {items, ids} = todayIds(), it = items.find(i => i.exercise_id === wm.exId);
     const n = setsFor(log.id, wm.exId).filter(isWork).length;
     if(it && it.target_sets > 0 && n >= it.target_sets){
@@ -1316,7 +1271,6 @@
     mqLand.addEventListener ? mqLand.addEventListener('change', onMq) : mqLand.addListener(onMq);
   }
 
-  /* ---------- BODY ---------- */
   $('bBtn').onclick = () => {
     const v = num($('bInput').value);
     if(v == null || v <= 0){ toast(t('toast.needWeight')); return; }
@@ -1350,7 +1304,6 @@
         h('button', {class:'del', 'aria-label':t('a.del'), onclick:() => { if(confirm(t('confirm.delBw'))){ db.body_weights = db.body_weights.filter(x => x !== b); save(); renderBody(); } }}, '×'))));
   }
 
-  /* ---------- DAY LOG（その日の種目・時間・メモ） ---------- */
   const logsOnDay = k => db.workout_logs.filter(l => dayKey(l.executed_at) === k);
   function renderDayLog(){
     if(!$('dDate').value) $('dDate').value = todayKey();
@@ -1378,7 +1331,6 @@
     save(); renderDayLog(); toast(t('toast.recorded'));
   };
 
-  /* ---------- CHARTS ---------- */
   let gid = 0;
   function drawChart(box, pts){
     if(!pts.length){ box.innerHTML = '<div class="empty">NO DATA</div>'; return; }
@@ -1390,7 +1342,7 @@
     const r = hi - lo; lo -= r*.12; hi += r*.12;
     const pw = W-L-R, ph = H-T-B;
     const step = pts.length > 1 ? pw/(pts.length-1) : 0;
-    // p.t（時刻）があれば日付の間隔どおりに配置、なければ等間隔
+
     const t0 = pts[0].t, t1 = pts[pts.length-1].t, timed = t0 != null && t1 > t0;
     const X = i => timed ? L + (pts[i].t - t0)/(t1 - t0)*pw : pts.length > 1 ? L + step*i : L + pw/2;
     const Y = v => T + ph - (v-lo)/(hi-lo)*ph;
@@ -1444,7 +1396,7 @@
     document.querySelectorAll('#bSeg button').forEach(x => x.classList.toggle('on', x === b));
     renderBodyChart();
   });
-  /* ---------- LOG ---------- */
+
   let logFilter = 'all', logQT;
   document.querySelectorAll('#logSeg button').forEach(b => b.onclick = () => {
     logFilter = b.dataset.f;
@@ -1464,7 +1416,7 @@
     Object.keys(bw).forEach(k => { by[k] = by[k] || []; });
     const all = Object.keys(by).sort().reverse();
     if(!all.length){ $('logCount').textContent = ''; box.append(h('div', {class:'empty', style:'line-height:2; letter-spacing:.06em;'}, 'NO DATA', h('br'), t('log.empty'))); return; }
-    // 振り返り用の絞り込み（種類）と検索（メモ・種目名）
+
     const q = ($('logQ').value || '').trim().toLowerCase();
     const days = all.filter(d => {
       const logs = by[d], sets = logs.flatMap(l => setsOf(l.id));
@@ -1533,7 +1485,6 @@
     save(); renderLog(); toast(t('toast.deleted'));
   }
 
-  /* ---------- SETUP ---------- */
   function mkSel(opts, val, ph){
     const s = h('select', {class:'sm-sel'}, h('option', {value:''}, ph + ' —'));
     const all = val && !opts.includes(val) ? opts.concat([val]) : opts;
@@ -1689,8 +1640,8 @@
   };
   $('setDay').onchange = () => { db.settings.day_start_hour = parseInt($('setDay').value) || 0; save(); checkDay(); renderBar(); };
 
-  /* ---------- backup ---------- */
   const say = s => { $('msg').textContent = s; };
+
   const backupJSON = () => JSON.stringify(db, null, 2);
   $('exportBtn').onclick = () => { $('backupArea').value = backupJSON(); say(t('say.exported')); };
   $('copyBtn').onclick = async () => {
@@ -1735,7 +1686,6 @@
     }catch(e){ say(t('say.loadFail') + e.message); }
   }
 
-  /* ---------- language ---------- */
   function fillSel(sel, opts, ph){
     const v = sel.value; sel.innerHTML = '';
     sel.append(h('option', {value:''}, ph + ' —'));
@@ -1761,17 +1711,16 @@
     if(window.TDIV) TDIV.setLang(LANG, true);
     applyLang();
   };
-  // 右上メニューで言語を変えたとき
+
   window.addEventListener('tdiv:lang', e => { if(e.detail === LANG) return; LANG = e.detail; db.settings.lang = LANG; save(); applyLang(); });
   $('setLang').onchange = () => setLangFrom($('setLang'));
 
-  /* ---------- init ---------- */
   load();
   if(window.TDIV && LANGS.includes(TDIV.lang())) LANG = TDIV.lang();
   if(db.settings.lang !== LANG){ db.settings.lang = LANG; save(); }
   lastDay = todayKey();
   applyLang();
-  // アプリ化（PWA）: https で公開したときだけオフライン用の service worker を登録
+
   if('serviceWorker' in navigator && location.protocol === 'https:'){
     window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
   }

@@ -1,8 +1,5 @@
-/* TIVS - 共通メニュー（右上の ≡）
- * 使い方: ページの見出しの中に <div data-menu-slot></div> を置いて、<script src="menu.js"></script> を読み込むだけ。
- * 言語は全ページ共通（localStorage: tdiv_lang）。変更すると window に 'tdiv:lang' イベントが飛ぶ。
- */
 (function(){
+
   const LANGS = ['ja', 'en', 'ko', 'zh'];
   const LANG_NAME = {ja:'日本語', en:'English', ko:'한국어', zh:'中文'};
   const L = {
@@ -14,9 +11,13 @@
     menu:    {ja:'メニュー', en:'Menu', ko:'메뉴', zh:'菜单'},
     close:   {ja:'閉じる', en:'Close', ko:'닫기', zh:'关闭'},
     spotify: {ja:'Spotifyを開く', en:'Open Spotify', ko:'Spotify 열기', zh:'打开 Spotify'},
+    theme:   {ja:'背景', en:'Background', ko:'배경', zh:'背景'},
+    light:   {ja:'白', en:'White', ko:'흰색', zh:'白色'},
+    dark:    {ja:'黒', en:'Black', ko:'검정', zh:'黑色'},
     spBig:   {ja:'Spotifyで音楽をかける', en:'Play music on Spotify', ko:'Spotify로 음악 듣기', zh:'用 Spotify 播放音乐'},
     spSub:   {ja:'タイマーは止まらずに動き続けます', en:'The timer keeps running', ko:'타이머는 멈추지 않고 계속됩니다', zh:'计时器会继续运行'}
   };
+
   const PAGES = [
     {key:'home', href:'./', en:'HOME', files:['', 'index']},
     {key:'workout', href:'workout.html', en:'WORKOUT', files:['workout']},
@@ -46,6 +47,37 @@
   const tr = k => (L[k] && (L[k][lang()] || L[k].ja)) || k;
   window.TDIV = {lang, setLang, LANGS};
 
+  const DARK_CSS = `
+  html[data-theme="dark"]{--bg:#0d0d0d; --white:#171717; --black:#f0f0f0; --g1:#2a2a2a; --g2:#474747; --g3:#8f8f8f; --shadow:rgba(0,0,0,.6); color-scheme:dark;}
+  html[data-theme="dark"] body{background:#000;}
+  html[data-theme="dark"] :is(.t-run, .timer, .rest, .wlatest, .wm-l, .toast, .hero, .chart, .week, .br, .player, .sp-big, .tm-sp, .tm-panel,
+    .t-wo, .t-ac .go, .appbar .sub b, .tg, .seg button.on, .wdtabs button.on, .wm-open-btn, .wm-log, .btn.lime, .btn:hover, .btn:active,
+    .pat button.on, .flow .play, .rest.fin, .timer.fin){
+    --black:#000000; --white:#ffffff; --g1:#eeeeee; --g2:#cccccc; --g3:#aaaaaa; --bg:#fdfdfd;}
+  html[data-theme="dark"] .wm{background:#000;}
+  html[data-theme="dark"] :is(.t-wo, .t-ac .go, .appbar .sub b, .tg){color:var(--black);}
+  html[data-theme="dark"] :is(.t-run, .timer, .wlatest, .chart, .week, .br, .sp-big:not([data-spotify-btn="mini"]), .rest){box-shadow:0 0 0 1px #2e2e2e;}
+  html[data-theme="dark"] :is(.btn.ghost, .chip.add, .day-h small, .ent .m small, .ent .x, .flow .ed, .flow .meta, .flow .poses, .note, .pat button small,
+    .hm-det small, .hm-leg, .hm-mo, .t-ac .meta, .rn .m, .warn p, .tile li){color:#a3a3a3;}
+  html[data-theme="dark"] .chk input, html[data-theme="dark"] .opt input, html[data-theme="dark"] .opts input{accent-color:var(--lime,#ceff00);}
+  html[data-theme="dark"] .appbar{border-bottom-color:#262626;}
+  html[data-theme="dark"] .tm-btn{border-color:#f0f0f0; background:#171717;} html[data-theme="dark"] .tm-btn i{background:#f0f0f0;}
+  html[data-theme="dark"] .tm-sp{border-color:#000;}
+  html[data-theme="dark"] .t-ac{border-color:#f0f0f0;}
+  html[data-theme="dark"] .hm button:is(.l1,.l2,.l3) :is(.r,.a){background:#000;}
+  html[data-theme="dark"] img, html[data-theme="dark"] video{filter:none;}
+  `;
+  function theme(){ const v = get('tdiv_theme'); return v === 'dark' ? 'dark' : 'light'; }
+  function applyTheme(){
+    const th = theme();
+    document.documentElement.dataset.theme = th;
+    const m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = th === 'dark' ? '#171717' : '#ffffff';
+  }
+  (function(){ const st = document.createElement('style'); st.id = 'tdiv-theme'; st.textContent = DARK_CSS; (document.head || document.documentElement).append(st); })();
+  applyTheme();
+  function setTheme(th){ set('tdiv_theme', th === 'dark' ? 'dark' : 'light'); applyTheme(); paint(); window.dispatchEvent(new CustomEvent('tdiv:theme', {detail:theme()})); }
+  window.TDIV.theme = theme; window.TDIV.setTheme = setTheme;
+
   const css = `
   .tm-btn{width:44px; height:44px; flex:none; border:1px solid var(--black,#000); background:var(--white,#fff); cursor:pointer; display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:0;}
   .tm-btn i{display:block; width:20px; height:2px; background:var(--black,#000); transition:transform .4s ease, opacity .3s;}
@@ -59,7 +91,6 @@
   .tm-sp:hover{background:var(--lime,#ceff00); color:var(--black,#000);}
   .tm-sp:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime,#ceff00);}
   @media (min-width:600px){ .tm-sp span{display:inline;} .tm-sp{padding:0 14px;} }
-  /* タイマーの下の大きな Spotify ボタン（data-spotify-btn） */
   .sp-big{display:grid; grid-template-columns:56px 1fr auto; align-items:center; gap:0; margin-top:10px; min-height:60px; background:var(--black,#000); color:var(--white,#fff);
     text-decoration:none; border:2px solid var(--black,#000); overflow:hidden; position:relative; transition:transform .2s;}
   .sp-big .ic{height:100%; min-height:56px; background:var(--lime,#ceff00); color:var(--black,#000); display:flex; align-items:center; justify-content:center;}
@@ -112,6 +143,9 @@
   .tm-lang .g{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
   .tm-lang button{height:46px; background:#000; color:#fff; border:1px solid #444; font-family:'Noto Sans JP',sans-serif; font-weight:700; font-size:15px; cursor:pointer;}
   .tm-lang button.on{background:var(--lime,#ceff00); color:#000; border-color:var(--lime,#ceff00);}
+  .tm-theme{margin-top:24px;}
+  .tm-theme button{display:flex; align-items:center; justify-content:center; gap:10px;}
+  .tm-theme .sw{width:18px; height:18px; border:1px solid #888; display:inline-block; flex:none;}
   .tm-lang button:focus-visible{outline:none; border-color:var(--lime,#ceff00);}
   .tm-foot{margin-top:auto; padding-top:28px; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:20px; letter-spacing:.04em; color:#444;}
   .tm-foot::before{content:''; display:block; width:30px; height:4px; background:var(--lime,#ceff00); transform:skewX(-20deg); margin-bottom:8px;}
@@ -121,13 +155,13 @@
   `;
 
   let ov, panel, btn, sp, lastFocus;
-  // 今いるページ。ホスティングによって /workout.html・/workout・/workout/ のどれでも開くので、
-  // 末尾の / と .html を外した名前で見分ける（分からないときは null = どれも「現在地」にしない）
+
   function here(){
     const f = location.pathname.replace(/\/+$/, '').split('/').pop().replace(/\.html?$/i, '');
     const p = PAGES.find(p => p.files.includes(f));
     return p ? p.key : (location.pathname.endsWith('/') ? 'home' : null);
   }
+
   function build(){
     const st = document.createElement('style'); st.textContent = css; document.head.append(st);
     const slot = document.querySelector('[data-menu-slot]');
@@ -135,7 +169,7 @@
     btn.className = 'tm-btn'; btn.type = 'button';
     btn.setAttribute('aria-haspopup', 'dialog'); btn.setAttribute('aria-expanded', 'false');
     btn.innerHTML = '<i></i><i></i><i></i>';
-    // data-spotify が付いたページ（workout / run / active）は ≡ の左に Spotify ボタン
+
     if(slot){
       slot.classList.add('tm-slot');
       if(slot.hasAttribute('data-spotify')){
@@ -154,6 +188,9 @@
     panel.innerHTML =
       '<div class="tm-head"><span>MENU</span><button class="tm-x" type="button">✕</button></div>' +
       '<div class="tm-nav">' + PAGES.map(p => `<a href="${p.href}" data-k="${p.key}" class="${p.key === cur ? 'cur' : ''}"${p.key === cur ? ' aria-current="page"' : ''}><b>${p.en}</b><small></small></a>`).join('') + '</div>' +
+      '<div class="tm-lang tm-theme"><div class="lb"></div><div class="g">' +
+        '<button type="button" data-th="light"><span class="sw" style="background:#fff"></span><span class="nm"></span></button>' +
+        '<button type="button" data-th="dark"><span class="sw" style="background:#000; border-color:#666"></span><span class="nm"></span></button></div></div>' +
       '<div class="tm-lang"><div class="lb"></div><div class="g">' + LANGS.map(l => `<button type="button" data-l="${l}">${LANG_NAME[l]}</button>`).join('') + '</div></div>' +
       '<div class="tm-foot">TIVS</div>';
     document.body.append(ov, panel);
@@ -162,10 +199,12 @@
     ov.onclick = close;
     panel.querySelector('.tm-x').onclick = close;
     panel.querySelectorAll('[data-l]').forEach(b => b.onclick = () => setLang(b.dataset.l));
+    panel.querySelectorAll('[data-th]').forEach(b => b.onclick = () => setTheme(b.dataset.th));
     panel.querySelectorAll('.tm-nav a').forEach(a => a.addEventListener('click', e => { if(a.classList.contains('cur')){ e.preventDefault(); close(); } }));
     document.addEventListener('keydown', e => { if(e.key === 'Escape' && panel.classList.contains('open')) close(); });
     paint();
   }
+
   const NOTE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>';
   function fillBig(){
     document.querySelectorAll('[data-spotify-btn]').forEach(a => {
@@ -174,6 +213,7 @@
     });
   }
   window.TDIV.fillSpotify = fillBig;
+
   function paint(){
     if(!panel) return;
     const l = lang();
@@ -183,9 +223,12 @@
     panel.setAttribute('aria-label', tr('menu'));
     panel.querySelector('.tm-x').setAttribute('aria-label', tr('close'));
     panel.querySelectorAll('.tm-nav a').forEach(a => a.querySelector('small').textContent = tr(a.dataset.k));
-    panel.querySelector('.tm-lang .lb').textContent = 'LANGUAGE / ' + tr('lang');
+    panel.querySelector('.tm-lang:not(.tm-theme) .lb').textContent = 'LANGUAGE / ' + tr('lang');
+    panel.querySelector('.tm-theme .lb').textContent = 'BACKGROUND / ' + tr('theme');
+    panel.querySelectorAll('[data-th]').forEach(b => { const on = b.dataset.th === theme(); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.querySelector('.nm').textContent = tr(b.dataset.th); });
     panel.querySelectorAll('[data-l]').forEach(b => { const on = b.dataset.l === l; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
   }
+
   function open(){
     lastFocus = document.activeElement;
     panel.inert = false;

@@ -36,11 +36,9 @@
   .bar-r{display:flex; align-items:center; gap:12px;}
   .appbar .sub{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.1em; text-align:right; line-height:1.5;}
   .appbar .sub b{display:inline-block; background:var(--lime); padding:1px 6px; font-weight:700;}
-
   .view{display:none; padding:20px 20px 0; animation:in .5s ease;}
   .view.active{display:block;}
   @keyframes in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
-
   .tabbar{position:fixed; left:50%; transform:translateX(-50%); bottom:0; z-index:30; width:100%; max-width:var(--appw); background:var(--white);
     border-top:1px solid var(--g1); display:grid; grid-template-columns:repeat(4,1fr); padding-bottom:env(safe-area-inset-bottom); box-shadow:0 -4px 16px var(--shadow);}
   .tab{position:relative; height:var(--tabh); background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
@@ -49,7 +47,6 @@
   .tab::before{content:''; position:absolute; top:-1px; left:20%; right:20%; height:3px; background:var(--lime); transform:scaleX(0); transition:transform .5s;}
   .tab.active{color:var(--black);}
   .tab.active::before{transform:scaleX(1);}
-
   .label{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase;}
   .dim{color:var(--g3);}
   .section-t{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase; font-size:24px; margin:26px 0 12px; display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
@@ -63,8 +60,6 @@
   .btn.block{display:block; width:100%;}
   .btn:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime);}
   .btn:active{transform:translateY(1px);}
-
-  /* ---------- RUN hero ---------- */
   .hero{background:var(--black); color:var(--white); padding:18px 20px 20px; position:relative; overflow:hidden;}
   .hero::after{content:''; position:absolute; right:-30px; top:0; bottom:0; width:90px; background:var(--lime); transform:skewX(-20deg); opacity:.08;}
   .hero .top{display:flex; justify-content:space-between; align-items:center; gap:10px;}
@@ -89,7 +84,6 @@
   .warn{margin-top:12px; border:2px solid var(--black); border-left:8px solid var(--lime); background:var(--white); padding:10px 12px;}
   .warn b{display:block; font-size:14px; font-weight:700;}
   .warn p{font-size:12px; color:#555; line-height:1.7; margin-top:4px;}
-
   .splits{border-top:2px solid var(--black);}
   .sp{display:grid; grid-template-columns:56px 1fr auto; gap:10px; align-items:center; padding:10px 2px; border-bottom:1px solid var(--g1); font-family:'JetBrains Mono',monospace; font-size:13px;}
   .sp b{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:20px;}
@@ -97,8 +91,6 @@
   .sp .bar i{position:absolute; left:0; top:0; bottom:0; background:var(--black);}
   .sp.best .bar i{background:var(--lime);}
   .sp .lap{color:var(--g3); font-size:11px;}
-
-  /* finish sheet */
   .card{background:var(--white); border:1px solid var(--g1); padding:16px; margin-top:12px;}
   .card.hl{border:2px solid var(--black);}
   .field{display:block; margin-top:12px;}
@@ -115,8 +107,6 @@
   details.man summary::-webkit-details-marker{display:none;}
   details.man summary::after{content:'+'; font-style:normal;}
   details.man[open] summary::after{content:'−';}
-
-  /* week */
   .week{display:flex; align-items:flex-end; justify-content:space-between; gap:12px;}
   .week .v{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:52px; line-height:.9;}
   .week .v small{font-size:20px; margin-left:4px; font-style:normal;}
@@ -129,8 +119,6 @@
   .wdots i.on{background:var(--black);}
   .wdots i.today{box-shadow:inset 0 0 0 2px var(--lime);}
   .wdots i em{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-style:normal; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:13px; color:var(--lime);}
-
-  /* ---------- LOG ---------- */
   .totals{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
   .mini{background:var(--white); border:1px solid var(--g1); padding:12px;}
   .mini .n{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:28px; line-height:1; margin-top:4px; white-space:nowrap;}
@@ -150,8 +138,6 @@
   .rn .det p{white-space:pre-wrap; font-family:'Noto Sans JP',sans-serif; font-size:13px; margin-top:8px;}
   .rn .det .del{margin-top:10px; height:36px; font-size:13px;}
   .tg{font-family:'JetBrains Mono',monospace; font-size:10px; background:var(--lime); color:var(--black); padding:2px 7px; font-weight:700; white-space:nowrap; vertical-align:2px; margin-left:6px;}
-
-  /* ---------- CHARTS ---------- */
   .chart{background:var(--black); color:var(--white); padding:16px 14px 10px;}
   .chart svg{display:block; width:100%; height:auto; overflow:visible;}
   .chart .ax{font-family:'JetBrains Mono',monospace; font-size:10px; fill:var(--g3);}
@@ -161,11 +147,9 @@
   .rec .mini .s{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--g3); margin-top:6px;}
   .goalrow{display:flex; gap:8px; align-items:center;}
   .goalrow .in{max-width:140px;}
-
   .toast{position:fixed; left:50%; bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 16px); transform:translate(-50%, 20px); background:var(--black); color:var(--lime);
     padding:12px 18px; font-family:'JetBrains Mono',monospace; font-size:13px; z-index:60; opacity:0; transition:all .3s; pointer-events:none; width:max-content; max-width:calc(100vw - 40px); text-align:center; line-height:1.5;}
   .toast.on{opacity:1; transform:translate(-50%, 0);}
-
   @media (min-width:768px){
     :root{--appw:100%;}
     .app{box-shadow:none;}
@@ -201,7 +185,6 @@
     </div>
   </header>
 
-  <!-- RUN -->
   <main class="view active" id="v-run">
     <div class="cols"><div class="col col-l">
       <div class="hero" id="hero">
@@ -218,7 +201,6 @@
       <label class="opt" id="gpsOpt"><input type="checkbox" id="optGps"><span data-i18n="useGps"></span></label>
       <div class="warn" role="note"><b data-i18n="gpsLock"></b><p data-i18n="gpsNote"></p></div>
 
-      <!-- 終了後の保存 -->
       <div class="card hl" id="finish" hidden>
         <div class="section-t" style="margin-top:0;" data-i18n="saveRun"></div>
         <div class="label dim" id="fSummary"></div>
@@ -252,13 +234,11 @@
     </div></div>
   </main>
 
-  <!-- LOG -->
   <main class="view" id="v-log">
     <div class="totals" id="totals"></div>
     <div id="logList"></div>
   </main>
 
-  <!-- CHARTS -->
   <main class="view" id="v-charts">
     <div class="cols"><div class="col col-l">
       <div class="section-t" style="margin-top:0;"><span>Weekly km</span><small data-i18n="last12"></small></div>
@@ -271,7 +251,6 @@
     </div></div>
   </main>
 
-  <!-- SETUP -->
   <main class="view" id="v-setup">
     <div class="cols"><div class="col col-l">
       <div class="section-t" style="margin-top:0;"><span>Goal</span><small data-i18n="perWeek"></small></div>
@@ -306,11 +285,7 @@
 <script>
 (function(){
   'use strict';
-  /* ===== データ（ブラウザの localStorage に保存）=====
-   * tdiv_run_v1 : { runs:[{id, started_at, duration_sec, distance_km, memo, splits:[秒/km], source:'gps'|'manual'}],
-   *                 settings:{ week_goal_km, gps } }
-   * tdiv_run_cur: 計測中のラン（画面を閉じても続きから）
-   */
+
   const KEY = 'tdiv_run_v1', CUR = 'tdiv_run_cur';
   const $ = id => document.getElementById(id);
   const pad = n => String(n).padStart(2, '0');
@@ -321,7 +296,6 @@
   const lsSet = (k, v) => { try{ localStorage.setItem(k, v); }catch(e){} };
   const lsDel = k => { try{ localStorage.removeItem(k); }catch(e){} };
 
-  /* ===== 言語 ===== */
   const I18N = {
     start:{ja:'スタート', en:'Start', ko:'시작', zh:'开始'},
     pause:{ja:'一時停止', en:'Pause', ko:'일시정지', zh:'暂停'},
@@ -377,25 +351,21 @@
   let LANG = window.TDIV ? TDIV.lang() : 'ja';
   const t = (k, v) => { const e = I18N[k]; let r = e ? (e[LANG] != null ? e[LANG] : e.ja) : k; if(v) for(const x in v) r = r.split('{' + x + '}').join(v[x]); return r; };
 
-  /* ===== 保存データ ===== */
   let db = {runs:[], settings:{week_goal_km:20, gps:true}};
   try{ const r = JSON.parse(lsGet(KEY) || 'null'); if(r && Array.isArray(r.runs)){ db.runs = r.runs; Object.assign(db.settings, r.settings || {}); } }catch(e){}
   const save = () => lsSet(KEY, JSON.stringify(db));
 
-  /* ===== 表示用の書式 ===== */
   const hms = sec => { sec = Math.max(0, Math.floor(sec)); const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60), s = sec%60; return `${h}:${pad(m)}:${pad(s)}`; };
   const ms = sec => { sec = Math.max(0, Math.round(sec)); const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60), s = sec%60; return h ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`; };
   const pace = secPerKm => (!isFinite(secPerKm) || secPerKm <= 0 || secPerKm > 3600) ? `--'--"` : `${Math.floor(secPerKm/60)}'${pad(Math.round(secPerKm%60) % 60)}"`;
   const km = v => (v || 0).toFixed(2);
   const runPace = r => r.distance_km > 0 && r.duration_sec > 0 ? r.duration_sec / r.distance_km : NaN;
   const dOf = r => new Date(r.started_at);
-  const weekStart = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; }; // 月曜はじまり
+  const weekStart = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; };
 
   let toastT;
   function toast(m){ const el = $('toast'); el.textContent = m; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), 1800); }
 
-  /* ===== 計測（ストップウォッチ + GPS）===== */
-  // cur = {state:'run'|'pause', acc, seg, dist, last, splits:[], laps:[], recent:[], gps}
   let cur = null;
   try{ cur = JSON.parse(lsGet(CUR) || 'null'); }catch(e){}
   const saveCur = () => cur ? lsSet(CUR, JSON.stringify(cur)) : lsDel(CUR);
@@ -417,8 +387,8 @@
     const pt = {lat:p.coords.latitude, lon:p.coords.longitude, t:Date.now()};
     if(!cur.last){ cur.last = pt; saveCur(); renderGps(); return; }
     const d = hav(cur.last, pt), dt = (pt.t - cur.last.t) / 1000;
-    if(d < Math.max(5, acc * 0.6)){ renderGps(); return; }     // 立ち止まっているときの揺れは数えない
-    if(dt > 0 && d / dt > 11){ cur.last = pt; saveCur(); return; } // ありえない速さ（位置の飛び）は捨てる
+    if(d < Math.max(5, acc * 0.6)){ renderGps(); return; }
+    if(dt > 0 && d / dt > 11){ cur.last = pt; saveCur(); return; }
     cur.dist += d; cur.last = pt;
     const e = elapsed();
     cur.recent.push({t:e, d:cur.dist});
@@ -430,7 +400,7 @@
     }
     saveCur(); render();
   }
-  // 1=許可されていない → 使用不可。電波が一時的に取れない(2,3)は探索中のまま待つ
+
   function onPosErr(e){ if(e && e.code === 1) gpsState = 'ng'; else if(gpsState !== 'ok' && gpsState !== 'weak') gpsState = 'wait'; renderGps(); }
   function gpsStart(){
     if(watchId != null || !cur || !cur.gps) return;
@@ -445,7 +415,7 @@
       if(!on && wakeLock){ await wakeLock.release(); wakeLock = null; }
     }catch(e){}
   }
-  // 画面ロック・スリープから戻ったとき: 画面オンを再設定し、GPSが止まっていたことを知らせる
+
   let hiddenAt = 0;
   document.addEventListener('visibilitychange', () => {
     if(document.visibilityState === 'hidden'){ hiddenAt = Date.now(); return; }
@@ -512,7 +482,6 @@
   };
   $('optGps').onchange = () => { db.settings.gps = $('optGps').checked; save(); };
 
-  /* ===== 描画 ===== */
   function renderGps(){
     const c = $('gpsChip');
     const g = cur ? cur.gps : $('optGps').checked;
@@ -577,7 +546,6 @@
     if(finishing) $('fSummary').textContent = `${hms(elapsed())}  ·  ${km(cur.dist / 1000)} km (GPS)`;
   }
 
-  /* LOG */
   const openRuns = new Set();
   let delArm = null;
   function renderLog(){
@@ -622,9 +590,8 @@
     });
   }
 
-  /* CHARTS */
   function renderCharts(){
-    // 週ごとの距離（12週）
+
     const W = 340, H = 170, L = 26, B = 22, T = 16;
     const ws0 = weekStart(new Date());
     const weeks = [];
@@ -646,7 +613,6 @@
     if(goal) s += `<line x1="${L}" x2="${W}" y1="${y(goal)}" y2="${y(goal)}" stroke="#ceff00" stroke-dasharray="4 4"/><text class="ax" x="${L + 4}" y="${y(goal) - 4}" text-anchor="start" style="fill:#ceff00">GOAL ${goal}</text>`;
     $('chWeek').innerHTML = s + '</svg>';
 
-    // ペースの推移（直近20回、上ほど速い）
     const pr = db.runs.filter(r => r.distance_km >= 1 && isFinite(runPace(r))).sort((a, b) => a.started_at < b.started_at ? -1 : 1).slice(-20);
     if(pr.length < 2){ $('chPace').innerHTML = `<div class="empty" style="color:#aaa">${t('noRuns')}</div>`; }
     else{
@@ -661,7 +627,6 @@
       $('chPace').innerHTML = p + '</svg>';
     }
 
-    // 記録
     const now = new Date(), mo = db.runs.filter(r => dOf(r).getFullYear() === now.getFullYear() && dOf(r).getMonth() === now.getMonth());
     const longR = db.runs.reduce((m, r) => !m || r.distance_km > m.distance_km ? r : m, null);
     const fastR = db.runs.filter(r => r.distance_km >= 1 && isFinite(runPace(r))).reduce((m, r) => !m || runPace(r) < runPace(m) ? r : m, null);
@@ -672,6 +637,7 @@
       <div class="mini"><div class="label dim">${t('month')}</div><div class="n">${mo.reduce((a, r) => a + (r.distance_km || 0), 0).toFixed(1)}<small>km</small></div><div class="s">${t('runs', {n:mo.length})}</div></div>
       <div class="mini"><div class="label dim">${t('allTime')}</div><div class="n">${tot.toFixed(1)}<small>km</small></div><div class="s">${t('runs', {n:db.runs.length})}</div></div>`;
   }
+
   function renderSetup(){
     $('goalIn').value = db.settings.week_goal_km || '';
     $('optGps2').checked = db.settings.gps !== false;
@@ -688,7 +654,6 @@
   };
   $('goalSave').onclick = () => { db.settings.week_goal_km = Math.max(0, parseFloat($('goalIn').value) || 0); save(); toast(t('saved')); renderSetup(); };
 
-  /* ===== タブ ===== */
   let current = 'run';
   const TITLES = {run:'Run', log:'Run Log', charts:'Charts', setup:'Setup'};
   function go(v){
@@ -716,7 +681,6 @@
   }
   window.addEventListener('tdiv:lang', e => { LANG = e.detail; applyLang(); });
 
-  /* ===== 起動 ===== */
   $('optGps').checked = db.settings.gps !== false;
   $('mDate').value = fmtD(new Date());
   if(cur && cur.state === 'run'){ gpsStart(); wake(true); startTick(); }

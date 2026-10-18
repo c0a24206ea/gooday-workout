@@ -29,17 +29,14 @@
   .brand::after{content:''; display:block; width:30px; height:4px; background:var(--lime); margin-top:6px; transform:skewX(-20deg);}
   main{padding:20px 20px 0; animation:in .5s ease;}
   @keyframes in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
-
   .label{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase;}
   .dim{color:var(--g3);}
   .section-t{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase; font-size:24px; margin:28px 0 12px; display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
   .section-t small{font-family:'JetBrains Mono',monospace; font-style:normal; font-weight:500; font-size:11px; letter-spacing:.1em;}
-
   .today{display:flex; align-items:flex-end; justify-content:space-between; gap:10px; padding-bottom:16px; border-bottom:2px solid var(--black);}
   .today .d{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:76px; line-height:.8; letter-spacing:-.01em;}
   .today .d small{font-size:30px; margin-left:8px;}
   .today .msg{font-size:14px; font-weight:700; text-align:right; line-height:1.5;}
-
   .tiles{display:grid; gap:12px; margin-top:16px;}
   .tile{position:relative; display:block; text-decoration:none; color:inherit; padding:18px 20px 20px; overflow:hidden; min-height:220px;
     transition:transform .35s ease, box-shadow .35s ease;}
@@ -60,12 +57,10 @@
   .tile li b{font-family:'JetBrains Mono',monospace; font-size:12px; white-space:nowrap;}
   .tile .bar{height:8px; margin-top:12px; position:relative; overflow:hidden;}
   .tile .bar i{position:absolute; left:0; top:0; bottom:0; transition:width 1s ease;}
-
   .t-wo{background:var(--lime);}
   .t-wo .go{background:var(--black); color:var(--lime);}
   .t-wo .bar{background:rgba(0,0,0,.15);} .t-wo .bar i{background:var(--black);}
   .t-wo::after{content:''; position:absolute; right:-40px; bottom:-20px; width:120px; height:160px; background:var(--black); transform:skewX(-20deg); opacity:.06;}
-
   .t-run{background:var(--black); color:var(--white);}
   .t-run .go{background:var(--lime); color:var(--black);}
   .t-run .big{color:var(--lime);}
@@ -73,21 +68,17 @@
   .t-run .bar{background:#333;} .t-run .bar i{background:var(--lime);}
   .t-run li{border-top-color:#333;}
   .t-run::after{content:''; position:absolute; right:-40px; bottom:-20px; width:120px; height:160px; background:var(--lime); transform:skewX(-20deg); opacity:.1;}
-
   .t-ac{background:var(--white); border:3px solid var(--black);}
   .t-ac .go{background:var(--lime); color:var(--black); border:2px solid var(--black);}
   .t-ac .bar{background:var(--g1);} .t-ac .bar i{background:var(--lime); border-right:3px solid var(--black);}
   .t-ac .meta{color:#555;}
   .t-ac li{border-top-color:var(--g1);}
   .t-ac::after{content:''; position:absolute; right:-40px; bottom:-20px; width:120px; height:160px; background:var(--lime); transform:skewX(-20deg); opacity:.35;}
-
   .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
   .mini{background:var(--white); border:1px solid var(--g1); padding:12px; min-width:0;}
   .mini .n{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:30px; line-height:1; margin-top:4px; white-space:nowrap;}
   .mini .n small{font-size:13px; margin-left:2px;}
   .mini .s{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--g3); margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-
-  /* 達成度ヒートマップ: 列=週, 行=曜日（月→日） */
   .hm-sum{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px;}
   .hm-sum > div{border-left:4px solid var(--black); padding:2px 0 2px 10px;}
   .hm-sum b{display:block; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:30px; line-height:1; margin-top:4px;}
@@ -119,7 +110,6 @@
   .hm-det{margin-top:12px; min-height:52px; background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--lime); padding:10px 14px; font-size:13px; line-height:1.6;}
   .hm-det b{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:20px; margin-right:8px;}
   .hm-det small{display:block; font-family:'JetBrains Mono',monospace; font-size:11px; color:#555;}
-
   .feed{border-top:2px solid var(--black);}
   .fi{display:grid; grid-template-columns:54px 8px 1fr auto; gap:12px; align-items:center; padding:12px 2px; border-bottom:1px solid var(--g1); text-decoration:none; color:inherit;}
   .fi:hover{background:var(--white);}
@@ -130,7 +120,6 @@
   .fi .m small{display:block; font-size:11px; color:var(--g3);}
   .fi .v{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:22px; white-space:nowrap;}
   .empty{padding:24px 0; text-align:center; color:var(--g3); font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.14em;}
-
   @media (min-width:768px){
     :root{--appw:100%;}
     .app{box-shadow:none;}
@@ -280,7 +269,6 @@
   function render(){
     document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
 
-    /* ---- 筋トレのデータ（workout.html と同じ tdiv_v2）---- */
     const w = read('tdiv_v2') || {};
     const ex = w.exercises || [], items = w.routine_items || [], logs = w.workout_logs || [], sets = w.workout_sets || [], bws = w.body_weights || [];
     const st = w.settings || {}, hh = +st.day_start_hour || 0;
@@ -309,7 +297,6 @@
       return `<li><span>${esc(exName(i.exercise_id))}</span><b>${c}/${i.target_sets || 0} · ${tw}×${i.target_reps || '—'}</b></li>`;
     }).join('') + (plan.length > 4 ? `<li><span>${t('more', {n:plan.length - 4})}</span><b></b></li>` : '');
 
-    /* ---- ランのデータ（run.html の tdiv_run_v1）---- */
     const r = read('tdiv_run_v1') || {};
     const runs = (r.runs || []).slice().sort((a, b) => a.started_at < b.started_at ? 1 : -1);
     const goal = +((r.settings || {}).week_goal_km) || 0;
@@ -324,7 +311,6 @@
       return `<li><span>${d.getMonth() + 1}/${d.getDate()} ${WD[LANG][d.getDay()]}</span><b>${(x.distance_km || 0).toFixed(2)} km · ${pace(p)}</b></li>`;
     }).join('') : `<li><span>${t('noRun')}</span><b></b></li>`;
 
-    /* ---- 軽い運動（active.html の tdiv_active_v1）---- */
     const ac = read('tdiv_active_v1') || {};
     const acLogs = (ac.logs || []).slice().sort((a, b) => a.at < b.at ? 1 : -1);
     const AC_T = {yoga:['ヨガ','Yoga','요가','瑜伽'], walk:['ウォーキング','Walking','걷기','散步'], stretch:['ストレッチ','Stretching','스트레칭','拉伸'], meditation:['瞑想','Meditation','명상','冥想'], pilates:['ピラティス','Pilates','필라테스','普拉提'], cycling:['サイクリング','Cycling','자전거','骑行'], swim:['水泳','Swimming','수영','游泳'], other:['その他','Other','기타','其他']};
@@ -339,7 +325,6 @@
     const acMinDay = {};
     acLogs.forEach(l => { const k = fmtD(new Date(l.at)); acMinDay[k] = (acMinDay[k] || 0) + (+l.min || 0); });
 
-    /* ---- 動いた日（筋トレ or ラン）---- */
     const wDays = new Set(logs.filter(l => sets.some(s => s.workout_log_id === l.id && isWork(s)) || l.duration_min).map(l => dayKey(l.executed_at)));
     const rDays = new Set(runs.map(x => fmtD(new Date(x.started_at))));
     const any = k => wDays.has(k) || rDays.has(k) || aDays.has(k);
@@ -355,10 +340,6 @@
       <div class="mini"><div class="label dim">${t('weight')}</div><div class="n">${lastBw ? (+lastBw.weight_kg).toFixed(1) : '—'}<small>kg</small></div><div class="s">${lastBw ? fmtD(new Date(lastBw.measured_at)) : 'BODY'}</div></div>
       <div class="mini"><div class="label dim">${t('month')}</div><div class="n">${monthDays}<small>${t('days')}</small></div><div class="s">${ym.replace('-', '.')}</div></div>`;
 
-    /* ---- 達成度ヒートマップ ----
-     * 色 = その日の筋トレ達成率（記録したときのメニュー routine_snapshot 基準）
-     *   l1: 1〜49%  l2: 50〜79%  l3: 80〜99%  l4: 100%（黒）  l0: メニュー外で記録だけ（グレー）
-     * 丸 = ランした日 */
     const rateOf = l => {
       const items = l.routine_snapshot || [];
       const rs = items.filter(i => i.target_sets > 0).map(i => Math.min(1, sets.filter(s => s.workout_log_id === l.id && s.exercise_id === i.exercise_id && isWork(s) && s.reps >= (i.target_reps || 0) && (!(i.target_weight > 0) || (s.weight || 0) >= i.target_weight)).length / i.target_sets));
@@ -380,9 +361,9 @@
     let cells = '', mo = '', lastM = -1, act = 0, full = 0, rsum = 0, rcnt = 0;
     for(let w = 0; w < WEEKS; w++){
       const first = new Date(start); first.setDate(first.getDate() + w * 7);
-      // 月の頭の週に月ラベル
+
       const m = new Date(first); m.setDate(m.getDate() + 6);
-      // 最初の列は、その月の日が少ない（すぐ次の月になる）ならラベルを省いて重なりを防ぐ
+
       if(m.getMonth() !== lastM){ if(!(w === 0 && m.getDate() > 14)) mo += `<span style="grid-column:${w + 1}">${m.getMonth() + 1}${LANG === 'en' ? '' : '月'}</span>`; lastM = m.getMonth(); }
       for(let d = 0; d < 7; d++){
         const day = new Date(first); day.setDate(day.getDate() + d);
@@ -405,8 +386,8 @@
       <div><span class="label dim">${t('avgRate')}</span><b>${rcnt ? Math.round(rsum / rcnt * 100) : '—'}<small>%</small></b></div>
       <div><span class="label dim">${t('fullDays')}</span><b>${full}<small>${t('days')}</small></b></div>
       <div><span class="label dim">${t('actDays')}</span><b>${act}<small>${t('days')}</small></b></div>`;
-    $('hmLeg').innerHTML = `<span class="sc">${t('less')} <i style="--k:#eeeeee"></i><i style="--k:#f1ffb8"></i><i style="--k:#e0ff66"></i><i style="--k:#ceff00"></i><i style="--k:#000"></i> ${t('moreL')}(100%)</span>
-      <span class="sc"><i style="--k:#cccccc"></i> ${t('offPlan')}</span><span class="sc"><i class="dot" style="--k:#eeeeee"></i> ${t('runDot')}</span><span class="sc"><i class="bar" style="--k:#eeeeee"></i> ${t('acDot')}</span>`;
+    $('hmLeg').innerHTML = `<span class="sc">${t('less')} <i style="--k:var(--g1)"></i><i style="--k:#f1ffb8"></i><i style="--k:#e0ff66"></i><i style="--k:#ceff00"></i><i style="--k:var(--black)"></i> ${t('moreL')}(100%)</span>
+      <span class="sc"><i style="--k:var(--g2)"></i> ${t('offPlan')}</span><span class="sc"><i class="dot" style="--k:var(--g1)"></i> ${t('runDot')}</span><span class="sc"><i class="bar" style="--k:var(--g1)"></i> ${t('acDot')}</span>`;
     const showDay = k => {
       $('heat').querySelectorAll('.sel').forEach(b => b.classList.remove('sel'));
       const b = $('heat').querySelector(`[data-k="${k}"]`); if(b) b.classList.add('sel');
@@ -420,12 +401,10 @@
     $('heat').onclick = e => { const b = e.target.closest('button[data-k]'); if(b) showDay(b.dataset.k); };
     $('hmDet').innerHTML = `<small>${t('tapDay')}</small>`;
 
-    // 日付と一言
     const dd = new Date(today + 'T12:00:00');
     $('tDate').innerHTML = `${dd.getMonth() + 1}.${pad(dd.getDate())}<small>${WD[LANG][dd.getDay()]}</small>`;
     $('tMsg').textContent = streak > 1 ? t('msgS', {n:streak}) : any(today) ? t('msg1') : t('msg0');
 
-    // 最近の記録（筋トレ + ラン）
     const feed = [];
     logs.forEach(l => {
       const ws2 = sets.filter(s => s.workout_log_id === l.id && isWork(s));
@@ -446,10 +425,11 @@
   }
 
   window.addEventListener('tdiv:lang', e => { LANG = e.detail; render(); });
-  // 他のページから戻ってきたとき（キャッシュから復元されたときも）最新にする
+
   window.addEventListener('pageshow', render);
   window.matchMedia('(min-width:768px)').addEventListener('change', render);
   document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') render(); });
+
   render();
   if('serviceWorker' in navigator && location.protocol === 'https:'){
     window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
