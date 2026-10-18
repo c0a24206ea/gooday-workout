@@ -7,11 +7,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="TIVS">
+<meta name="apple-mobile-web-app-title" content="TRAINING">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>TIVS</title>
+<title>TRAINING DIVISION</title>
 <script src="menu.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -74,6 +74,13 @@
   .t-run li{border-top-color:#333;}
   .t-run::after{content:''; position:absolute; right:-40px; bottom:-20px; width:120px; height:160px; background:var(--lime); transform:skewX(-20deg); opacity:.1;}
 
+  .t-ac{background:var(--white); border:3px solid var(--black);}
+  .t-ac .go{background:var(--lime); color:var(--black); border:2px solid var(--black);}
+  .t-ac .bar{background:var(--g1);} .t-ac .bar i{background:var(--lime); border-right:3px solid var(--black);}
+  .t-ac .meta{color:#555;}
+  .t-ac li{border-top-color:var(--g1);}
+  .t-ac::after{content:''; position:absolute; right:-40px; bottom:-20px; width:120px; height:160px; background:var(--lime); transform:skewX(-20deg); opacity:.35;}
+
   .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
   .mini{background:var(--white); border:1px solid var(--g1); padding:12px; min-width:0;}
   .mini .n{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:30px; line-height:1; margin-top:4px; white-space:nowrap;}
@@ -102,10 +109,13 @@
   .hm button.sel{outline:2px solid var(--black); outline-offset:1px; z-index:1;}
   .hm button .r{position:absolute; right:14%; bottom:14%; width:30%; height:30%; border-radius:50%; background:var(--black);}
   .hm button.l4 .r{background:var(--lime);}
+  .hm button .a{position:absolute; left:14%; right:14%; top:12%; height:16%; background:var(--black);}
+  .hm button.l4 .a{background:var(--lime);}
   .hm-leg{display:flex; flex-wrap:wrap; align-items:center; gap:6px 14px; margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:10px; color:#555;}
   .hm-leg .sc{display:inline-flex; align-items:center; gap:3px;}
   .hm-leg i{display:inline-block; width:11px; height:11px; background:var(--k); position:relative;}
   .hm-leg i.dot::after{content:''; position:absolute; inset:2px; border-radius:50%; background:var(--black);}
+  .hm-leg i.bar::after{content:''; position:absolute; left:2px; right:2px; top:2px; height:3px; background:var(--black);}
   .hm-det{margin-top:12px; min-height:52px; background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--lime); padding:10px 14px; font-size:13px; line-height:1.6;}
   .hm-det b{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:20px; margin-right:8px;}
   .hm-det small{display:block; font-family:'JetBrains Mono',monospace; font-size:11px; color:#555;}
@@ -115,7 +125,7 @@
   .fi:hover{background:var(--white);}
   .fi .d{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700;}
   .fi .k{width:8px; height:28px; transform:skewX(-20deg);}
-  .fi .k.w{background:var(--black);} .fi .k.r{background:var(--lime);}
+  .fi .k.w{background:var(--black);} .fi .k.r{background:var(--lime);} .fi .k.a{background:var(--white); border:2px solid var(--black);}
   .fi .m{font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;}
   .fi .m small{display:block; font-size:11px; color:var(--g3);}
   .fi .v{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:22px; white-space:nowrap;}
@@ -127,13 +137,23 @@
     main,.appbar{padding-left:max(28px, env(safe-area-inset-left)); padding-right:max(28px, env(safe-area-inset-right));}
     main{padding-top:28px;}
     .tiles{grid-template-columns:1fr 1fr; gap:16px;}
+    .t-ac{grid-column:1 / -1; min-height:0;}
     .tile{min-height:280px; padding:24px 28px;}
     .tile h2{font-size:64px;}
     .tile .big{font-size:84px;}
     .cols{display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start;}
     .hm-wd{font-size:10px;}
   }
+  @media (min-width:1100px){
+    .tiles{grid-template-columns:repeat(3, 1fr);}
+    .t-ac{grid-column:auto; min-height:280px;}
+    .tile{padding:22px 22px;}
+    .tile h2{font-size:clamp(40px, 3.4vw, 54px);}
+    .tile .go{width:42px; height:42px;}
+    .tile .big{font-size:clamp(60px, 5.4vw, 84px);}
+  }
   @media (orientation:landscape) and (max-height:520px){
+    .t-ac{grid-column:1 / -1;}
     .appbar{position:static; padding-top:calc(env(safe-area-inset-top) + 8px); padding-bottom:8px;}
     .tiles{grid-template-columns:1fr 1fr;}
     .tile{min-height:0;}
@@ -145,7 +165,7 @@
 <body>
 <div class="app">
   <header class="appbar">
-    <div class="brand">TIDIV</div>
+    <div class="brand">Training<br>Division</div>
     <div data-menu-slot></div>
   </header>
 
@@ -169,6 +189,13 @@
         <div class="bar"><i id="rnBar" style="width:0"></i></div>
         <div class="meta" id="rnMeta"></div>
         <ul id="rnList"></ul>
+      </a>
+      <a class="tile t-ac" href="active.html">
+        <div class="hd"><h2>Active<small data-i18n="active2"></small></h2><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+        <div class="big" id="acMin">—</div>
+        <div class="bar"><i id="acBar" style="width:0"></i></div>
+        <div class="meta" id="acMeta"></div>
+        <ul id="acList"></ul>
       </a>
     </div>
 
@@ -228,6 +255,10 @@
     msgS:{ja:'{n}日連続！', en:'{n}-day streak!', ko:'{n}일 연속!', zh:'连续{n}天！'},
     exercises:{ja:'{n}種目', en:'{n} exercises', ko:'{n}종목', zh:'{n}个动作'},
     bw:{ja:'自重', en:'BW', ko:'맨몸', zh:'自重'},
+    active2:{ja:'ヨガ・ウォーキングなど', en:'Yoga, walking & more', ko:'요가·걷기 등', zh:'瑜伽、散步等'},
+    acDot:{ja:'軽い運動', en:'Active', ko:'가벼운 운동', zh:'轻运动'},
+    acGoal:{ja:'今週 · 目標 {g} 分', en:'this week · goal {g} min', ko:'이번 주 · 목표 {g}분', zh:'本周 · 目标 {g} 分钟'},
+    noAc:{ja:'まだ記録がありません', en:'Nothing logged yet', ko:'아직 기록 없음', zh:'还没有记录'},
     weeksN:{ja:'直近{n}週', en:'last {n} weeks', ko:'최근 {n}주', zh:'最近{n}周'},
     avgRate:{ja:'平均達成率', en:'Avg completion', ko:'평균 달성률', zh:'平均完成率'},
     fullDays:{ja:'100%の日', en:'100% days', ko:'100% 달성일', zh:'100%的天数'},
@@ -293,16 +324,31 @@
       return `<li><span>${d.getMonth() + 1}/${d.getDate()} ${WD[LANG][d.getDay()]}</span><b>${(x.distance_km || 0).toFixed(2)} km · ${pace(p)}</b></li>`;
     }).join('') : `<li><span>${t('noRun')}</span><b></b></li>`;
 
+    /* ---- 軽い運動（active.html の tdiv_active_v1）---- */
+    const ac = read('tdiv_active_v1') || {};
+    const acLogs = (ac.logs || []).slice().sort((a, b) => a.at < b.at ? 1 : -1);
+    const AC_T = {yoga:['ヨガ','Yoga','요가','瑜伽'], walk:['ウォーキング','Walking','걷기','散步'], stretch:['ストレッチ','Stretching','스트레칭','拉伸'], meditation:['瞑想','Meditation','명상','冥想'], pilates:['ピラティス','Pilates','필라테스','普拉提'], cycling:['サイクリング','Cycling','자전거','骑行'], swim:['水泳','Swimming','수영','游泳'], other:['その他','Other','기타','其他']};
+    const acLabel = k => k && k.startsWith('c:') ? k.slice(2) : (AC_T[k] || [k])[['ja','en','ko','zh'].indexOf(LANG)] || k;
+    const acGoal = +((ac.settings || {}).week_goal_min) || 150;
+    const acWk = acLogs.filter(l => new Date(l.at) >= ws).reduce((a, l) => a + (+l.min || 0), 0);
+    $('acMin').innerHTML = `${acWk}<small>min</small>`;
+    $('acBar').style.width = Math.min(100, acWk / acGoal * 100) + '%';
+    $('acMeta').textContent = t('acGoal', {g:acGoal});
+    $('acList').innerHTML = acLogs.length ? acLogs.slice(0, 2).map(l => { const d = new Date(l.at); return `<li><span>${d.getMonth() + 1}/${d.getDate()} ${esc(acLabel(l.type))}</span><b>${l.min} min</b></li>`; }).join('') : `<li><span>${t('noAc')}</span><b></b></li>`;
+    const aDays = new Set(acLogs.map(l => fmtD(new Date(l.at))));
+    const acMinDay = {};
+    acLogs.forEach(l => { const k = fmtD(new Date(l.at)); acMinDay[k] = (acMinDay[k] || 0) + (+l.min || 0); });
+
     /* ---- 動いた日（筋トレ or ラン）---- */
     const wDays = new Set(logs.filter(l => sets.some(s => s.workout_log_id === l.id && isWork(s)) || l.duration_min).map(l => dayKey(l.executed_at)));
     const rDays = new Set(runs.map(x => fmtD(new Date(x.started_at))));
-    const any = k => wDays.has(k) || rDays.has(k);
+    const any = k => wDays.has(k) || rDays.has(k) || aDays.has(k);
     let streak = 0;
     const c = new Date(today + 'T12:00:00');
     if(!any(fmtD(c))) c.setDate(c.getDate() - 1);
     while(any(fmtD(c))){ streak++; c.setDate(c.getDate() - 1); }
     const ym = today.slice(0, 7);
-    const monthDays = new Set([...wDays, ...rDays].filter(k => k.startsWith(ym))).size;
+    const monthDays = new Set([...wDays, ...rDays, ...aDays].filter(k => k.startsWith(ym))).size;
     const lastBw = bws.slice().sort((a, b) => a.measured_at < b.measured_at ? 1 : -1)[0];
     $('stats').innerHTML = `
       <div class="mini"><div class="label dim">${t('streak')}</div><div class="n">${streak}<small>${t('days')}</small></div><div class="s">STREAK</div></div>
@@ -342,11 +388,11 @@
         const day = new Date(first); day.setDate(day.getDate() + d);
         const k = fmtD(day);
         if(k > today){ cells += `<button class="fut" tabindex="-1" aria-hidden="true"></button>`; continue; }
-        const inf = dayInfo[k], km = runKm[k];
-        if(inf || km) act++;
+        const inf = dayInfo[k], km = runKm[k], am = acMinDay[k];
+        if(inf || km || am) act++;
         if(inf && inf.rate != null){ rsum += inf.rate; rcnt++; if(inf.rate >= 1) full++; }
         const cls = inf ? lvl(inf.rate) : '';
-        cells += `<button data-k="${k}" class="${cls}${k === today ? ' today' : ''}" aria-label="${k}">${km ? '<span class="r"></span>' : ''}</button>`;
+        cells += `<button data-k="${k}" class="${cls}${k === today ? ' today' : ''}" aria-label="${k}">${am ? '<span class="a"></span>' : ''}${km ? '<span class="r"></span>' : ''}</button>`;
       }
     }
     $('heat').style.gridTemplateColumns = `repeat(${WEEKS}, 1fr)`;
@@ -360,14 +406,15 @@
       <div><span class="label dim">${t('fullDays')}</span><b>${full}<small>${t('days')}</small></b></div>
       <div><span class="label dim">${t('actDays')}</span><b>${act}<small>${t('days')}</small></b></div>`;
     $('hmLeg').innerHTML = `<span class="sc">${t('less')} <i style="--k:#eeeeee"></i><i style="--k:#f1ffb8"></i><i style="--k:#e0ff66"></i><i style="--k:#ceff00"></i><i style="--k:#000"></i> ${t('moreL')}(100%)</span>
-      <span class="sc"><i style="--k:#cccccc"></i> ${t('offPlan')}</span><span class="sc"><i class="dot" style="--k:#eeeeee"></i> ${t('runDot')}</span>`;
+      <span class="sc"><i style="--k:#cccccc"></i> ${t('offPlan')}</span><span class="sc"><i class="dot" style="--k:#eeeeee"></i> ${t('runDot')}</span><span class="sc"><i class="bar" style="--k:#eeeeee"></i> ${t('acDot')}</span>`;
     const showDay = k => {
       $('heat').querySelectorAll('.sel').forEach(b => b.classList.remove('sel'));
       const b = $('heat').querySelector(`[data-k="${k}"]`); if(b) b.classList.add('sel');
-      const d = new Date(k + 'T12:00:00'), inf = dayInfo[k], km = runKm[k];
+      const d = new Date(k + 'T12:00:00'), inf = dayInfo[k], km = runKm[k], am = acMinDay[k];
       const parts = [];
       if(inf) parts.push(inf.rate == null ? `${t('offPlan')} · ${t('setsN', {n:inf.sets})}` : `${t('rateL', {p:Math.round(inf.rate * 100)})} · ${t('setsN', {n:inf.sets})}`);
       if(km) parts.push(`${t('runDot')} ${km.toFixed(2)} km`);
+      if(am) parts.push(`${t('acDot')} ${am} min (${[...new Set(acLogs.filter(l => fmtD(new Date(l.at)) === k).map(l => acLabel(l.type)))].join(' · ')})`);
       $('hmDet').innerHTML = `<b>${d.getMonth() + 1}/${d.getDate()} ${WD[LANG][d.getDay()]}</b>${parts.length ? parts.join('<br>') : t('rest')}`;
     };
     $('heat').onclick = e => { const b = e.target.closest('button[data-k]'); if(b) showDay(b.dataset.k); };
@@ -390,6 +437,7 @@
       const p = x.distance_km > 0 && x.duration_sec > 0 ? x.duration_sec / x.distance_km : NaN;
       feed.push({at:x.started_at, k:'r', href:'run.html', m:x.memo || t('run'), s:pace(p) + ' /km', v:`${(x.distance_km || 0).toFixed(2)} KM`});
     });
+    acLogs.forEach(l => feed.push({at:l.at, k:'a', href:'active.html', m:acLabel(l.type) + (l.flow ? ' — ' + l.flow : ''), s:l.memo || '', v:`${l.min} MIN`}));
     feed.sort((a, b) => a.at < b.at ? 1 : -1);
     $('feed').innerHTML = feed.length ? feed.slice(0, 6).map(f => {
       const d = new Date(f.at);

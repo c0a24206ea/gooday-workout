@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TRAINING">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>ACTIVE — TRAINING DIVISION</title>
+<script src="menu.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fdfdfd; --white:#ffffff; --black:#000000; --lime:#ceff00;
+    --g1:#eeeeee; --g2:#cccccc; --g3:#aaaaaa; --shadow:rgba(0,0,0,.1);
+    --tabh:64px; --appw:480px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  [hidden]{display:none !important;}
+  ::selection{background:var(--lime); color:var(--black);}
+  html,body{height:100%;}
+  body{background:var(--g1); color:var(--black); font-family:'Noto Sans JP',sans-serif; -webkit-font-smoothing:antialiased;}
+  button,input,textarea,select{font-family:inherit; color:var(--black);}
+  .app{max-width:var(--appw); margin:0 auto; min-height:100%; background:var(--bg); position:relative; box-shadow:0 0 40px var(--shadow);
+    padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 40px);}
+  .appbar{position:sticky; top:0; z-index:20; background:var(--white); border-bottom:1px solid var(--g1);
+    padding:calc(env(safe-area-inset-top) + 12px) 20px 12px; display:flex; align-items:center; justify-content:space-between; gap:12px;}
+  .appbar h1{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase; font-size:34px; line-height:.95;}
+  .appbar h1::after{content:''; display:block; width:30px; height:4px; background:var(--lime); margin-top:6px; transform:skewX(-20deg);}
+  .bar-r{display:flex; align-items:center; gap:12px;}
+  .appbar .sub{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.1em; text-align:right; line-height:1.5;}
+  .appbar .sub b{display:inline-block; background:var(--lime); padding:1px 6px; font-weight:700;}
+
+  .view{display:none; padding:20px 20px 0; animation:in .5s ease;}
+  .view.active{display:block;}
+  @keyframes in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+  /* 下タブ（workout / run と同じデザイン） */
+  .tabbar{position:fixed; left:50%; transform:translateX(-50%); bottom:0; z-index:30; width:100%; max-width:var(--appw); background:var(--white);
+    border-top:1px solid var(--g1); display:grid; grid-template-columns:repeat(4,1fr); padding-bottom:env(safe-area-inset-bottom); box-shadow:0 -4px 16px var(--shadow);}
+  .tab{position:relative; height:var(--tabh); background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    color:var(--g3); font-family:'Barlow Condensed',sans-serif; font-weight:700; letter-spacing:.1em; font-size:12px; text-transform:uppercase;}
+  .tab svg{width:22px; height:22px;}
+  .tab::before{content:''; position:absolute; top:-1px; left:20%; right:20%; height:3px; background:var(--lime); transform:scaleX(0); transition:transform .5s;}
+  .tab.active{color:var(--black);}
+  .tab.active::before{transform:scaleX(1);}
+
+  .label{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase;}
+  .dim{color:var(--g3);}
+  .section-t{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase; font-size:24px; margin:26px 0 12px; display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
+  .section-t small{font-family:'JetBrains Mono',monospace; font-style:normal; font-weight:500; font-size:11px; letter-spacing:.1em;}
+  .empty{padding:26px 0; text-align:center; color:var(--g3); font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.14em;}
+  .btn{height:50px; border:2px solid var(--black); background:var(--white); cursor:pointer; padding:0 16px;
+    font-family:'Barlow Condensed','Noto Sans JP',sans-serif; font-weight:800; font-size:18px; letter-spacing:.12em; text-transform:uppercase;}
+  .btn.lime{background:var(--lime); border-color:var(--lime);}
+  .btn.dark{background:var(--black); color:var(--white);}
+  .btn.ghost{border-color:var(--g2); color:#777; font-size:15px;}
+  .btn.sm{height:38px; font-size:14px; padding:0 12px;}
+  .btn.block{display:block; width:100%;}
+  .btn:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime);}
+  .btn:active{transform:translateY(1px);}
+  .card{background:var(--white); border:1px solid var(--g1); padding:16px;}
+  .in{width:100%; height:46px; border:1px solid var(--g2); background:var(--bg); padding:0 12px; font-size:16px; border-radius:0;}
+  textarea.in{height:70px; padding:10px 12px; resize:vertical;}
+  .in:focus{outline:none; border-color:var(--black); box-shadow:inset 0 0 0 1px var(--black);}
+  .field{display:block; margin-top:14px;}
+  .field > .label{display:block; margin-bottom:8px;}
+  .note{font-size:12px; color:#777; margin-top:8px; line-height:1.6;}
+
+  /* ---------- 週のリング ---------- */
+  .week{background:var(--black); color:var(--white); padding:18px 20px; display:grid; grid-template-columns:auto 1fr; gap:18px; align-items:center; position:relative; overflow:hidden;}
+  .week::after{content:''; position:absolute; right:-30px; top:0; bottom:0; width:90px; background:var(--lime); transform:skewX(-20deg); opacity:.08;}
+  .ring{width:128px; height:128px; position:relative;}
+  .ring svg{width:100%; height:100%; transform:rotate(-90deg);}
+  .ring .v{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .ring .v b{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:44px; line-height:.9; color:var(--lime);}
+  .ring .v small{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--g3); margin-top:2px;}
+  .ring circle.p{transition:stroke-dashoffset 1s ease;}
+  .week .info{min-width:0; position:relative; z-index:1;}
+  .week .info .big{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px; line-height:1.1; margin-top:4px;}
+  .week .info .label{color:var(--g3);}
+  .days{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-top:12px; align-items:end; height:58px;}
+  .days div{display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:3px; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--g3);}
+  .days i{display:block; width:100%; background:#333; min-height:3px;}
+  .days i.on{background:var(--lime);}
+  .days div.today span{color:var(--lime);}
+
+  /* ---------- かんたん記録 ---------- */
+  .chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{height:40px; padding:0 14px; border:1px solid var(--g2); background:var(--white); cursor:pointer; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:6px;}
+  .chip.on{background:var(--black); color:var(--white); border-color:var(--black);}
+  .chip.add{border-style:dashed; color:#777;}
+  .chip:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime);}
+  .seg{display:grid; gap:6px;}
+  .seg button{height:44px; border:1px solid var(--g2); background:var(--white); cursor:pointer; font-family:'Barlow Condensed','Noto Sans JP',sans-serif; font-weight:800; font-size:17px;}
+  .seg button.on{background:var(--lime); border-color:var(--black); box-shadow:inset 0 0 0 1px var(--black);}
+  .seg button:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime);}
+  .mood button{font-size:22px; font-family:inherit;}
+  .minrow{display:grid; grid-template-columns:repeat(5,1fr) 1.2fr; gap:6px;}
+  .minrow .in{height:44px; text-align:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:18px; padding:0 4px;}
+
+  .ent{display:grid; grid-template-columns:auto 1fr auto auto; gap:12px; align-items:center; padding:12px 2px; border-bottom:1px solid var(--g1);}
+  .ent .k{width:8px; height:30px; transform:skewX(-20deg); background:var(--lime);}
+  .ent .m{min-width:0; font-size:14px; font-weight:700;}
+  .ent .m small{display:block; font-weight:400; font-size:12px; color:#777; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .ent .v{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px; white-space:nowrap;}
+  .ent .v small{font-size:13px; margin-left:2px;}
+  .ent .x{width:34px; height:34px; border:1px solid var(--g2); background:none; cursor:pointer; color:#777; font-size:14px;}
+  .ent .x.arm{background:var(--black); color:var(--lime); border-color:var(--black);}
+
+  /* ---------- FLOW ---------- */
+  .flow{background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--black); margin-bottom:10px; display:grid; grid-template-columns:1fr auto; align-items:center;}
+  .flow .bd{padding:14px 14px 12px; min-width:0;}
+  .flow h3{font-size:16px; font-weight:700;}
+  .flow .meta{font-family:'JetBrains Mono',monospace; font-size:11px; color:#777; margin-top:4px;}
+  .flow .poses{font-size:12px; color:#555; margin-top:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .flow .act{display:flex; flex-direction:column; gap:6px; padding:10px;}
+  .flow .play{width:56px; height:56px; background:var(--lime); border:2px solid var(--black); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .flow .play svg{width:22px; height:22px;}
+  .flow .ed{height:28px; background:none; border:1px solid var(--g2); font-size:11px; cursor:pointer; color:#555;}
+  .opts{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:12px; font-size:13px;}
+  .opts label{display:flex; align-items:center; gap:8px;}
+  .opts input{width:20px; height:20px; accent-color:var(--black);}
+
+  .editor .pr{display:grid; grid-template-columns:1fr 78px auto auto auto; gap:6px; align-items:center; margin-top:6px;}
+  .editor .pr .in{height:42px;}
+  .editor .pr .sec{text-align:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:18px; padding:0 4px;}
+  .editor .pr button{width:34px; height:42px; border:1px solid var(--g2); background:var(--white); cursor:pointer; font-size:14px;}
+  .editor .tot{font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:10px; text-align:right;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px;}
+
+  /* ---------- フロー再生（全画面） ---------- */
+  .player{position:fixed; inset:0; z-index:100; background:var(--black); color:var(--white); display:flex; flex-direction:column;
+    padding:calc(env(safe-area-inset-top) + 16px) calc(env(safe-area-inset-right) + 20px) calc(env(safe-area-inset-bottom) + 18px) calc(env(safe-area-inset-left) + 20px);}
+  .pl-top{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+  .pl-top .label{color:var(--g3);}
+  .pl-x{height:40px; padding:0 14px; background:none; border:1px solid #444; color:var(--white); cursor:pointer; font-weight:700;}
+  .pl-prog{display:flex; gap:3px; margin-top:12px;}
+  .pl-prog i{flex:1; height:4px; background:#333;}
+  .pl-prog i.done{background:var(--lime);}
+  .pl-prog i.cur{background:linear-gradient(90deg, var(--lime) var(--p,0%), #333 var(--p,0%));}
+  .pl-main{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px; min-height:0;}
+  .pl-step{font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.14em; color:var(--g3);}
+  .pl-name{font-size:clamp(28px, 8vw, 54px); font-weight:700; line-height:1.25; max-width:16em;}
+  .pl-ring{width:min(56vw, 34vh); aspect-ratio:1; position:relative; margin-top:8px;}
+  .pl-ring svg{width:100%; height:100%; transform:rotate(-90deg);}
+  .pl-ring .t{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:min(20vw, 13vh); color:var(--lime); font-variant-numeric:tabular-nums;}
+  .pl-next{font-size:14px; color:var(--g3);}
+  .pl-next b{color:var(--white); margin-left:6px;}
+  .pl-ctrl{display:grid; grid-template-columns:1fr 1.6fr 1fr; gap:8px;}
+  .pl-ctrl button{height:60px; background:var(--black); color:var(--white); border:1px solid #555; font-family:'Barlow Condensed','Noto Sans JP',sans-serif; font-weight:800; font-size:20px; letter-spacing:.08em; cursor:pointer;}
+  .pl-ctrl button.main{background:var(--lime); color:var(--black); border-color:var(--lime);}
+  .pl-ctrl button:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime);}
+  .player.paused .pl-ring .t{animation:blink 1.2s steps(2) infinite;}
+  @keyframes blink{50%{opacity:.35}}
+  .pl-done{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center;}
+  .pl-done h2{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:64px; line-height:.9; color:var(--lime);}
+  .pl-done .sum{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--g3);}
+  .pl-done .seg{width:min(100%, 420px);}
+  .pl-done .seg button{background:var(--black); color:var(--white); border-color:#555;}
+  .pl-done .seg button.on{background:var(--lime); color:var(--black);}
+  .pl-done .btn{width:min(100%, 420px);}
+  @media (orientation:landscape) and (max-height:520px){
+    .pl-main{flex-direction:row; gap:28px;}
+    .pl-main .txt{text-align:left;}
+    .pl-ring{width:min(30vw, 52vh);}
+    .pl-ctrl button{height:48px;}
+  }
+
+  /* ---------- BREATH ---------- */
+  .br{background:var(--black); color:var(--white); padding:18px 16px 20px; text-align:center; position:relative; overflow:hidden;}
+  .br-stage{height:280px; display:flex; align-items:center; justify-content:center; position:relative;}
+  .br-guide{position:absolute; width:240px; height:240px; border-radius:50%; border:1px dashed #444;}
+  .br-c{width:240px; height:240px; border-radius:50%; background:radial-gradient(circle at 50% 45%, var(--lime), #9fc400 70%); transform:scale(.42);
+    display:flex; align-items:center; justify-content:center; box-shadow:0 0 60px rgba(206,255,0,.25);}
+  .br-txt{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none;}
+  .br-txt b{font-size:26px; font-weight:700; color:var(--white); text-shadow:0 1px 8px rgba(0,0,0,.6);}
+  .br-txt span{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:44px; line-height:1; color:var(--white); text-shadow:0 1px 8px rgba(0,0,0,.6);}
+  .br-left{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--g3); margin-top:6px;}
+  .pat{display:grid; grid-template-columns:repeat(3,1fr); gap:6px;}
+  .pat button{border:1px solid var(--g2); background:var(--white); cursor:pointer; padding:10px 6px; text-align:center;}
+  .pat button b{display:block; font-family:'Barlow Condensed','Noto Sans JP',sans-serif; font-weight:800; font-size:17px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pat button small{display:block; font-size:11px; color:#555; margin-top:2px;}
+  .pat button.on{background:var(--lime); border-color:var(--black); box-shadow:inset 0 0 0 1px var(--black);}
+  .pat button:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime);}
+
+  /* ---------- LOG ---------- */
+  .chart{background:var(--black); color:var(--white); padding:16px 14px 10px;}
+  .chart svg{display:block; width:100%; height:auto; overflow:visible;}
+  .chart .ax{font-family:'JetBrains Mono',monospace; font-size:10px; fill:var(--g3);}
+  .chart .vl{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:13px; fill:var(--white);}
+  .brk{border-top:2px solid var(--black);}
+  .brk div{display:grid; grid-template-columns:7em 1fr auto; gap:10px; align-items:center; padding:9px 0; border-bottom:1px solid var(--g1); font-size:13px;}
+  .brk i{display:block; height:10px; background:var(--black);}
+  .brk b{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:18px; white-space:nowrap;}
+  .day-h{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; margin:18px 0 2px; display:flex; justify-content:space-between;}
+  .day-h small{font-weight:500; color:#777;}
+  .goalrow{display:flex; gap:8px; align-items:center;}
+  .goalrow .in{max-width:130px; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:24px;}
+
+  .toast{position:fixed; left:50%; bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 16px); transform:translate(-50%, 20px); background:var(--black); color:var(--lime);
+    padding:12px 18px; font-family:'JetBrains Mono',monospace; font-size:13px; z-index:150; opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap;}
+  .toast.on{opacity:1; transform:translate(-50%, 0);}
+
+  @media (min-width:768px){
+    :root{--appw:100%;}
+    .app{box-shadow:none;}
+    .view{padding-top:24px; padding-left:max(28px, env(safe-area-inset-left)); padding-right:max(28px, env(safe-area-inset-right));}
+    .appbar{padding-left:max(28px, env(safe-area-inset-left)); padding-right:max(28px, env(safe-area-inset-right));}
+    .cols{display:grid; grid-template-columns:minmax(340px, 2fr) 3fr; gap:28px; align-items:start;}
+    .col{min-width:0;}
+    .col-r > .section-t:first-child{margin-top:0;}
+    .tab{flex-direction:row; gap:8px; font-size:14px;}
+    #flowList{display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:10px;}
+    #flowList .flow{margin-bottom:0;}
+  }
+  @media (orientation:landscape) and (max-height:520px){
+    :root{--tabh:46px;}
+    .appbar{position:static; padding-top:calc(env(safe-area-inset-top) + 8px); padding-bottom:8px;}
+    .appbar h1{font-size:24px;}
+    .appbar h1::after{display:none;}
+    .view{padding-top:14px;}
+    .tab{flex-direction:row; gap:8px; font-size:13px;}
+    .tab svg{width:18px; height:18px;}
+    .br-stage{height:220px;}
+  }
+  @media (prefers-reduced-motion: reduce){ .view{animation:none;} .player.paused .pl-ring .t{animation:none;} }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="appbar">
+    <h1 id="viewTitle">Active</h1>
+    <div class="bar-r">
+      <div class="sub" id="barSub">—</div>
+      <div data-menu-slot></div>
+    </div>
+  </header>
+
+  <!-- TODAY: 週のリング + かんたん記録 -->
+  <main class="view active" id="v-today">
+    <div class="cols"><div class="col col-l">
+      <div class="week">
+        <div class="ring">
+          <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#333" stroke-width="12"/><circle class="p" id="ringP" cx="60" cy="60" r="52" fill="none" stroke="#ceff00" stroke-width="12" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg>
+          <div class="v"><b id="wkMin">0</b><small>MIN</small></div>
+        </div>
+        <div class="info">
+          <div class="label">THIS WEEK</div>
+          <div class="big" id="wkMsg"></div>
+          <div class="days" id="wkDays"></div>
+        </div>
+      </div>
+
+      <div class="section-t"><span>Today</span><small id="todaySum"></small></div>
+      <div id="todayList"></div>
+    </div><div class="col col-r">
+      <div class="section-t"><span>Quick log</span><small data-i18n="quickNote"></small></div>
+      <div class="card">
+        <div class="field" style="margin-top:0;"><span class="label">ACTIVITY</span><div class="chips" id="typeChips"></div></div>
+        <div class="field" id="customRow" hidden><span class="label" data-i18n="newType"></span>
+          <div style="display:flex; gap:6px;"><input class="in" id="customIn" maxlength="20"><button class="btn dark sm" id="customAdd" data-i18n="add"></button></div>
+        </div>
+        <div class="field"><span class="label">TIME (min)</span>
+          <div class="minrow" id="minRow"></div>
+        </div>
+        <div class="field"><span class="label" data-i18n="intensity"></span><div class="seg" id="intSeg" style="grid-template-columns:repeat(3,1fr);"></div></div>
+        <div class="field"><span class="label" data-i18n="moodQ"></span><div class="seg mood" id="moodSeg" style="grid-template-columns:repeat(5,1fr);"></div></div>
+        <label class="field"><span class="label" data-i18n="memo"></span><textarea class="in" id="qMemo" data-i18n-ph="memoPh"></textarea></label>
+        <button class="btn lime block" id="qSave" style="margin-top:16px; height:56px; font-size:20px;" data-i18n="logIt"></button>
+      </div>
+    </div></div>
+  </main>
+
+  <!-- FLOW: ガイド付きセッション -->
+  <main class="view" id="v-flow">
+    <div id="flowHome">
+      <div class="section-t" style="margin-top:0;"><span>Flows</span><small data-i18n="flowNote"></small></div>
+      <div id="flowList"></div>
+      <button class="btn block" id="flowNew" style="margin-top:12px;" data-i18n="newFlow"></button>
+      <div class="opts">
+        <label><input type="checkbox" id="optVoice"><span data-i18n="voice"></span></label>
+        <label><input type="checkbox" id="optSound"><span data-i18n="sound"></span></label>
+        <label><input type="checkbox" id="optWake"><span data-i18n="wake"></span></label>
+      </div>
+      <p class="note" data-i18n="flowHint"></p>
+    </div>
+    <div id="flowEdit" class="editor" hidden>
+      <div class="section-t" style="margin-top:0;"><span>Edit flow</span></div>
+      <div class="card">
+        <label class="field" style="margin-top:0;"><span class="label" data-i18n="flowName"></span><input class="in" id="feName" maxlength="40"></label>
+        <div class="field"><span class="label" data-i18n="category"></span><div class="chips" id="feType"></div></div>
+        <div class="field"><span class="label" data-i18n="poses"></span><div id="fePoses"></div></div>
+        <button class="btn sm" id="feAdd" style="margin-top:10px;" data-i18n="addPose"></button>
+        <div class="tot" id="feTot"></div>
+        <div class="row2"><button class="btn ghost" id="feCancel" data-i18n="cancel"></button><button class="btn lime" id="feSave" data-i18n="save"></button></div>
+        <button class="btn ghost block sm" id="feDel" style="margin-top:10px;" data-i18n="delFlow"></button>
+      </div>
+    </div>
+  </main>
+
+  <!-- BREATH: 呼吸ガイド -->
+  <main class="view" id="v-breath">
+    <div class="cols"><div class="col col-l">
+      <div class="br">
+        <div class="label dim" id="brPat">BREATH</div>
+        <div class="br-stage"><div class="br-guide"></div><div class="br-c" id="brC"></div><div class="br-txt"><b id="brWord"></b><span id="brCount"></span></div></div>
+        <div class="br-left" id="brLeft"></div>
+      </div>
+      <button class="btn lime block" id="brGo" style="margin-top:10px; height:60px; font-size:22px;"></button>
+    </div><div class="col col-r">
+      <div class="section-t"><span>Pattern</span></div>
+      <div class="pat" id="patSel"></div>
+      <div class="section-t"><span>Time</span></div>
+      <div class="seg" id="brMin" style="grid-template-columns:repeat(4,1fr);"></div>
+      <p class="note" data-i18n="brNote"></p>
+    </div></div>
+  </main>
+
+  <!-- LOG -->
+  <main class="view" id="v-log">
+    <div class="cols"><div class="col col-l">
+      <div class="section-t" style="margin-top:0;"><span>Weekly min</span><small data-i18n="last8"></small></div>
+      <div class="chart" id="chWeek"></div>
+      <div class="section-t"><span>This month</span><small data-i18n="byType"></small></div>
+      <div class="brk" id="brk"></div>
+      <div class="section-t"><span>Setup</span></div>
+      <div class="card">
+        <span class="label" data-i18n="goalLbl"></span>
+        <div class="goalrow" style="margin-top:8px;"><input class="in" id="goalIn" type="number" inputmode="numeric" min="0" step="10"><b style="font-family:'Barlow Condensed';font-size:20px;">min</b><button class="btn dark sm" id="goalSave" data-i18n="save"></button></div>
+        <p class="note" data-i18n="goalNote"></p>
+        <div class="field"><span class="label">BACKUP</span>
+          <textarea class="in" id="bkArea" style="height:110px; font-family:'JetBrains Mono',monospace; font-size:12px;" data-i18n-ph="bkPh"></textarea>
+          <div class="row2" style="margin-top:8px;"><button class="btn sm" id="bkOut" data-i18n="bkOut"></button><button class="btn dark sm" id="bkIn" data-i18n="bkIn"></button></div>
+        </div>
+      </div>
+    </div><div class="col col-r">
+      <div class="section-t"><span>History</span><small id="histSum"></small></div>
+      <div id="hist"></div>
+    </div></div>
+  </main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-v="today">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M4 12l5 5L20 6"/></svg>Today
+    </button>
+    <button class="tab" data-v="flow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><circle cx="12" cy="4.5" r="1.8"/><path d="M12 7v6M5 10l7 3 7-3M8 21l4-8 4 8"/></svg>Flow
+    </button>
+    <button class="tab" data-v="breath">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>Breath
+    </button>
+    <button class="tab" data-v="log">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Log
+    </button>
+  </nav>
+</div>
+
+<!-- フロー再生（全画面） -->
+<div class="player" id="player" hidden role="dialog" aria-modal="true" aria-label="Flow player">
+  <div class="pl-top"><div class="label" id="plTitle"></div><button class="pl-x" id="plStop"></button></div>
+  <div class="pl-prog" id="plProg"></div>
+  <div class="pl-main" id="plMain">
+    <div class="txt"><div class="pl-step" id="plStep"></div><div class="pl-name" id="plName"></div><div class="pl-next" id="plNext"></div></div>
+    <div class="pl-ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="none" stroke="#222" stroke-width="6"/><circle id="plArc" cx="60" cy="60" r="54" fill="none" stroke="#ceff00" stroke-width="6" stroke-dasharray="339.3" stroke-dashoffset="0"/></svg><div class="t" id="plT">0</div></div>
+  </div>
+  <div class="pl-ctrl" id="plCtrl"><button id="plPrev">◀◀</button><button class="main" id="plPause"></button><button id="plSkip">▶▶</button></div>
+  <div class="pl-done" id="plDone" hidden>
+    <h2>NICE<br>WORK.</h2>
+    <div class="sum" id="plSum"></div>
+    <div class="label" style="color:#aaa;" data-i18n="moodQ"></div>
+    <div class="seg mood" id="plMood" style="grid-template-columns:repeat(5,1fr);"></div>
+    <button class="btn lime" id="plSave" data-i18n="logIt"></button>
+    <button class="btn dark" id="plSkipSave" style="border-color:#555;" data-i18n="noSave"></button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  /* ===== データ（localStorage: tdiv_active_v1）=====
+   * logs : [{id, at, type, min, intensity(1-3), mood(1-5|null), memo, source:'manual'|'flow'|'breath'}]
+   * flows: [{id, name, type, poses:[{name, sec}]}]
+   * types: [自分で追加した種目名]
+   * settings: {week_goal_min, voice, sound, wake, br_pat, br_min}
+   */
+  const KEY = 'tdiv_active_v1';
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2, '0');
+  const fmtD = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const uid = p => p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const lsGet = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
+  const lsSet = (k, v) => { try{ localStorage.setItem(k, v); }catch(e){} };
+
+  /* ===== 言語 ===== */
+  const I18N = {
+    yoga:{ja:'ヨガ', en:'Yoga', ko:'요가', zh:'瑜伽'},
+    walk:{ja:'ウォーキング', en:'Walking', ko:'걷기', zh:'散步'},
+    stretch:{ja:'ストレッチ', en:'Stretching', ko:'스트레칭', zh:'拉伸'},
+    meditation:{ja:'瞑想', en:'Meditation', ko:'명상', zh:'冥想'},
+    pilates:{ja:'ピラティス', en:'Pilates', ko:'필라테스', zh:'普拉提'},
+    cycling:{ja:'サイクリング', en:'Cycling', ko:'자전거', zh:'骑行'},
+    swim:{ja:'水泳', en:'Swimming', ko:'수영', zh:'游泳'},
+    other:{ja:'その他', en:'Other', ko:'기타', zh:'其他'},
+    addType:{ja:'＋ 追加', en:'+ Add', ko:'+ 추가', zh:'+ 添加'},
+    newType:{ja:'新しい種目の名前', en:'New activity name', ko:'새 종목 이름', zh:'新项目名称'},
+    add:{ja:'追加', en:'Add', ko:'추가', zh:'添加'},
+    quickNote:{ja:'やったらすぐ記録', en:'log it right away', ko:'바로 기록', zh:'做完马上记录'},
+    intensity:{ja:'きつさ', en:'Intensity', ko:'강도', zh:'强度'},
+    int1:{ja:'楽', en:'Easy', ko:'가벼움', zh:'轻松'},
+    int2:{ja:'ふつう', en:'Moderate', ko:'보통', zh:'适中'},
+    int3:{ja:'ややきつい', en:'Hard', ko:'조금 힘듦', zh:'有点累'},
+    moodQ:{ja:'終わったあとの気分', en:'How do you feel?', ko:'끝난 후 기분', zh:'结束后的感觉'},
+    memo:{ja:'メモ', en:'Notes', ko:'메모', zh:'备注'},
+    memoPh:{ja:'場所・体の感じなど', en:'Where, how your body felt…', ko:'장소, 몸 상태 등', zh:'地点、身体感受等'},
+    logIt:{ja:'記録する', en:'Log it', ko:'기록하기', zh:'记录'},
+    noSave:{ja:'記録せずに閉じる', en:'Close without saving', ko:'기록하지 않고 닫기', zh:'不记录并关闭'},
+    saved:{ja:'記録しました', en:'Logged', ko:'기록했습니다', zh:'已记录'},
+    deleted:{ja:'削除しました', en:'Deleted', ko:'삭제했습니다', zh:'已删除'},
+    needMin:{ja:'時間を選んでください', en:'Choose a time', ko:'시간을 선택하세요', zh:'请选择时间'},
+    needType:{ja:'種目を選んでください', en:'Choose an activity', ko:'종목을 선택하세요', zh:'请选择项目'},
+    nothingToday:{ja:'今日はまだ記録がありません', en:'NOTHING LOGGED TODAY', ko:'오늘은 아직 기록이 없습니다', zh:'今天还没有记录'},
+    goalLeft:{ja:'あと {m} 分', en:'{m} min to go', ko:'{m}분 남음', zh:'还差 {m} 分钟'},
+    goalDone:{ja:'今週の目標達成！', en:'Weekly goal reached!', ko:'이번 주 목표 달성!', zh:'本周目标达成！'},
+    ofGoal:{ja:'目標 {g} 分', en:'goal {g} min', ko:'목표 {g}분', zh:'目标 {g} 分钟'},
+    flowNote:{ja:'流れに沿って音声で案内', en:'guided with voice & sound', ko:'음성으로 안내', zh:'语音引导'},
+    newFlow:{ja:'＋ 新しいフローを作る', en:'+ New flow', ko:'+ 새 플로 만들기', zh:'+ 新建流程'},
+    edit:{ja:'編集', en:'Edit', ko:'편집', zh:'编辑'},
+    voice:{ja:'ポーズ名を読み上げる', en:'Read pose names aloud', ko:'포즈 이름 읽어주기', zh:'朗读姿势名称'},
+    sound:{ja:'切り替え音', en:'Transition sound', ko:'전환음', zh:'切换提示音'},
+    wake:{ja:'画面を消さない', en:'Keep screen on', ko:'화면 켜두기', zh:'保持屏幕常亮'},
+    flowHint:{ja:'スマホを床に置いて使えるよう、大きな文字と音で次のポーズを知らせます。横向きにすると見やすい配置になります。', en:'Big text and sounds tell you the next pose so you can leave the phone on the floor. Landscape works nicely too.', ko:'휴대폰을 바닥에 두고도 볼 수 있도록 큰 글씨와 소리로 다음 포즈를 알려줍니다. 가로 화면도 지원합니다.', zh:'用大字和提示音告诉你下一个姿势，手机放在地上也能用。横屏也很方便。'},
+    flowName:{ja:'フローの名前', en:'Flow name', ko:'플로 이름', zh:'流程名称'},
+    category:{ja:'記録するときの種目', en:'Logged as', ko:'기록 종목', zh:'记录为'},
+    poses:{ja:'ポーズ（名前・秒数）', en:'Poses (name · seconds)', ko:'포즈 (이름 · 초)', zh:'姿势（名称 · 秒）'},
+    addPose:{ja:'＋ ポーズを追加', en:'+ Add pose', ko:'+ 포즈 추가', zh:'+ 添加姿势'},
+    cancel:{ja:'キャンセル', en:'Cancel', ko:'취소', zh:'取消'},
+    save:{ja:'保存', en:'Save', ko:'저장', zh:'保存'},
+    delFlow:{ja:'このフローを削除', en:'Delete this flow', ko:'이 플로 삭제', zh:'删除此流程'},
+    delSure:{ja:'もう一度押すと削除', en:'Tap again to delete', ko:'한 번 더 누르면 삭제', zh:'再点一次删除'},
+    total:{ja:'合計 {t}', en:'Total {t}', ko:'합계 {t}', zh:'合计 {t}'},
+    posesN:{ja:'{n}ポーズ', en:'{n} poses', ko:'{n}포즈', zh:'{n}个姿势'},
+    needPose:{ja:'ポーズを1つ以上入れてください', en:'Add at least one pose', ko:'포즈를 하나 이상 넣어주세요', zh:'请至少添加一个姿势'},
+    ready:{ja:'準備', en:'Get ready', ko:'준비', zh:'准备'},
+    next:{ja:'次', en:'Next', ko:'다음', zh:'下一个'},
+    last:{ja:'これで最後', en:'Last one', ko:'마지막', zh:'最后一个'},
+    pause:{ja:'一時停止', en:'Pause', ko:'일시정지', zh:'暂停'},
+    resume:{ja:'再開', en:'Resume', ko:'재개', zh:'继续'},
+    stop:{ja:'終了', en:'End', ko:'종료', zh:'结束'},
+    doneSum:{ja:'{n}ポーズ · {t}', en:'{n} poses · {t}', ko:'{n}포즈 · {t}', zh:'{n}个姿势 · {t}'},
+    finished:{ja:'おつかれさまでした', en:'Well done', ko:'수고하셨습니다', zh:'辛苦了'},
+    inhale:{ja:'吸う', en:'Inhale', ko:'들이쉬기', zh:'吸气'},
+    hold:{ja:'止める', en:'Hold', ko:'멈추기', zh:'屏息'},
+    exhale:{ja:'吐く', en:'Exhale', ko:'내쉬기', zh:'呼气'},
+    brStart:{ja:'はじめる', en:'Start', ko:'시작', zh:'开始'},
+    brStop:{ja:'やめる', en:'Stop', ko:'그만', zh:'停止'},
+    brLeft:{ja:'残り {t}', en:'{t} left', ko:'남은 시간 {t}', zh:'剩余 {t}'},
+    brReady:{ja:'円に合わせて呼吸', en:'Breathe with the circle', ko:'원에 맞춰 호흡', zh:'跟着圆圈呼吸'},
+    brNote:{ja:'1分以上続けると「瞑想」として自動で記録されます。途中でやめた場合も、1分以上ならその時間を記録します。', en:'Sessions of 1 min or more are logged as Meditation automatically, even if you stop early.', ko:'1분 이상 하면 "명상"으로 자동 기록됩니다. 중간에 멈춰도 1분 이상이면 기록합니다.', zh:'持续1分钟以上会自动记录为“冥想”，中途停止也会记录。'},
+    box:{ja:'ボックス', en:'Box', ko:'박스', zh:'方块'},
+    boxS:{ja:'集中・落ち着く', en:'focus & calm', ko:'집중·안정', zh:'专注·平静'},
+    p478:{ja:'4-7-8', en:'4-7-8', ko:'4-7-8', zh:'4-7-8'},
+    p478S:{ja:'寝る前に', en:'before sleep', ko:'자기 전에', zh:'睡前'},
+    relax:{ja:'リラックス', en:'Relax', ko:'릴랙스', zh:'放松'},
+    relaxS:{ja:'吐く息を長く', en:'longer exhale', ko:'길게 내쉬기', zh:'延长呼气'},
+    brLogged:{ja:'瞑想 {m}分を記録しました', en:'Logged {m} min of meditation', ko:'명상 {m}분을 기록했습니다', zh:'已记录冥想 {m} 分钟'},
+    last8:{ja:'直近8週', en:'last 8 weeks', ko:'최근 8주', zh:'最近8周'},
+    byType:{ja:'種目ごとの時間', en:'minutes by activity', ko:'종목별 시간', zh:'各项目时间'},
+    goalLbl:{ja:'1週間の目標（分）', en:'Weekly goal (min)', ko:'주간 목표(분)', zh:'每周目标（分钟）'},
+    goalNote:{ja:'WHOは「中くらいの運動を週150分以上」をすすめています。', en:'WHO recommends at least 150 min of moderate activity per week.', ko:'WHO는 주 150분 이상의 중간 강도 운동을 권장합니다.', zh:'WHO建议每周进行至少150分钟的中等强度运动。'},
+    bkPh:{ja:'「書き出し」でここにデータが出ます。別の端末で貼り付けて「読み込み」。', en:'Export puts your data here. Paste it on another device and Import.', ko:'내보내기를 누르면 여기에 데이터가 나옵니다. 다른 기기에 붙여넣고 가져오기.', zh:'点“导出”后数据会显示在这里，在其他设备粘贴后点“导入”。'},
+    bkOut:{ja:'書き出し', en:'Export', ko:'내보내기', zh:'导出'},
+    bkIn:{ja:'読み込み', en:'Import', ko:'가져오기', zh:'导入'},
+    bkBad:{ja:'データの形式が正しくありません', en:'Invalid data', ko:'데이터 형식이 올바르지 않습니다', zh:'数据格式不正确'},
+    bkDone:{ja:'{n}件を読み込みました', en:'Imported {n} entries', ko:'{n}건을 가져왔습니다', zh:'已导入{n}条'},
+    noLogs:{ja:'まだ記録がありません', en:'NO ENTRIES YET', ko:'아직 기록이 없습니다', zh:'还没有记录'},
+    nEntries:{ja:'{n}件 · {m}分', en:'{n} entries · {m} min', ko:'{n}건 · {m}분', zh:'{n}条 · {m}分钟'},
+    srcFlow:{ja:'フロー', en:'flow', ko:'플로', zh:'流程'},
+    srcBreath:{ja:'呼吸ガイド', en:'breathing', ko:'호흡 가이드', zh:'呼吸引导'}
+  };
+  const WD = {ja:['日','月','火','水','木','金','土'], en:['S','M','T','W','T','F','S'], ko:['일','월','화','수','목','금','토'], zh:['日','一','二','三','四','五','六']};
+  let LANG = window.TDIV ? TDIV.lang() : 'ja';
+  const t = (k, v) => { const e = I18N[k]; let r = e ? (e[LANG] != null ? e[LANG] : e.ja) : k; if(v) for(const x in v) r = r.split('{' + x + '}').join(v[x]); return r; };
+  const BASE_TYPES = ['yoga', 'walk', 'stretch', 'meditation', 'pilates', 'cycling', 'swim', 'other'];
+  const typeLabel = k => k && k.startsWith('c:') ? k.slice(2) : t(k);
+  const mmss = s => { s = Math.max(0, Math.round(s)); return `${Math.floor(s / 60)}:${pad(s % 60)}`; };
+  const minTxt = s => { const m = Math.round(s / 60); return m >= 60 ? `${Math.floor(m / 60)}h${pad(m % 60)}` : `${m}min`; };
+
+  /* 初回だけ入れておくフロー（その時の言語で作成。あとで自由に編集できます） */
+  const P = (ja, en, ko, zh) => ({ja, en, ko, zh});
+  const PRESETS = [
+    {name:P('朝のヨガ 10分','Morning yoga 10 min','아침 요가 10분','晨间瑜伽 10分钟'), type:'yoga', poses:[
+      [P('あぐらで深呼吸','Seated breathing','책상다리로 심호흡','盘坐深呼吸'), 60],
+      [P('キャット＆カウ','Cat-cow','고양이-소 자세','猫牛式'), 60],
+      [P('ダウンドッグ','Downward dog','다운독','下犬式'), 45],
+      [P('ローランジ（右）','Low lunge (right)','로우 런지 (오른쪽)','低弓步（右）'), 40],
+      [P('ローランジ（左）','Low lunge (left)','로우 런지 (왼쪽)','低弓步（左）'), 40],
+      [P('戦士のポーズⅡ（右）','Warrior II (right)','전사 자세 II (오른쪽)','战士二式（右）'), 40],
+      [P('戦士のポーズⅡ（左）','Warrior II (left)','전사 자세 II (왼쪽)','战士二式（左）'), 40],
+      [P('木のポーズ（右）','Tree pose (right)','나무 자세 (오른쪽)','树式（右）'), 30],
+      [P('木のポーズ（左）','Tree pose (left)','나무 자세 (왼쪽)','树式（左）'), 30],
+      [P('チャイルドポーズ','Child\'s pose','아기 자세','婴儿式'), 60],
+      [P('仰向けで休む','Lying rest','누워서 휴식','仰卧休息'), 90]]},
+    {name:P('寝る前ストレッチ','Bedtime stretch','자기 전 스트레칭','睡前拉伸'), type:'stretch', poses:[
+      [P('首をゆっくり回す','Slow neck rolls','목 천천히 돌리기','慢慢转动脖子'), 40],
+      [P('肩回し','Shoulder rolls','어깨 돌리기','转肩'), 40],
+      [P('座って前屈','Seated forward fold','앉아서 전굴','坐姿前屈'), 60],
+      [P('合せきのポーズ','Butterfly','나비 자세','束角式'), 60],
+      [P('仰向けでひざ抱え','Knees to chest','무릎 끌어안기','抱膝'), 45],
+      [P('仰向けツイスト（右）','Supine twist (right)','누워서 비틀기 (오른쪽)','仰卧扭转（右）'), 45],
+      [P('仰向けツイスト（左）','Supine twist (left)','누워서 비틀기 (왼쪽)','仰卧扭转（左）'), 45],
+      [P('脚を壁に上げて休む','Legs up the wall','다리 벽에 올리기','靠墙抬腿'), 120]]},
+    {name:P('デスクワーク肩こりリセット','Desk break reset','사무직 어깨 리셋','久坐肩颈放松'), type:'stretch', poses:[
+      [P('立って背伸び','Standing reach','서서 기지개','站立伸展'), 30],
+      [P('首を横に倒す（右）','Neck side stretch (right)','목 옆으로 기울이기 (오른쪽)','侧颈拉伸（右）'), 30],
+      [P('首を横に倒す（左）','Neck side stretch (left)','목 옆으로 기울이기 (왼쪽)','侧颈拉伸（左）'), 30],
+      [P('胸を開く（手を後ろで組む）','Chest opener','가슴 열기','扩胸'), 40],
+      [P('肩甲骨寄せ','Shoulder blade squeeze','견갑골 모으기','夹肩胛骨'), 40],
+      [P('立って前屈','Standing forward fold','서서 전굴','站立前屈'), 40]]}
+  ];
+
+  let db = {logs:[], flows:[], types:[], settings:{week_goal_min:150, voice:true, sound:true, wake:true, br_pat:'box', br_min:3}};
+  let fresh = true;
+  try{ const r = JSON.parse(lsGet(KEY) || 'null'); if(r && Array.isArray(r.logs)){ fresh = false; db.logs = r.logs; db.flows = r.flows || []; db.types = r.types || []; Object.assign(db.settings, r.settings || {}); } }catch(e){}
+  if(fresh){
+    db.flows = PRESETS.map(p => ({id:uid('fl'), name:p.name[LANG] || p.name.ja, type:p.type, poses:p.poses.map(([n, s]) => ({name:n[LANG] || n.ja, sec:s}))}));
+  }
+  const save = () => lsSet(KEY, JSON.stringify(db));
+  if(fresh) save();
+
+  let toastT;
+  function toast(m){ const el = $('toast'); el.textContent = m; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), 1900); }
+
+  /* ===== 音・読み上げ・画面オン ===== */
+  let actx = null;
+  function beep(freq = 880, dur = .15, vol = .25){
+    if(!db.settings.sound) return;
+    try{
+      if(navigator.audioSession) navigator.audioSession.type = 'ambient'; // 音楽を止めずに重ねて鳴らす（iOS）
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if(actx.state === 'suspended') actx.resume();
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.frequency.value = freq; o.type = 'sine';
+      g.gain.setValueAtTime(vol, actx.currentTime); g.gain.exponentialRampToValueAtTime(.001, actx.currentTime + dur);
+      o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + dur);
+    }catch(e){}
+  }
+  const VOICE_LANG = {ja:'ja-JP', en:'en-US', ko:'ko-KR', zh:'zh-CN'};
+  function say(text){
+    if(!db.settings.voice || !('speechSynthesis' in window)) return;
+    try{ speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = VOICE_LANG[LANG]; u.rate = .95; speechSynthesis.speak(u); }catch(e){}
+  }
+  let wakeLock = null;
+  async function wake(on){
+    try{
+      if(on && db.settings.wake && 'wakeLock' in navigator && !wakeLock){ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+      if(!on && wakeLock){ await wakeLock.release(); wakeLock = null; }
+    }catch(e){}
+  }
+
+  /* ===== 共通計算 ===== */
+  const weekStart = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; };
+  const logsIn = (a, b) => db.logs.filter(l => { const d = new Date(l.at); return d >= a && d < b; });
+  const sumMin = ls => ls.reduce((a, l) => a + (+l.min || 0), 0);
+  const MOOD = ['😣', '🙁', '😐', '🙂', '😄'];
+
+  function addLog(o){
+    db.logs.push(Object.assign({id:uid('ac'), at:new Date().toISOString(), intensity:2, mood:null, memo:'', source:'manual'}, o));
+    save();
+  }
+
+  /* ===== TODAY ===== */
+  const q = {type:null, min:null, intensity:2, mood:null};
+  function renderWeek(){
+    const ws = weekStart(new Date()), we = new Date(ws); we.setDate(we.getDate() + 7);
+    const m = sumMin(logsIn(ws, we)), g = +db.settings.week_goal_min || 0;
+    $('wkMin').textContent = m;
+    $('ringP').style.strokeDashoffset = 326.7 * (1 - (g ? Math.min(1, m / g) : 0));
+    $('wkMsg').innerHTML = g ? (m >= g ? t('goalDone') : t('goalLeft', {m:g - m})) + `<div class="label" style="margin-top:4px;">${t('ofGoal', {g})}</div>` : '';
+    const today = fmtD(new Date());
+    const per = [];
+    for(let i = 0; i < 7; i++){ const a = new Date(ws); a.setDate(a.getDate() + i); const b = new Date(a); b.setDate(b.getDate() + 1); per.push({d:a, m:sumMin(logsIn(a, b))}); }
+    const mx = Math.max(30, ...per.map(p => p.m));
+    $('wkDays').innerHTML = per.map(p => `<div class="${fmtD(p.d) === today ? 'today' : ''}"><i class="${p.m ? 'on' : ''}" style="height:${p.m ? Math.max(8, p.m / mx * 40) : 3}px" title="${p.m} min"></i><span>${WD[LANG][p.d.getDay()]}</span></div>`).join('');
+  }
+  function entRow(l, withDate){
+    const d = new Date(l.at);
+    const src = l.source === 'flow' ? t('srcFlow') : l.source === 'breath' ? t('srcBreath') : '';
+    const sub = [withDate ? '' : `${pad(d.getHours())}:${pad(d.getMinutes())}`, t('int' + (l.intensity || 2)), src, l.mood ? MOOD[l.mood - 1] : '', l.memo ? esc(l.memo) : ''].filter(Boolean).join(' · ');
+    const el = document.createElement('div'); el.className = 'ent';
+    el.innerHTML = `<span class="k"></span><div class="m">${esc(typeLabel(l.type))}${l.flow ? ` <small style="display:inline">— ${esc(l.flow)}</small>` : ''}<small>${sub}</small></div><div class="v">${l.min}<small>min</small></div>`;
+    const x = document.createElement('button'); x.className = 'x'; x.textContent = '✕'; x.setAttribute('aria-label', 'delete');
+    x.onclick = () => {
+      if(!x.classList.contains('arm')){ x.classList.add('arm'); setTimeout(() => x.classList.remove('arm'), 2500); return; }
+      db.logs = db.logs.filter(y => y.id !== l.id); save(); toast(t('deleted')); render();
+    };
+    el.append(x);
+    return el;
+  }
+  function renderTodayList(){
+    const a = new Date(); a.setHours(0, 0, 0, 0); const b = new Date(a); b.setDate(b.getDate() + 1);
+    const ls = logsIn(a, b).sort((x, y) => x.at < y.at ? 1 : -1);
+    $('todaySum').textContent = ls.length ? `${sumMin(ls)} min` : '';
+    const box = $('todayList'); box.innerHTML = '';
+    if(!ls.length){ box.innerHTML = `<div class="empty">${t('nothingToday')}</div>`; return; }
+    const wrap = document.createElement('div'); wrap.style.borderTop = '2px solid #000';
+    ls.forEach(l => wrap.append(entRow(l)));
+    box.append(wrap);
+  }
+  function renderQuick(){
+    const types = BASE_TYPES.concat(db.types.map(x => 'c:' + x));
+    const c = $('typeChips'); c.innerHTML = '';
+    types.forEach(k => {
+      const b = document.createElement('button'); b.className = 'chip' + (q.type === k ? ' on' : ''); b.textContent = typeLabel(k);
+      b.setAttribute('aria-pressed', q.type === k);
+      b.onclick = () => { q.type = k; renderQuick(); };
+      c.append(b);
+    });
+    const ad = document.createElement('button'); ad.className = 'chip add'; ad.textContent = t('addType');
+    ad.onclick = () => { $('customRow').hidden = !$('customRow').hidden; if(!$('customRow').hidden) $('customIn').focus(); };
+    c.append(ad);
+    const mr = $('minRow'); mr.innerHTML = '';
+    [10, 20, 30, 45, 60].forEach(m => {
+      const b = document.createElement('button'); b.className = 'chip' + (q.min === m && !$('minIn') ? ' on' : ''); b.style.justifyContent = 'center'; b.style.padding = '0';
+      b.textContent = m; b.onclick = () => { q.min = m; minIn.value = ''; renderQuick(); };
+      mr.append(b);
+    });
+    mr.append(minIn);
+    [...mr.querySelectorAll('.chip')].forEach(b => b.classList.toggle('on', +b.textContent === q.min && !minIn.value));
+    $('intSeg').innerHTML = '';
+    [1, 2, 3].forEach(i => { const b = document.createElement('button'); b.textContent = t('int' + i); b.className = q.intensity === i ? 'on' : ''; b.onclick = () => { q.intensity = i; renderQuick(); }; $('intSeg').append(b); });
+    $('moodSeg').innerHTML = '';
+    MOOD.forEach((m, i) => { const b = document.createElement('button'); b.textContent = m; b.className = q.mood === i + 1 ? 'on' : ''; b.setAttribute('aria-label', 'mood ' + (i + 1)); b.onclick = () => { q.mood = q.mood === i + 1 ? null : i + 1; renderQuick(); }; $('moodSeg').append(b); });
+  }
+  const minIn = document.createElement('input');
+  minIn.className = 'in'; minIn.type = 'number'; minIn.inputMode = 'numeric'; minIn.min = '1'; minIn.placeholder = '—'; minIn.setAttribute('aria-label', 'minutes');
+  minIn.oninput = () => { const v = parseInt(minIn.value); q.min = v > 0 ? v : null; $('minRow').querySelectorAll('.chip').forEach(b => b.classList.remove('on')); };
+  $('customAdd').onclick = () => {
+    const v = $('customIn').value.trim(); if(!v) return;
+    if(!db.types.includes(v)) db.types.push(v);
+    save(); q.type = 'c:' + v; $('customIn').value = ''; $('customRow').hidden = true; renderQuick();
+  };
+  $('qSave').onclick = () => {
+    if(!q.type){ toast(t('needType')); return; }
+    if(!(q.min > 0)){ toast(t('needMin')); return; }
+    addLog({type:q.type, min:q.min, intensity:q.intensity, mood:q.mood, memo:$('qMemo').value.trim()});
+    $('qMemo').value = ''; q.mood = null; minIn.value = '';
+    toast(t('saved')); render();
+  };
+  function renderToday(){ renderWeek(); renderTodayList(); renderQuick(); }
+
+  /* ===== FLOW ===== */
+  const flowSecs = f => f.poses.reduce((a, p) => a + (+p.sec || 0), 0);
+  function renderFlowList(){
+    const box = $('flowList'); box.innerHTML = '';
+    if(!db.flows.length){ box.innerHTML = `<div class="empty">${t('noLogs')}</div>`; }
+    db.flows.forEach(f => {
+      const el = document.createElement('div'); el.className = 'flow';
+      el.innerHTML = `<div class="bd"><h3>${esc(f.name)}</h3><div class="meta">${typeLabel(f.type)} · ${t('posesN', {n:f.poses.length})} · ${mmss(flowSecs(f))}</div><div class="poses">${f.poses.map(p => esc(p.name)).join(' → ')}</div></div>
+        <div class="act"><button class="play" aria-label="play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg></button><button class="ed">${t('edit')}</button></div>`;
+      el.querySelector('.play').onclick = () => startFlow(f);
+      el.querySelector('.ed').onclick = () => openEditor(f);
+      box.append(el);
+    });
+    $('optVoice').checked = !!db.settings.voice; $('optSound').checked = !!db.settings.sound; $('optWake').checked = !!db.settings.wake;
+  }
+  $('optVoice').onchange = () => { db.settings.voice = $('optVoice').checked; save(); if(db.settings.voice) say(t('ready')); };
+  $('optSound').onchange = () => { db.settings.sound = $('optSound').checked; save(); beep(); };
+  $('optWake').onchange = () => { db.settings.wake = $('optWake').checked; save(); };
+
+  // エディタ
+  let ed = null, delArm = false;
+  function openEditor(f){
+    ed = f ? JSON.parse(JSON.stringify(f)) : {id:null, name:'', type:'yoga', poses:[{name:'', sec:30}]};
+    $('flowHome').hidden = true; $('flowEdit').hidden = false; $('feDel').hidden = !f; delArm = false; $('feDel').textContent = t('delFlow');
+    $('feName').value = ed.name;
+    renderEditor(); window.scrollTo(0, 0);
+  }
+  function closeEditor(){ ed = null; $('flowHome').hidden = false; $('flowEdit').hidden = true; renderFlowList(); }
+  function renderEditor(){
+    const c = $('feType'); c.innerHTML = '';
+    BASE_TYPES.concat(db.types.map(x => 'c:' + x)).forEach(k => {
+      const b = document.createElement('button'); b.className = 'chip' + (ed.type === k ? ' on' : ''); b.textContent = typeLabel(k);
+      b.onclick = () => { ed.type = k; renderEditor(); }; c.append(b);
+    });
+    const box = $('fePoses'); box.innerHTML = '';
+    ed.poses.forEach((p, i) => {
+      const r = document.createElement('div'); r.className = 'pr';
+      const n = document.createElement('input'); n.className = 'in'; n.value = p.name; n.maxLength = 40; n.placeholder = t('poses').split('（')[0].split(' (')[0] + ' ' + (i + 1);
+      n.oninput = () => { p.name = n.value; };
+      const s = document.createElement('input'); s.className = 'in sec'; s.type = 'number'; s.inputMode = 'numeric'; s.min = '5'; s.step = '5'; s.value = p.sec; s.setAttribute('aria-label', 'seconds');
+      s.oninput = () => { p.sec = Math.max(0, parseInt(s.value) || 0); $('feTot').textContent = t('total', {t:mmss(flowSecs(ed))}); };
+      const up = document.createElement('button'); up.textContent = '↑'; up.disabled = i === 0; up.setAttribute('aria-label', 'move up');
+      up.onclick = () => { ed.poses.splice(i - 1, 0, ed.poses.splice(i, 1)[0]); renderEditor(); };
+      const dn = document.createElement('button'); dn.textContent = '↓'; dn.disabled = i === ed.poses.length - 1; dn.setAttribute('aria-label', 'move down');
+      dn.onclick = () => { ed.poses.splice(i + 1, 0, ed.poses.splice(i, 1)[0]); renderEditor(); };
+      const x = document.createElement('button'); x.textContent = '✕'; x.setAttribute('aria-label', 'remove');
+      x.onclick = () => { ed.poses.splice(i, 1); renderEditor(); };
+      r.append(n, s, up, dn, x); box.append(r);
+    });
+    $('feTot').textContent = t('total', {t:mmss(flowSecs(ed))});
+  }
+  $('feAdd').onclick = () => { ed.poses.push({name:'', sec:30}); renderEditor(); const ins = $('fePoses').querySelectorAll('.pr .in:not(.sec)'); ins[ins.length - 1].focus(); };
+  $('feCancel').onclick = closeEditor;
+  $('feSave').onclick = () => {
+    ed.name = $('feName').value.trim() || t('newFlow').replace(/^[+＋]\s*/, '');
+    ed.poses = ed.poses.filter(p => p.name.trim() && p.sec > 0).map(p => ({name:p.name.trim(), sec:p.sec}));
+    if(!ed.poses.length){ toast(t('needPose')); renderEditor(); return; }
+    if(ed.id){ const i = db.flows.findIndex(f => f.id === ed.id); db.flows[i] = ed; } else { ed.id = uid('fl'); db.flows.push(ed); }
+    save(); toast(t('saved')); closeEditor();
+  };
+  $('feDel').onclick = () => {
+    if(!delArm){ delArm = true; $('feDel').textContent = t('delSure'); setTimeout(() => { delArm = false; if(ed) $('feDel').textContent = t('delFlow'); }, 2500); return; }
+    db.flows = db.flows.filter(f => f.id !== ed.id); save(); toast(t('deleted')); closeEditor();
+  };
+  $('flowNew').onclick = () => openEditor(null);
+
+  // 再生
+  // pl = {f, idx(-1=準備), end(ms), left(ms, 一時停止中), paused, active(実際に動いた秒), lastTick, mood}
+  let pl = null, plTimer = null;
+  const PREP = 5;
+  function startFlow(f){
+    pl = {f, idx:-1, end:Date.now() + PREP * 1000, paused:false, active:0, lastTick:Date.now(), mood:null, warned:0};
+    $('player').hidden = false; $('plDone').hidden = true; $('plMain').hidden = false; $('plCtrl').hidden = false; $('plProg').hidden = false;
+    $('player').classList.remove('paused');
+    $('plTitle').textContent = f.name;
+    $('plProg').innerHTML = f.poses.map(() => '<i></i>').join('');
+    document.body.style.overflow = 'hidden';
+    beep(660); say(t('ready') + '。' + f.poses[0].name);
+    wake(true);
+    clearInterval(plTimer); plTimer = setInterval(plTick, 200);
+    plRender();
+  }
+  function goPose(i){
+    if(i >= pl.f.poses.length){ plFinish(); return; }
+    pl.idx = Math.max(0, i); pl.warned = 0;
+    const p = pl.f.poses[pl.idx];
+    if(pl.paused) pl.left = p.sec * 1000; else pl.end = Date.now() + p.sec * 1000;
+    beep(988, .25, .3); setTimeout(() => beep(1318, .3, .25), 180);
+    const nx = pl.f.poses[pl.idx + 1];
+    say(p.name + (nx ? '' : '。' + t('last')));
+    if(navigator.vibrate) navigator.vibrate(120);
+    plRender();
+  }
+  function plTick(){
+    if(!pl || pl.done) return;
+    const now = Date.now();
+    if(!pl.paused){ if(pl.idx >= 0) pl.active += (now - pl.lastTick) / 1000; }
+    pl.lastTick = now;
+    if(pl.paused) return;
+    const rem = (pl.end - now) / 1000;
+    // 残り3秒でカウント音
+    const s = Math.ceil(rem);
+    if(s <= 3 && s >= 1 && pl.warned !== s){ pl.warned = s; beep(523, .08, .18); }
+    if(rem <= 0){ goPose(pl.idx + 1); return; }
+    plRender();
+  }
+  function plRender(){
+    if(!pl) return;
+    const f = pl.f, i = pl.idx, prep = i < 0;
+    const p = prep ? null : f.poses[i];
+    const total = prep ? PREP : p.sec;
+    const rem = pl.paused ? (pl.left || 0) / 1000 : Math.max(0, (pl.end - Date.now()) / 1000);
+    $('plStep').textContent = prep ? t('ready').toUpperCase() : `${i + 1} / ${f.poses.length}`;
+    $('plName').textContent = prep ? f.poses[0].name : p.name;
+    const nx = prep ? null : f.poses[i + 1];
+    $('plNext').innerHTML = prep ? '' : nx ? `${t('next')}<b>${esc(nx.name)}</b>` : `<b>${t('last')}</b>`;
+    $('plT').textContent = rem >= 60 ? mmss(Math.ceil(rem)) : Math.ceil(rem);
+    $('plArc').style.strokeDashoffset = 339.3 * (1 - rem / total);
+    $('plArc').style.stroke = prep ? '#ffffff' : '#ceff00';
+    [...$('plProg').children].forEach((el, k) => {
+      el.className = k < i ? 'done' : k === i ? 'cur' : '';
+      if(k === i) el.style.setProperty('--p', (100 * (1 - rem / total)) + '%');
+    });
+    $('plPause').textContent = pl.paused ? t('resume') : t('pause');
+    $('plStop').textContent = t('stop');
+  }
+  $('plPause').onclick = () => {
+    if(!pl) return;
+    if(pl.paused){ pl.paused = false; pl.end = Date.now() + pl.left; pl.lastTick = Date.now(); }
+    else { pl.paused = true; pl.left = Math.max(0, pl.end - Date.now()); }
+    $('player').classList.toggle('paused', pl.paused);
+    plRender();
+  };
+  $('plSkip').onclick = () => pl && goPose(pl.idx + 1);
+  $('plPrev').onclick = () => pl && goPose(pl.idx <= 0 ? 0 : pl.idx - 1);
+  $('plStop').onclick = () => { if(!pl) return; if(pl.done || pl.active < 60) closePlayer(); else plFinish(); };
+  function plFinish(){
+    pl.done = true; clearInterval(plTimer);
+    beep(784, .2); setTimeout(() => beep(988, .2), 200); setTimeout(() => beep(1318, .4), 400);
+    say(t('finished'));
+    $('plMain').hidden = true; $('plCtrl').hidden = true; $('plDone').hidden = false;
+    [...$('plProg').children].forEach(el => el.className = 'done');
+    const done = Math.min(pl.f.poses.length, pl.idx + 1);
+    $('plSum').textContent = t('doneSum', {n:done, t:minTxt(pl.active)});
+    renderPlMood();
+    $('plStop').textContent = '✕';
+    wake(false);
+  }
+  function renderPlMood(){
+    $('plMood').innerHTML = '';
+    MOOD.forEach((m, i) => { const b = document.createElement('button'); b.textContent = m; b.className = pl.mood === i + 1 ? 'on' : ''; b.onclick = () => { pl.mood = pl.mood === i + 1 ? null : i + 1; renderPlMood(); }; $('plMood').append(b); });
+  }
+  $('plSave').onclick = () => {
+    addLog({type:pl.f.type, min:Math.max(1, Math.round(pl.active / 60)), intensity:1, mood:pl.mood, source:'flow', flow:pl.f.name});
+    toast(t('saved')); closePlayer(); go('today');
+  };
+  $('plSkipSave').onclick = closePlayer;
+  function closePlayer(){
+    clearInterval(plTimer); pl = null;
+    $('player').hidden = true; document.body.style.overflow = '';
+    try{ speechSynthesis.cancel(); }catch(e){}
+    wake(false); render();
+  }
+  document.addEventListener('keydown', e => {
+    if($('player').hidden || !pl || pl.done) return;
+    if(e.key === ' '){ e.preventDefault(); $('plPause').click(); }
+    if(e.key === 'ArrowRight') $('plSkip').click();
+    if(e.key === 'ArrowLeft') $('plPrev').click();
+    if(e.key === 'Escape') $('plStop').click();
+  });
+
+  /* ===== BREATH ===== */
+  const PATS = {
+    box:{name:'box', sub:'boxS', ph:[['inhale', 4], ['hold', 4], ['exhale', 4], ['hold', 4]]},
+    p478:{name:'p478', sub:'p478S', ph:[['inhale', 4], ['hold', 7], ['exhale', 8]]},
+    relax:{name:'relax', sub:'relaxS', ph:[['inhale', 4], ['exhale', 6]]}
+  };
+  let br = null, brTimer = null;
+  function brPhase(){
+    const pat = PATS[db.settings.br_pat].ph;
+    const [k, s] = pat[br.pi];
+    br.phEnd = Date.now() + s * 1000; br.phLen = s;
+    const c = $('brC');
+    c.style.transition = `transform ${s}s ${k === 'hold' ? 'linear' : 'ease-in-out'}`;
+    if(k === 'inhale') c.style.transform = 'scale(1)';
+    if(k === 'exhale') c.style.transform = 'scale(.42)';
+    $('brWord').textContent = t(k);
+    beep(k === 'inhale' ? 523 : k === 'exhale' ? 392 : 440, .12, .12);
+  }
+  function brTick(){
+    if(!br) return;
+    const now = Date.now();
+    const left = br.end - now;
+    if(left <= 0){ brStop(true); return; }
+    if(now >= br.phEnd){ br.pi = (br.pi + 1) % PATS[db.settings.br_pat].ph.length; brPhase(); }
+    $('brCount').textContent = Math.max(1, Math.ceil((br.phEnd - now) / 1000));
+    $('brLeft').textContent = t('brLeft', {t:mmss(left / 1000)});
+  }
+  function brStart(){
+    br = {start:Date.now(), end:Date.now() + db.settings.br_min * 60000, pi:0};
+    brPhase(); wake(true);
+    clearInterval(brTimer); brTimer = setInterval(brTick, 200); brTick();
+    renderBreath();
+  }
+  function brStop(complete){
+    if(!br) return;
+    const secs = (Date.now() - br.start) / 1000;
+    clearInterval(brTimer); br = null; wake(false);
+    const c = $('brC'); c.style.transition = 'transform 1.2s ease'; c.style.transform = 'scale(.42)';
+    if(secs >= 60){
+      const m = Math.round(secs / 60);
+      addLog({type:'meditation', min:m, intensity:1, source:'breath', memo:t(PATS[db.settings.br_pat].name)});
+      toast(t('brLogged', {m}));
+      if(complete){ beep(784, .2); setTimeout(() => beep(1046, .4), 220); }
+    }
+    renderBreath();
+  }
+  $('brGo').onclick = () => br ? brStop(false) : brStart();
+  function renderBreath(){
+    $('brGo').textContent = br ? t('brStop') : t('brStart');
+    $('brGo').className = 'btn block ' + (br ? 'dark' : 'lime');
+    const sel = $('patSel'); sel.innerHTML = '';
+    Object.keys(PATS).forEach(k => {
+      const p = PATS[k], b = document.createElement('button');
+      b.className = db.settings.br_pat === k ? 'on' : ''; b.disabled = !!br;
+      b.innerHTML = `<b>${t(p.name)}</b><small>${p.ph.map(x => x[1]).join('-')}</small><small>${t(p.sub)}</small>`;
+      b.onclick = () => { db.settings.br_pat = k; save(); renderBreath(); };
+      sel.append(b);
+    });
+    const ms = $('brMin'); ms.innerHTML = '';
+    [1, 3, 5, 10].forEach(m => { const b = document.createElement('button'); b.textContent = m + ' min'; b.className = db.settings.br_min === m ? 'on' : ''; b.disabled = !!br; b.onclick = () => { db.settings.br_min = m; save(); renderBreath(); }; ms.append(b); });
+    $('brPat').textContent = `${t(PATS[db.settings.br_pat].name).toUpperCase()} · ${PATS[db.settings.br_pat].ph.map(x => x[1]).join('-')}`;
+    if(!br){ $('brWord').textContent = t('brReady'); $('brCount').textContent = ''; $('brLeft').textContent = `${db.settings.br_min}:00`; }
+  }
+
+  /* ===== LOG ===== */
+  function renderLog(){
+    // 週ごとの合計（8週）
+    const W = 340, H = 160, L = 30, B = 22, T = 16;
+    const ws0 = weekStart(new Date()), weeks = [];
+    for(let i = 7; i >= 0; i--){ const s = new Date(ws0); s.setDate(s.getDate() - 7 * i); const e = new Date(s); e.setDate(e.getDate() + 7); weeks.push({s, v:sumMin(logsIn(s, e))}); }
+    const goal = +db.settings.week_goal_min || 0, max = Math.max(60, goal, ...weeks.map(w => w.v)) * 1.15;
+    const bw = (W - L) / 8, y = v => T + (H - T - B) * (1 - v / max);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="weekly minutes">`;
+    [0, .5, 1].forEach(f => { const v = max / 1.15 * f; s += `<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="#333"/><text class="ax" x="${L - 4}" y="${y(v) + 3}" text-anchor="end">${Math.round(v)}</text>`; });
+    weeks.forEach((w, i) => {
+      const x = L + i * bw + 5, cur = i === 7;
+      if(w.v > 0){ s += `<rect x="${x}" y="${y(w.v)}" width="${bw - 10}" height="${H - B - y(w.v)}" fill="${cur ? '#ceff00' : (goal && w.v >= goal ? '#ffffff' : '#777')}"/><text class="vl" x="${x + (bw - 10) / 2}" y="${y(w.v) - 4}" text-anchor="middle">${w.v}</text>`; }
+      s += `<text class="ax" x="${x + (bw - 10) / 2}" y="${H - 6}" text-anchor="middle">${w.s.getMonth() + 1}/${w.s.getDate()}</text>`;
+    });
+    if(goal) s += `<line x1="${L}" x2="${W}" y1="${y(goal)}" y2="${y(goal)}" stroke="#ceff00" stroke-dasharray="4 4"/><text class="ax" x="${L + 4}" y="${y(goal) - 4}" style="fill:#ceff00">GOAL ${goal}</text>`;
+    $('chWeek').innerHTML = s + '</svg>';
+
+    // 今月の種目別
+    const now = new Date(), ms = new Date(now.getFullYear(), now.getMonth(), 1), me = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const by = {};
+    logsIn(ms, me).forEach(l => { by[l.type] = (by[l.type] || 0) + (+l.min || 0); });
+    const arr = Object.entries(by).sort((a, b) => b[1] - a[1]), mx = Math.max(1, ...arr.map(a => a[1]));
+    $('brk').innerHTML = arr.length ? arr.map(([k, v]) => `<div><span>${esc(typeLabel(k))}</span><i style="width:${Math.max(4, v / mx * 100)}%"></i><b>${v} min</b></div>`).join('') : `<div class="empty" style="display:block">${t('noLogs')}</div>`;
+
+    // 履歴
+    const all = db.logs.slice().sort((a, b) => a.at < b.at ? 1 : -1);
+    $('histSum').textContent = t('nEntries', {n:all.length, m:sumMin(all)});
+    const h = $('hist'); h.innerHTML = '';
+    if(!all.length){ h.innerHTML = `<div class="empty">${t('noLogs')}</div>`; }
+    let curDay = '', wrap = null;
+    all.slice(0, 120).forEach(l => {
+      const d = new Date(l.at), k = fmtD(d);
+      if(k !== curDay){
+        curDay = k;
+        const dayMin = sumMin(all.filter(x => fmtD(new Date(x.at)) === k));
+        const hd = document.createElement('div'); hd.className = 'day-h'; hd.innerHTML = `<span>${k.replace(/-/g, '.')} ${WD[LANG][d.getDay()]}</span><small>${dayMin} min</small>`;
+        h.append(hd);
+        wrap = document.createElement('div'); wrap.style.borderTop = '2px solid #000'; h.append(wrap);
+      }
+      wrap.append(entRow(l));
+    });
+    $('goalIn').value = db.settings.week_goal_min || '';
+  }
+  $('goalSave').onclick = () => { db.settings.week_goal_min = Math.max(0, parseInt($('goalIn').value) || 0); save(); toast(t('saved')); renderLog(); };
+  $('bkOut').onclick = () => { $('bkArea').value = JSON.stringify(db); $('bkArea').select(); };
+  $('bkIn').onclick = () => {
+    let d; try{ d = JSON.parse($('bkArea').value.trim()); }catch(e){}
+    if(!d || !Array.isArray(d.logs)){ toast(t('bkBad')); return; }
+    const ids = new Set(db.logs.map(l => l.id)), fids = new Set(db.flows.map(f => f.id));
+    const add = d.logs.filter(l => l && l.id && l.at && !ids.has(l.id));
+    db.logs = db.logs.concat(add);
+    db.flows = db.flows.concat((d.flows || []).filter(f => f && f.id && !fids.has(f.id)));
+    db.types = [...new Set(db.types.concat(d.types || []))];
+    save(); toast(t('bkDone', {n:add.length})); render();
+  };
+
+  /* ===== タブ ===== */
+  let current = 'today';
+  const TITLES = {today:'Active', flow:'Flow', breath:'Breath', log:'Log'};
+  function go(v){
+    if(br && v !== 'breath') brStop(false);
+    current = v;
+    document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.id === 'v-' + v));
+    document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.dataset.v === v));
+    $('viewTitle').textContent = TITLES[v];
+    if(v === 'flow' && ed) closeEditor();
+    render(); window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('.tab').forEach(el => el.onclick = () => go(el.dataset.v));
+  function renderBar(){ const d = new Date(); $('barSub').innerHTML = `<b>ACTIVE</b><br>${fmtD(d).replace(/-/g, '.')} ${WD[LANG][d.getDay()]}`; }
+  function render(){
+    renderBar();
+    ({today:renderToday, flow:() => { if(!ed) renderFlowList(); }, breath:renderBreath, log:renderLog})[current]();
+  }
+  function applyLang(){
+    document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = t(el.dataset.i18nPh));
+    render();
+  }
+  window.addEventListener('tdiv:lang', e => { LANG = e.detail; applyLang(); if(pl) plRender(); });
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && (pl && !pl.done || br)) wake(true); });
+
+  applyLang();
+  if('serviceWorker' in navigator && location.protocol === 'https:'){
+    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+  }
+})();
+</script>
+</body>
+</html>

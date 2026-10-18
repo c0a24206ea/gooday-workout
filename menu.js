@@ -9,6 +9,7 @@
     home:    {ja:'ホーム', en:'Home', ko:'홈', zh:'首页'},
     run:     {ja:'ランニング', en:'Running', ko:'러닝', zh:'跑步'},
     workout: {ja:'筋トレ', en:'Workout', ko:'근력 운동', zh:'力量训练'},
+    active:  {ja:'ヨガ・ウォーキング', en:'Yoga & walking', ko:'요가·걷기', zh:'瑜伽·散步'},
     lang:    {ja:'言語', en:'Language', ko:'언어', zh:'语言'},
     menu:    {ja:'メニュー', en:'Menu', ko:'메뉴', zh:'菜单'},
     close:   {ja:'閉じる', en:'Close', ko:'닫기', zh:'关闭'}
@@ -16,7 +17,8 @@
   const PAGES = [
     {key:'home', href:'./', en:'HOME', files:['', 'index.html']},
     {key:'workout', href:'workout.html', en:'WORKOUT', files:['workout.html']},
-    {key:'run', href:'run.html', en:'RUNNING', files:['run.html']}
+    {key:'run', href:'run.html', en:'RUNNING', files:['run.html']},
+    {key:'active', href:'active.html', en:'ACTIVE', files:['active.html']}
   ];
 
   const get = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
@@ -60,7 +62,7 @@
   .tm-nav a{display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:16px 2px; border-bottom:1px solid #333; color:#fff; text-decoration:none;
     opacity:0; transform:translateX(16px); transition:opacity .4s ease, transform .4s ease, color .2s;}
   .tm-panel.open .tm-nav a{opacity:1; transform:none;}
-  .tm-panel.open .tm-nav a:nth-child(1){transition-delay:.12s;} .tm-panel.open .tm-nav a:nth-child(2){transition-delay:.18s;} .tm-panel.open .tm-nav a:nth-child(3){transition-delay:.24s;}
+  .tm-panel.open .tm-nav a:nth-child(1){transition-delay:.12s;} .tm-panel.open .tm-nav a:nth-child(2){transition-delay:.18s;} .tm-panel.open .tm-nav a:nth-child(3){transition-delay:.24s;} .tm-panel.open .tm-nav a:nth-child(4){transition-delay:.30s;}
   .tm-nav b{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:34px; line-height:1; letter-spacing:.01em;}
   .tm-nav small{font-size:12px; color:#aaa; white-space:nowrap;}
   .tm-nav a:hover b, .tm-nav a:focus-visible b{color:var(--lime,#ceff00);}
