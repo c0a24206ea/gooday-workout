@@ -1,6 +1,6 @@
 // TIVS - offline support
 // 更新したら CACHE の番号を上げると、利用者の端末で新しい版に切り替わります
-const CACHE = 'tdiv-v17';
+const CACHE = 'tdiv-v18';
 const SHELL = ['./', './index.html', './workout.html', './run.html', './active.html', './menu.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 // Cloudflare などは /workout.html → /workout に転送するので、転送後のレスポンスは

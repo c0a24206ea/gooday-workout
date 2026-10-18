@@ -79,7 +79,12 @@
   .sp-big[data-spotify-btn="mini"] .go{padding:0 12px; font-size:14px;}
   @media (orientation:landscape) and (max-height:520px){ .sp-big{min-height:48px;} .sp-big .ic{min-height:44px;} }
   .sp-big .go i{font-style:normal;}
-  @media (max-width:479px){ .sp-big:not([data-spotify-btn="mini"]) .go i{display:none;} .sp-big:not([data-spotify-btn="mini"]) .go{font-size:24px; padding:0 18px;} }
+  .sp-big .go{display:flex; align-items:center; gap:10px;}
+  .sp-big .go .pl{width:30px; height:30px; padding:7px; box-sizing:border-box; background:var(--lime,#ceff00); color:var(--black,#000); flex:none; transition:transform .25s ease;}
+  .sp-big:hover .go .pl{transform:scale(1.08);}
+  .sp-big:hover .go{text-decoration:none;}
+  .sp-big[data-spotify-btn="mini"] .go .pl{width:22px; height:22px; padding:5px;}
+  @media (max-width:479px){ .sp-big:not([data-spotify-btn="mini"]) .go i{display:none;} .sp-big:not([data-spotify-btn="mini"]) .go{padding:0 14px;} }
   @media (max-width:400px){ .appbar .sub{font-size:10px; letter-spacing:.04em; white-space:nowrap;} .appbar h1{font-size:30px;} }
   .tm-ov{position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity .45s ease;}
   .tm-ov.open{opacity:1; pointer-events:auto;}
@@ -164,7 +169,7 @@
   const NOTE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>';
   function fillBig(){
     document.querySelectorAll('[data-spotify-btn]').forEach(a => {
-      a.innerHTML = `<span class="ic">${NOTE}</span><span class="tx"><b>${tr('spBig')}</b><small>${tr('spSub')}</small></span><span class="go"><i>SPOTIFY </i>↗</span>`;
+      a.innerHTML = `<span class="ic">${NOTE}</span><span class="tx"><b>${tr('spBig')}</b><small>${tr('spSub')}</small></span><span class="go"><i>SPOTIFY</i><svg class="pl" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></svg></span>`;
       a.setAttribute('aria-label', tr('spBig'));
     });
   }
