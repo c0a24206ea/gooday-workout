@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TRAINING">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>WORKOUT — TRAINING DIVISION</title>
+<script src="menu.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* Palette: only colors used on zetadivision.com */
+  :root{
+    --bg:#fdfdfd;
+    --white:#ffffff;
+    --black:#000000;
+    --lime:#ceff00;
+    --g1:#eeeeee;
+    --g2:#cccccc;
+    --g3:#aaaaaa;
+    --shadow:rgba(0,0,0,.1);
+    --tabh:64px;
+    --appw:480px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  [hidden]{display:none !important;}
+  ::selection{background:var(--lime); color:var(--black);}
+  html,body{height:100%;}
+  body{
+    background:var(--g1); color:var(--black);
+    font-family:'Noto Sans JP',sans-serif; -webkit-font-smoothing:antialiased;
+  }
+  button{font-family:inherit; color:var(--black);}
+  input,select,textarea{font-family:inherit; color:var(--black);}
+
+  /* ---------- App shell ---------- */
+  .app{
+    max-width:var(--appw); margin:0 auto; min-height:100%; background:var(--bg);
+    position:relative; box-shadow:0 0 40px var(--shadow);
+    padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 96px);
+  }
+  .appbar{
+    position:sticky; top:0; z-index:20; background:var(--white);
+    border-bottom:1px solid var(--g1);
+    padding:calc(env(safe-area-inset-top) + 12px) 20px 12px;
+    display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+  }
+  .appbar h1{
+    font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase;
+    font-size:34px; line-height:.95; letter-spacing:.01em;
+  }
+  .appbar h1::after{content:''; display:block; width:30px; height:4px; background:var(--lime); margin-top:6px; transform:skewX(-20deg);}
+  .appbar .sub{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.1em; text-align:right; line-height:1.5;}
+  .appbar .sub b{display:inline-block; background:var(--lime); padding:1px 6px; font-weight:700;}
+  .bar-r{display:flex; flex-direction:row; align-items:center; gap:12px;}
+  .lang-top{height:30px; border:1px solid var(--black); background:var(--white); font-size:13px; font-weight:700; padding:0 6px; border-radius:0; color:var(--black); cursor:pointer;}
+  .lang-top:focus{outline:none; box-shadow:inset 0 0 0 2px var(--lime);}
+
+  .view{display:none; padding:20px 20px 0; animation:in .5s ease;}
+  .view.active{display:block;}
+  @keyframes in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+  /* ---------- Bottom tab bar ---------- */
+  .tabbar{
+    position:fixed; left:50%; transform:translateX(-50%); bottom:0; z-index:30;
+    width:100%; max-width:var(--appw); background:var(--white); border-top:1px solid var(--g1);
+    display:grid; grid-template-columns:repeat(4,1fr);
+    padding-bottom:env(safe-area-inset-bottom);
+    box-shadow:0 -4px 16px var(--shadow);
+  }
+  .tab{
+    position:relative; height:var(--tabh); background:none; border:none; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    color:var(--g3); font-family:'Barlow Condensed',sans-serif; font-weight:700; letter-spacing:.1em; font-size:12px; text-transform:uppercase;
+  }
+  .tab svg{width:22px; height:22px;}
+  .tab::before{content:''; position:absolute; top:-1px; left:20%; right:20%; height:3px; background:var(--lime); transform:scaleX(0); transition:transform .5s;}
+  .tab.active{color:var(--black);}
+  .tab.active::before{transform:scaleX(1);}
+
+  /* ---------- Common ---------- */
+  .label{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase;}
+  .label.dim{color:var(--g3);}
+  .section-t{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase; font-size:24px; margin:26px 0 12px; display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
+  .section-t small{font-family:'JetBrains Mono',monospace; font-style:normal; font-weight:500; font-size:11px; letter-spacing:.1em;}
+  .empty{padding:30px 0; text-align:center; color:var(--g3); font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.14em;}
+  .tags{display:flex; gap:6px; margin-top:6px; flex-wrap:wrap;}
+  .tg{font-family:'JetBrains Mono',monospace; font-size:10px; background:var(--lime); color:var(--black); padding:2px 7px; font-weight:700; white-space:nowrap;}
+  .tg.plain{background:var(--g1);}
+  .tg.pr{background:var(--black); color:var(--lime);}
+
+  .btn{
+    font-family:'Barlow Condensed','Noto Sans JP',sans-serif; font-weight:800; font-size:18px; letter-spacing:.12em; text-transform:uppercase;
+    background:var(--black); color:var(--white); border:1px solid var(--black); padding:0 24px; height:50px; cursor:pointer; border-radius:0; transition:background .12s, color .12s;
+  }
+  .btn:active, .btn:hover{background:var(--lime); color:var(--black);}
+  .btn.line{background:var(--white); color:var(--black);}
+  .btn.line:active, .btn.line:hover{background:var(--lime);}
+  .btn.block{width:100%;}
+  .btn.sm{height:40px; font-size:15px; padding:0 14px; letter-spacing:.06em;}
+
+  /* ---------- Today ---------- */
+  .hero{background:var(--lime); padding:20px 20px 18px; position:relative; overflow:hidden;}
+  .hero::after{content:''; position:absolute; right:-30px; top:-20px; width:120px; height:200px; background:var(--white); opacity:.35; transform:skewX(-18deg);}
+  .hero-row{display:flex; align-items:flex-end; justify-content:space-between; position:relative; z-index:1;}
+  .hero-num{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:96px; line-height:.8;}
+  .hero-num small{font-size:36px; margin-left:2px;}
+  #rateNum{display:inline-block; font-variant-numeric:tabular-nums;}
+  /* 達成率のグリッチ演出（ジジジ…と数字が乱れてから確定） */
+  .hero-num.glitch{transform:translateX(var(--gx,0)) skewX(var(--gs,0)); text-shadow:3px 0 0 #ffffff, -3px 0 0 rgba(0,0,0,.28);}
+  .hero-num.glitch #rateNum{animation:flick .08s steps(2) infinite;}
+  .hero-num.lock{animation:lockin .28s ease-out;}
+  @keyframes flick{50%{opacity:.6; clip-path:inset(0 0 38% 0);}}
+  @keyframes lockin{0%{transform:scale(1.08); text-shadow:5px 0 0 #ffffff;} 100%{transform:none; text-shadow:none;}}
+  .tbig.glitch{transform:translateX(var(--gx,0)) skewX(var(--gs,0)); text-shadow:3px 0 0 #ffffff, -3px 0 0 #aaaaaa; animation:flick .08s steps(2) infinite;}
+  .tbig.lock{animation:lockin2 .28s ease-out;}
+  @keyframes lockin2{0%{transform:scale(1.06); text-shadow:4px 0 0 #ffffff;} 100%{transform:none; text-shadow:none;}}
+  @media (prefers-reduced-motion: reduce){ .hero-num.glitch,.hero-num.lock,.tbig.glitch,.tbig.lock{animation:none; transform:none; text-shadow:none;} }
+  .hero-side{text-align:right; padding-bottom:6px;}
+  .hero-side .big{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:30px; line-height:1;}
+  .hero-bar{height:10px; background:var(--white); margin-top:18px; position:relative; z-index:1; transform:skewX(-20deg); overflow:hidden;}
+  .hero-bar i{position:absolute; left:0; top:0; bottom:0; background:var(--black); transition:width .5s ease;}
+
+  .minis{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;}
+  .mini{background:var(--white); border:1px solid var(--g1); padding:12px 12px 10px; min-width:0;}
+  .mini .n{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:30px; line-height:1; margin-top:4px; white-space:nowrap;}
+  .mini .n small{font-size:14px; font-weight:700;}
+
+  .ex{background:var(--white); border:1px solid var(--g1); margin-bottom:10px; position:relative; transition:border-color .15s;}
+  .ex::before{content:''; position:absolute; left:0; top:0; bottom:0; width:6px; background:var(--g1); transition:background .2s;}
+  .ex.done::before{background:var(--lime);}
+  .ex.done{border-color:var(--black);}
+  .ex-top{display:flex; align-items:flex-start; gap:12px; padding:14px 14px 0 18px;}
+  .ex-head{flex:1; min-width:0;}
+  .ex-title{font-weight:700; font-size:17px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .ex-pct{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:34px; line-height:1; white-space:nowrap;}
+  .ex-pct small{font-size:14px;}
+  .prev{padding:10px 14px 0 18px; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.6;}
+  .prev .label{margin-right:6px;}
+  .sets{padding:12px 14px 0 18px;}
+  .set-h,.set-row{display:grid; grid-template-columns:24px 1fr 1fr 56px 34px 28px; gap:6px; align-items:center;}
+  .set-h{margin-bottom:4px;}
+  .set-h span{text-align:center;}
+  .set-row{margin-bottom:6px;}
+  .sn{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:20px; text-align:center;}
+  .set-row input{
+    width:100%; min-width:0; height:42px; border:1px solid var(--g2); background:var(--bg);
+    font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:24px; text-align:center; border-radius:0;
+  }
+  .set-row input:focus,.set-row select:focus{outline:none; border-color:var(--black); background:var(--white);}
+  .set-row select{
+    width:100%; height:42px; border:1px solid var(--g2); background:var(--bg); border-radius:0;
+    font-family:'JetBrains Mono',monospace; font-size:16px; text-align:center; text-align-last:center; -webkit-appearance:none; appearance:none;
+  }
+  .set-row.warm input,.set-row.warm select{color:var(--g3);}
+  .wu{height:42px; border:1px solid var(--g2); background:var(--white); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:16px; color:var(--g3); cursor:pointer;}
+  .wu.on{background:var(--black); color:var(--lime); border-color:var(--black);}
+  .del{background:none; border:none; color:var(--g3); font-size:22px; cursor:pointer; height:42px; line-height:1;}
+  .del:active{color:var(--black);}
+  .ex-actions{display:flex; gap:8px; padding:12px 14px 14px 18px; flex-wrap:wrap;}
+  .ex-bar{height:4px; background:var(--g1);}
+  .ex-bar i{display:block; height:100%; width:0; background:var(--black); transition:width .3s;}
+  .ex.done .ex-bar i{background:var(--lime);}
+
+  .row-add{display:flex; margin-top:14px;}
+  .row-add select,.row-add input{flex:1; min-width:0; border:1px solid var(--black); border-right:none; padding:0 12px; height:50px; font-size:16px; font-weight:700; background:var(--white); border-radius:0;}
+  .row-add select:focus,.row-add input:focus{outline:none; box-shadow:inset 0 0 0 2px var(--lime);}
+
+  textarea{width:100%; border:1px solid var(--g2); background:var(--white); padding:12px; resize:vertical; border-radius:0; font-size:16px;}
+  textarea:focus{outline:none; border-color:var(--black);}
+  .memo{height:90px;}
+
+  /* Rest timer */
+  .rest{
+    position:fixed; left:50%; transform:translateX(-50%); z-index:25;
+    bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 10px);
+    width:calc(100% - 32px); max-width:448px; background:var(--black); color:var(--white);
+    display:flex; align-items:center; gap:6px; padding:8px 8px 8px 16px; box-shadow:0 6px 20px rgba(0,0,0,.25);
+  }
+  .rest .label{color:var(--g3);}
+  .rest .t{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:36px; color:var(--lime); line-height:1; flex:1; margin-left:6px;}
+  .rest button{height:40px; min-width:44px; background:transparent; color:var(--white); border:1px solid var(--g3); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:16px; cursor:pointer;}
+  .rest.fin{background:var(--lime);}
+  .rest.fin .t,.rest.fin .label{color:var(--black);}
+  .rest.fin button{color:var(--black); border-color:var(--black);}
+
+  /* ---------- Body ---------- */
+  .wcard{background:var(--white); border:1px solid var(--g1); padding:20px;}
+  .wtop{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+  .date-in{height:36px; border:1px solid var(--g2); background:var(--white); font-family:'JetBrains Mono',monospace; font-size:14px; padding:0 8px; border-radius:0;}
+  .wrow{display:flex; align-items:baseline; gap:8px; margin-top:6px;}
+  .wrow input{width:100%; max-width:200px; border:none; border-bottom:4px solid var(--black); background:transparent; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:72px; line-height:1; padding:0 4px; border-radius:0;}
+  .wrow input:focus{outline:none; border-bottom-color:var(--lime);}
+  .wrow .u{font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:26px;}
+  .wlatest{background:var(--black); color:var(--white); padding:18px 20px; margin-top:10px; display:flex; align-items:flex-end; justify-content:space-between;}
+  .wlatest .label{color:var(--white);}
+  .wlatest .v{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:52px; line-height:.9; color:var(--lime);}
+  .wlatest .v span{font-size:22px; color:var(--white);}
+  .wlatest .d{font-family:'JetBrains Mono',monospace; font-size:13px; text-align:right;}
+  .wlatest .d b{display:inline-block; background:var(--lime); color:var(--black); padding:1px 7px; margin-top:4px;}
+  .wl-item{display:flex; align-items:center; gap:10px; padding:10px 8px 10px 16px; background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--lime); margin-bottom:8px;}
+  .wl-item .tl-d{flex:1;}
+
+  /* ---------- Charts ---------- */
+  .chart-box{background:var(--white); border:1px solid var(--g1); padding:16px 10px 6px;}
+  .sel{width:100%; border:1px solid var(--black); background:var(--white); font-weight:700; font-size:16px; padding:0 12px; height:48px; margin-bottom:10px; border-radius:0;}
+  .sel:focus{outline:none; box-shadow:inset 0 0 0 2px var(--lime);}
+  .seg{display:grid; grid-template-columns:repeat(4,1fr); border:1px solid var(--black); margin-bottom:10px;}
+  .seg button{height:40px; background:var(--white); border:none; border-right:1px solid var(--black); font-weight:700; font-size:12px; cursor:pointer;}
+  .seg button:last-child{border-right:none;}
+  .seg button.on{background:var(--black); color:var(--lime);}
+  .best{margin-top:10px; padding:12px 14px; background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--black); font-family:'JetBrains Mono',monospace; font-size:12px;}
+  .best b{font-family:'Barlow Condensed',sans-serif; font-size:24px; margin:0 4px;}
+  svg.chart{display:block; width:100%; height:auto; overflow:visible;}
+
+  /* ---------- Log ---------- */
+  .tl-month{margin-bottom:26px;}
+  .tl-month h3{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:28px; text-transform:uppercase; display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px;}
+  .tl-month h3 small{font-family:'JetBrains Mono',monospace; font-style:normal; font-weight:500; font-size:11px; letter-spacing:.1em;}
+  .tl{border-left:2px solid var(--black); margin-left:5px;}
+  .tl-item{position:relative; padding:14px 0 14px 20px; border-bottom:1px solid var(--g1); display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center;}
+  .tl-item.tap{cursor:pointer;}
+  .tl-item::before{content:''; position:absolute; left:-7px; top:20px; width:12px; height:12px; background:var(--white); border:2px solid var(--black); transform:skewX(-10deg);}
+  .tl-item.full::before{background:var(--lime);}
+  .tl-d{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700;}
+  .tl-t{font-weight:700; font-size:14px; margin-top:2px;}
+  .tl-t span{font-weight:500; font-size:12px; margin-left:8px; color:var(--g3);}
+  .tl-bar{height:4px; background:var(--g1); margin-top:8px; max-width:200px;}
+  .tl-bar i{display:block; height:100%; background:var(--black);}
+  .tl-item.full .tl-bar i{background:var(--lime);}
+  .tl-w{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:22px; text-align:right; white-space:nowrap;}
+  .logbar{display:grid; gap:8px; margin-bottom:18px;}
+  .logbar .txt{height:46px;}
+  .tl-memo{font-size:12px; line-height:1.6; margin-top:8px; padding-left:8px; border-left:3px solid var(--lime); white-space:pre-wrap; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .tl-item.open .tl-memo{display:none;}
+  .tl-time{font-family:'JetBrains Mono',monospace; font-size:11px; margin-top:6px;}
+  .tl-detail .acts{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+  .tl-detail .acts .btn{margin-top:0;}
+  .tl-detail{grid-column:1 / -1; font-size:13px; line-height:1.9; background:var(--white); border:1px solid var(--g1); padding:10px 12px;}
+  .tl-detail .exl{font-family:'JetBrains Mono',monospace; font-size:12px;}
+  .tl-detail .exl b{font-family:'Noto Sans JP',sans-serif; font-size:13px; margin-right:6px;}
+  .tl-detail .memo-v{margin-top:4px; white-space:pre-wrap; border-left:3px solid var(--lime); padding-left:8px;}
+  .tl-detail .btn{margin-top:10px;}
+
+  /* ---------- Setup ---------- */
+  .srow{background:var(--white); border:1px solid var(--g1); padding:10px 12px; margin-bottom:8px; display:grid; gap:8px;}
+  .srow.arch{opacity:.5;}
+  .srow-top{display:grid; grid-template-columns:24px 1fr; gap:8px; align-items:center;}
+  .rt-grid{display:grid; grid-template-columns:1fr 1fr 1fr 36px 36px 36px; gap:6px; align-items:end;}
+  .ex-grid{display:grid; grid-template-columns:1fr 1fr auto auto; gap:6px;}
+  .num{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .num input{width:100%; min-width:0; height:38px; border:1px solid var(--g2); background:var(--bg); font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:20px; text-align:center; border-radius:0;}
+  .ibtn{min-width:36px; height:38px; padding:0 8px; border:1px solid var(--g2); background:var(--white); font-weight:700; font-size:13px; cursor:pointer; white-space:nowrap;}
+  .ibtn:disabled{opacity:.3; cursor:default;}
+  .ibtn:not(:disabled):active{background:var(--lime);}
+  .sm-sel,.txt{width:100%; min-width:0; height:40px; border:1px solid var(--g2); background:var(--white); font-size:16px; font-weight:700; padding:0 10px; border-radius:0;}
+  .sm-sel:focus,.txt:focus,.num input:focus{outline:none; border-color:var(--black);}
+  .addbox{background:var(--white); border:1px solid var(--black); padding:12px; display:grid; gap:8px; margin-top:12px;}
+  .addbox .two{display:grid; grid-template-columns:1fr 1fr; gap:6px;}
+  .chk{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700;}
+  .chk input{width:18px; height:18px; accent-color:#000000;}
+  .setting{display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--white); border:1px solid var(--g1); padding:12px 14px; margin-bottom:8px; font-size:14px; font-weight:700;}
+  .setting .sm-sel,.setting .txt{width:130px;}
+  .btns{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:8px;}
+  .btns .btn{padding:0; height:46px; font-size:15px; letter-spacing:.04em;}
+  #backupArea{height:180px; font-family:'JetBrains Mono',monospace; font-size:12px; margin-top:4px;}
+  .msg{margin-top:10px; min-height:20px; font-size:13px; font-weight:700;}
+  .note{margin-top:16px; padding:14px; background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--lime); font-size:12px; line-height:1.8;}
+
+  .timer{background:var(--black); color:var(--white); margin-top:10px; padding:16px 16px 14px;}
+  .timer .label{color:var(--white);}
+  .timer .label.dim{color:var(--g3);}
+  .timer-top{display:flex; justify-content:space-between; align-items:center;}
+  .tbig{display:block; width:100%; background:none; border:none; cursor:pointer; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:76px; line-height:1; color:var(--lime); text-align:center; margin:8px 0 4px; font-variant-numeric:tabular-nums;}
+  .thint{text-align:center; margin-bottom:10px; letter-spacing:.08em;}
+  .tedit{margin:10px 0 12px;}
+  .tin{display:flex; align-items:flex-start; justify-content:center; gap:8px;}
+  .tin label{display:flex; flex-direction:column; align-items:center; gap:4px;}
+  .tin input{width:96px; height:72px; border:2px solid var(--lime); background:var(--black); color:var(--lime); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:54px; text-align:center; border-radius:0;}
+  .tin input:focus{outline:none; background:#ffffff; color:var(--black);}
+  .tin b{font-family:'Barlow Condensed',sans-serif; font-size:54px; color:var(--lime); line-height:72px;}
+  .tpre{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-top:10px;}
+  .tpre button{height:36px; background:var(--black); color:var(--white); border:1px solid var(--g3); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:16px; cursor:pointer;}
+  .tpre button:active{background:var(--lime); color:var(--black);}
+  .tok{display:grid; grid-template-columns:1fr 1.4fr; gap:8px; margin-top:8px;}
+  .tok .btn{height:44px; padding:0; font-size:16px;}
+  .tok .btn.line{background:var(--black); color:var(--white); border-color:var(--g3);}
+  .tok #tSet{background:var(--lime); color:var(--black); border-color:var(--lime);}
+  .tbtns{display:grid; grid-template-columns:1fr 1.4fr 1fr; gap:8px;}
+  .tbtns .btn{padding:0; height:52px;}
+  .tbtns .btn.line{background:var(--black); color:var(--white); border-color:var(--g3);}
+  .tbtns #tStart{background:var(--lime); color:var(--black); border-color:var(--lime);}
+  .timer.run #tStart{background:var(--white); border-color:var(--white);}
+  .timer.fin{background:var(--lime);}
+  .timer.fin .tbig,.timer.fin .label{color:var(--black);}
+  .topts{display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; margin-top:12px;}
+  .topts .chk{color:var(--white); font-size:12px;}
+  .timer.fin .topts .chk{color:var(--black);}
+  .topts .chk input{accent-color:#ceff00;}
+  .spot{margin-left:auto; height:34px; font-size:13px; display:inline-flex; align-items:center; text-decoration:none;}
+  .dex{margin-top:6px; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.9;}
+  .dex b{font-family:'Noto Sans JP',sans-serif; font-size:13px; margin-right:6px;}
+  .drow{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px;}
+  .daylog .num input{height:44px; font-size:22px;}
+  .daylog .num textarea{margin-top:2px;}
+  .wdtabs{display:grid; grid-template-columns:repeat(7,1fr); border:1px solid var(--black); margin-bottom:10px;}
+  .wdtabs button{height:52px; background:var(--white); border:none; border-right:1px solid var(--black); cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; font-weight:700; font-size:15px;}
+  .wdtabs button:last-child{border-right:none;}
+  .wdtabs button small{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--g3);}
+  .wdtabs button.today{box-shadow:inset 0 -4px 0 var(--lime);}
+  .wdtabs button.on{background:var(--black); color:var(--lime);}
+  .wdtabs button.on small{color:var(--white);}
+  .wdbar{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
+  .wdbar .sm-sel{width:auto; max-width:60%; font-size:14px;}
+  /* iPhone横向きのノッチ・角丸に重ならないよう左右にも安全領域を確保 */
+  .view{padding-left:max(20px, env(safe-area-inset-left)); padding-right:max(20px, env(safe-area-inset-right));}
+  .appbar{padding-left:max(20px, env(safe-area-inset-left)); padding-right:max(20px, env(safe-area-inset-right));}
+  .tabbar{padding-left:env(safe-area-inset-left); padding-right:env(safe-area-inset-right);}
+  /* ---------- タブレット・PC: 横幅いっぱいの2列レイアウト ---------- */
+  @media (min-width:768px){
+    :root{--appw:100%;}
+    .app{box-shadow:none;}
+    .view{padding-top:24px; padding-left:max(28px, env(safe-area-inset-left)); padding-right:max(28px, env(safe-area-inset-right));}
+    .appbar{padding-left:max(28px, env(safe-area-inset-left)); padding-right:max(28px, env(safe-area-inset-right));}
+    .cols{display:grid; grid-template-columns:minmax(320px, 2fr) 3fr; gap:28px; align-items:start;}
+    .col{min-width:0;}
+    .col-r > .section-t:first-child{margin-top:0;}
+    #v-today .col-l{position:sticky; top:90px;}
+    .rest{max-width:448px;}
+    .tab{flex-direction:row; gap:8px; font-size:14px;}
+  }
+  @media (min-width:1180px){
+    #exList{display:grid; grid-template-columns:repeat(auto-fill, minmax(380px, 1fr)); gap:10px;}
+    #exList .ex{margin-bottom:0;}
+    #exList .empty{grid-column:1 / -1;}
+    .cols{grid-template-columns:minmax(360px, 1fr) 2fr;}
+  }
+  /* ---------- スマホ横向き（高さが低い画面）: 見出しとタブを細くして中身を広く ---------- */
+  @media (orientation:landscape) and (max-height:520px){
+    :root{--tabh:46px;}
+    .appbar{position:static; padding-top:calc(env(safe-area-inset-top) + 8px); padding-bottom:8px; align-items:center;}
+    .appbar h1{font-size:24px;}
+    .appbar h1::after{display:none;}
+    .bar-r{flex-direction:row; align-items:center; gap:10px;}
+    .appbar .sub br{display:none;}
+    .appbar .sub b{margin-right:6px;}
+    .lang-top{height:28px;}
+    .view{padding-top:14px;}
+    #v-today .col-l{position:static;}
+    .hero{padding:14px 16px;}
+    .hero-num{font-size:64px;}
+    .hero-num small{font-size:26px;}
+    .hero-bar{margin-top:12px;}
+    .tbig{font-size:54px; margin:4px 0 2px;}
+    .timer{padding:12px 14px;}
+    .tbtns .btn{height:44px;}
+    .tab{flex-direction:row; gap:8px; font-size:13px;}
+    .tab svg{width:18px; height:18px;}
+    .app{padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 70px);}
+  }
+  /* ---------- WORKOUT MODE ---------- */
+  .wm-open-btn{display:none; margin-bottom:10px; height:44px; font-size:16px; background:var(--lime); color:var(--black); border-color:var(--lime);}
+  @media (orientation:landscape) and (max-height:520px){ .wm-open-btn{display:block;} }
+  .wm{position:fixed; inset:0; z-index:60; background:var(--black); color:var(--white); display:grid; grid-template-columns:1fr 1.15fr;
+      padding:max(10px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left)); gap:14px;}
+  .wm-l{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; min-width:0;}
+  .wm-ring{position:relative; width:min(68vh, 40vw); aspect-ratio:1;}
+  .wm-ring svg{width:100%; height:100%; transform:rotate(-90deg);}
+  .wm-ring circle{fill:none; stroke-width:12;}
+  .wm-ring .bg{stroke:#333333;}
+  .wm-ring .fg{stroke:var(--lime); stroke-dasharray:565.5; stroke-dashoffset:0; transition:stroke-dashoffset .25s linear, stroke .2s;}
+  .wm-center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .wm-center .label{color:var(--g3); letter-spacing:.2em;}
+  .wm-time{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:min(21vh, 12vw); line-height:1; color:var(--lime); font-variant-numeric:tabular-nums;}
+  .wm.warn .wm-time{color:var(--white); animation:wmpulse 1s ease-in-out infinite;}
+  .wm.warn .wm-ring .fg{stroke:var(--white);}
+  @keyframes wmpulse{50%{opacity:.55;}}
+  .wm.flash{animation:wmflash .3s steps(2) 6;}
+  @keyframes wmflash{0%{background:var(--lime);} 100%{background:var(--black);}}
+  .wm-tb{display:grid; grid-template-columns:1fr 1.4fr 1fr; gap:8px; width:min(68vh, 40vw); min-width:220px;}
+  .wm-tb button{height:46px; background:var(--black); color:var(--white); border:1px solid var(--g3); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:18px; letter-spacing:.08em; cursor:pointer;}
+  .wm-tb .go{background:var(--lime); color:var(--black); border-color:var(--lime);}
+  .wm.run .wm-tb .go{background:var(--white); border-color:var(--white);}
+  .wm-r{background:var(--white); color:var(--black); padding:12px 16px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; min-width:0;}
+  .wm-top{display:flex; justify-content:space-between; align-items:center;}
+  .wm-top b{background:var(--lime); padding:1px 6px; margin-left:6px;}
+  .wm-x{height:32px; padding:0 12px; background:var(--white); border:1px solid var(--black); font-weight:700; font-size:12px; cursor:pointer;}
+  .wm-ex{display:grid; grid-template-columns:44px 1fr 44px; align-items:center; gap:8px;}
+  .wm-nav{height:44px; background:var(--g1); border:none; font-size:28px; font-weight:800; cursor:pointer;}
+  .wm-nav:disabled{opacity:.3;}
+  .wm-name{font-weight:700; font-size:24px; text-align:center; line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .wm-meta{font-family:'JetBrains Mono',monospace; font-size:11px; text-align:center; line-height:1.6;}
+  .wm-meta .ok{background:var(--lime); padding:1px 6px; font-weight:700;}
+  .wm-steps{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .wm-step{display:flex; flex-direction:column; gap:3px; min-width:0;}
+  .wm-row{display:grid; grid-template-columns:44px 1fr 44px; height:52px;}
+  .wm-row button{border:1px solid var(--black); background:var(--white); font-size:24px; font-weight:800; cursor:pointer;}
+  .wm-row button:active{background:var(--lime);}
+  .wm-row input{min-width:0; border:1px solid var(--black); border-left:none; border-right:none; text-align:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:34px; border-radius:0; background:var(--white);}
+  .wm-row input:focus{outline:none; background:var(--lime);}
+  .wm-log{height:58px; background:var(--lime); color:var(--black); border:2px solid var(--black); font-family:'Barlow Condensed','Noto Sans JP',sans-serif; font-weight:800; font-size:22px; letter-spacing:.06em; cursor:pointer; flex:none;}
+  .wm-log:active{background:var(--black); color:var(--lime);}
+  .wm-log:disabled{opacity:.3;}
+  .wm-done{font-family:'JetBrains Mono',monospace; font-size:12px; text-align:center; min-height:16px;}
+  .wm.empty .wm-steps,.wm.empty .wm-log,.wm.empty .wm-nav{visibility:hidden;}
+  .toast{position:fixed; top:calc(env(safe-area-inset-top) + 14px); left:50%; transform:translate(-50%,-20px); opacity:0; z-index:80; background:var(--black); color:var(--lime); font-weight:700; font-size:13px; padding:10px 16px; transition:all .2s; pointer-events:none; max-width:90%;}
+  .toast.show{opacity:1; transform:translate(-50%,0);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="appbar">
+    <h1 id="viewTitle">Today</h1>
+    <div class="bar-r">
+      <div class="sub" id="barSub">—</div>
+      <div data-menu-slot></div>
+    </div>
+  </header>
+
+  <!-- TODAY -->
+  <main class="view active" id="v-today">
+    <div class="cols"><div class="col col-l">
+    <button class="btn block wm-open-btn" id="wmOpen" data-i18n="wm.open"></button>
+    <div class="hero">
+      <div class="label">TODAY'S ACHIEVEMENT <span data-i18n="hero.sub"></span></div>
+      <div class="hero-row" style="margin-top:12px;">
+        <div class="hero-num" id="heroNum"><span id="rateNum">0</span><small>%</small></div>
+        <div class="hero-side">
+          <div class="big" id="doneBig">0/0</div>
+          <div class="label">WORK SETS</div>
+        </div>
+      </div>
+      <div class="hero-bar"><i id="heroBar" style="width:0%"></i></div>
+    </div>
+
+    <div class="minis">
+      <div class="mini"><div class="label dim">VOLUME</div><div class="n" id="mVol">0</div></div>
+      <div class="mini"><div class="label dim">STREAK</div><div class="n"><span id="mStreak">0</span><small data-i18n="unit.day"> 日</small></div></div>
+      <div class="mini"><div class="label dim">DAYS</div><div class="n"><span id="mDays">0</span><small data-i18n="unit.day"> 日</small></div></div>
+    </div>
+
+    <div class="timer" id="timerCard">
+      <div class="timer-top"><span class="label">REST TIMER <span data-i18n="timer.sub"></span></span><span class="label dim" id="tState">READY</span></div>
+      <button class="tbig" id="tBig" type="button">1:30</button>
+      <div class="tedit" id="tEdit" hidden>
+        <div class="tin">
+          <label><input id="tMin" type="number" min="0" max="60" inputmode="numeric"><span class="label dim" data-i18n="timer.min"></span></label>
+          <b>:</b>
+          <label><input id="tSec" type="number" min="0" max="59" inputmode="numeric"><span class="label dim" data-i18n="timer.sec"></span></label>
+        </div>
+        <div class="tpre" id="tPre"><button data-s="30">0:30</button><button data-s="60">1:00</button><button data-s="90">1:30</button><button data-s="120">2:00</button><button data-s="180">3:00</button></div>
+        <div class="tok"><button class="btn line" id="tCancel" data-i18n="timer.cancel"></button><button class="btn" id="tSet" data-i18n="timer.set"></button></div>
+      </div>
+      <div class="thint label dim" data-i18n="timer.hint"></div>
+      <div class="tbtns">
+        <button class="btn line" id="tMinus">−10s</button>
+        <button class="btn" id="tStart">START</button>
+        <button class="btn line" id="tPlus">+10s</button>
+      </div>
+      <div class="topts">
+        <label class="chk"><input type="checkbox" id="optSound"> <span data-i18n="opt.sound"></span></label>
+        <label class="chk"><input type="checkbox" id="optWake"> <span data-i18n="opt.wake"></span></label>
+        <a class="btn line sm spot" href="https://open.spotify.com/" target="_blank" rel="noopener" data-i18n="spotify">Spotifyを開く</a>
+      </div>
+    </div>
+
+    </div><div class="col col-r">
+    <div class="section-t">Menu <small id="menuCount">0 ITEMS</small></div>
+    <div id="exList"></div>
+    <div class="row-add">
+      <input id="adhocName" type="text" list="adhocList" data-i18n-ph="adhoc.ph" placeholder="" autocomplete="off">
+      <button class="btn" id="adhocBtn" data-i18n="btn.add">追加</button>
+    </div>
+    <datalist id="adhocList"></datalist>
+    <button class="btn line sm block" id="recallBtn" data-i18n="recall" style="margin-top:8px;"></button>
+    <label class="chk" style="margin-top:8px;"><input type="checkbox" id="adhocSave"> <span id="adhocSaveLabel">この曜日のメニューにも保存する</span></label>
+
+    <div class="section-t">Memo <small data-i18n="memo.sub"></small></div>
+    <textarea id="memo" class="memo" data-i18n-ph="memo.ph" placeholder=""></textarea>
+    </div></div>
+  </main>
+
+  <!-- BODY -->
+  <main class="view" id="v-body">
+    <div class="cols"><div class="col col-l">
+    <div class="wcard">
+      <div class="wtop">
+        <div class="label">BODY WEIGHT <span data-i18n="body.sub"></span></div>
+        <input type="date" id="bDate" class="date-in">
+      </div>
+      <div class="wrow"><input id="bInput" type="number" step="0.1" inputmode="decimal" placeholder="0.0"><span class="u">kg</span></div>
+      <button class="btn block" id="bBtn" style="margin-top:18px;" data-i18n="btn.record">記録する</button>
+    </div>
+    <div class="wlatest">
+      <div>
+        <div class="label">LATEST <span data-i18n="latest.sub"></span></div>
+        <div class="v" id="bLast" style="margin-top:8px;">--</div>
+      </div>
+      <div class="d" id="bDelta"></div>
+    </div>
+    <div class="section-t">Trend <small data-i18n="trend.sub"></small></div>
+    <div class="seg" id="bSeg">
+      <button data-r="30" class="on" data-i18n="r30">30日</button>
+      <button data-r="90" data-i18n="r90">90日</button>
+      <button data-r="365" data-i18n="r365">1年</button>
+      <button data-r="0" data-i18n="rAll">全期間</button>
+    </div>
+    <div class="chart-box" id="bChart"></div>
+    <div class="best" id="bStats" hidden></div>
+    </div><div class="col col-r">
+    <div class="section-t">Day Log <small data-i18n="daylog.sub"></small></div>
+    <div class="wcard daylog">
+      <div class="wtop"><div class="label">DATE <span data-i18n="daylog.date"></span></div><input type="date" id="dDate" class="date-in"></div>
+      <div class="label dim" style="margin-top:14px;" data-i18n="daylog.ex"></div>
+      <div class="dex" id="dEx"></div>
+      <div class="drow">
+        <label class="num"><span class="label dim" data-i18n="daylog.start"></span><input type="time" id="dStart"></label>
+        <label class="num"><span class="label dim" data-i18n="daylog.dur"></span><input type="number" id="dDur" min="0" max="600" inputmode="numeric" placeholder="60"></label>
+      </div>
+      <label class="num" style="margin-top:10px;"><span class="label dim" data-i18n="daylog.memo"></span><textarea id="dMemo" class="memo" data-i18n-ph="memo.ph" placeholder=""></textarea></label>
+      <button class="btn block" id="dSave" data-i18n="daylog.save" style="margin-top:12px;"></button>
+    </div>
+    <div class="section-t">Recent <small>LAST 10</small></div>
+    <div id="bList"></div>
+    </div></div>
+  </main>
+
+  <!-- LOG -->
+  <main class="view" id="v-log">
+    <div class="logbar">
+      <input id="logQ" class="txt" type="search" data-i18n-ph="log.q" placeholder="" autocomplete="off">
+      <div class="seg" id="logSeg" style="grid-template-columns:repeat(4,1fr); margin-bottom:0;">
+        <button data-f="all" class="on" data-i18n="log.fAll"></button>
+        <button data-f="train" data-i18n="log.fTrain"></button>
+        <button data-f="memo" data-i18n="log.fMemo"></button>
+        <button data-f="pr" data-i18n="log.fPr"></button>
+      </div>
+      <div class="label dim" id="logCount"></div>
+    </div>
+    <div id="tl"></div>
+  </main>
+
+  <!-- SETUP -->
+  <main class="view" id="v-setup">
+    <div class="cols"><div class="col col-l">
+    <div class="section-t" style="margin-top:0;">Menu <small data-i18n="setup.menu.sub"></small></div>
+    <div class="seg" id="planSeg" style="grid-template-columns:1fr 1fr;">
+      <button data-p="weekly" data-i18n="plan.weekly"></button>
+      <button data-p="daily" data-i18n="plan.daily"></button>
+    </div>
+    <div class="label dim" id="planHint" style="margin:-2px 0 12px; line-height:1.7; letter-spacing:.04em; text-transform:none;"></div>
+    <div class="wdtabs" id="wdTabs"></div>
+    <input type="date" id="planDate" class="date-in" style="width:100%; height:44px; margin-bottom:10px;" hidden>
+    <div class="wdbar">
+      <span class="label" id="wdTitle">MON</span>
+      <select class="sm-sel" id="wdCopy"></select>
+    </div>
+    <div id="rtList"></div>
+    <button class="btn line block" id="rtAdd" data-i18n="rtAdd"></button>
+
+    </div><div class="col col-r">
+    <div class="section-t">Exercises <small data-i18n="ex.sub"></small></div>
+    <div id="exMaster"></div>
+    <div class="addbox">
+      <div class="label">NEW EXERCISE <span data-i18n="newex.sub"></span></div>
+      <input class="txt" id="nxName" type="text" data-i18n-ph="nx.ph" placeholder="">
+      <div class="two"><select class="sm-sel" id="nxMuscle"></select><select class="sm-sel" id="nxEquip"></select></div>
+      <label class="chk"><input type="checkbox" id="nxRoutine" checked> <span id="nxRoutineLabel">選択中の曜日のメニューにも追加する</span></label>
+      <button class="btn sm" id="nxAdd" data-i18n="nx.add"></button>
+    </div>
+
+    <div class="section-t">Settings <small data-i18n="settings.sub"></small></div>
+    <div class="setting"><span data-i18n="set.rest"></span><input class="txt" id="setRest" type="number" min="0" max="3600" step="15" inputmode="numeric"></div>
+    <div class="setting"><span data-i18n="set.day"></span><select class="sm-sel" id="setDay"></select></div>
+    <div class="setting"><span data-i18n="set.lang">Language</span><select class="sm-sel" id="setLang"><option value="ja">日本語</option><option value="en">English</option><option value="ko">한국어</option><option value="zh">中文</option></select></div>
+
+    <div class="section-t">Backup <small>JSON</small></div>
+    <div class="btns">
+      <button class="btn" id="dlBtn" data-i18n="dlBtn"></button>
+      <button class="btn line" id="ulBtn" data-i18n="ulBtn"></button>
+      <button class="btn line" id="exportBtn" data-i18n="exportBtn"></button>
+    </div>
+    <input type="file" id="ulFile" accept="application/json,.json" hidden>
+    <textarea id="backupArea" data-i18n-ph="backup.ph" placeholder=""></textarea>
+    <div class="btns" style="grid-template-columns:1fr 1fr; margin-top:8px;">
+      <button class="btn line" id="copyBtn" data-i18n="copyBtn"></button>
+      <button class="btn" id="importBtn" data-i18n="importBtn"></button>
+    </div>
+    <div class="msg" id="msg"></div>
+    <div class="note" data-i18n="note"></div>
+    </div></div>
+  </main>
+
+  <div class="rest" id="rest" hidden>
+    <span class="label">REST</span>
+    <span class="t" id="restT">0:00</span>
+    <button id="restMinus">−10s</button>
+    <button id="restPlus">+10s</button>
+    <button id="restStop">STOP</button>
+  </div>
+
+  <nav class="tabbar">
+    <button class="tab active" data-view="today">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M4 12l5 5L20 6"/></svg>Today
+    </button>
+    <button class="tab" data-view="body">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M3 18l6-7 4 4 8-10"/></svg>Charts
+    </button>
+    <button class="tab" data-view="log">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Log
+    </button>
+    <button class="tab" data-view="setup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Setup
+    </button>
+  </nav>
+</div>
+<!-- WORKOUT MODE（スマホ横向き専用） -->
+<div class="wm" id="wm" hidden>
+  <div class="wm-l">
+    <div class="wm-ring">
+      <svg viewBox="0 0 200 200" aria-hidden="true"><circle class="bg" cx="100" cy="100" r="90"/><circle class="fg" id="wmArc" cx="100" cy="100" r="90"/></svg>
+      <div class="wm-center"><div class="label" id="wmState">READY</div><div class="wm-time" id="wmTime">1:30</div></div>
+    </div>
+    <div class="wm-tb">
+      <button id="wmMinus">−10s</button>
+      <button id="wmStart" class="go">START</button>
+      <button id="wmPlus">+10s</button>
+    </div>
+  </div>
+  <div class="wm-r">
+    <div class="wm-top"><span class="label">WORKOUT MODE <b id="wmPos"></b></span><button class="wm-x" id="wmExit" data-i18n="wm.exit"></button></div>
+    <div class="wm-ex">
+      <button class="wm-nav" id="wmPrev" aria-label="prev">‹</button>
+      <div class="wm-name" id="wmName"></div>
+      <button class="wm-nav" id="wmNext" aria-label="next">›</button>
+    </div>
+    <div class="wm-meta" id="wmMeta"></div>
+    <div class="wm-steps" id="wmSteps">
+      <div class="wm-step"><span class="label dim">KG</span><div class="wm-row"><button data-k="w" data-d="-2.5">−</button><input id="wmW" type="number" step="0.5" min="0" inputmode="decimal" placeholder="BW"><button data-k="w" data-d="2.5">＋</button></div></div>
+      <div class="wm-step"><span class="label dim">REP</span><div class="wm-row"><button data-k="r" data-d="-1">−</button><input id="wmR" type="number" step="1" min="0" inputmode="numeric"><button data-k="r" data-d="1">＋</button></div></div>
+    </div>
+    <button class="wm-log" id="wmLog" data-i18n="wm.log"></button>
+    <div class="wm-done" id="wmDone"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  /*
+   * データ構造（将来DBへ移すときのテーブルと1対1対応）
+   *   exercises      : {id, name, muscle_group, equipment, archived_at, created_at}
+   *   routine_items  : {id, weekday(0=日〜6=土) または date(YYYY-MM-DD), exercise_id, target_sets, target_reps, target_weight, order}
+   *   workout_logs   : {id, executed_at, memo, start_time, duration_min, routine_snapshot[]}
+   *   workout_sets   : {id, workout_log_id, exercise_id, set_number, weight, reps, rpe, is_warmup}
+   *   body_weights   : {id, measured_at, weight_kg}
+   */
+  const KEY = 'tdiv_v2', OLD_PLAN = 'tdiv_plan', OLD_LOGS = 'tdiv_logs';
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2,'0');
+  const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const sd = d => d.slice(5).replace('-','/');
+  const WD = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  /* ---------- i18n ---------- */
+  const I18N = {"timer.hint": {"ja": "数字をタップすると時間を入力できます", "en": "Tap the time to type it in", "ko": "숫자를 탭하면 시간을 입력할 수 있습니다", "zh": "点击数字即可输入时间"}, "timer.min": {"ja": "分", "en": "MIN", "ko": "분", "zh": "分"}, "timer.sec": {"ja": "秒", "en": "SEC", "ko": "초", "zh": "秒"}, "timer.set": {"ja": "セット", "en": "Set", "ko": "설정", "zh": "设定"}, "timer.cancel": {"ja": "キャンセル", "en": "Cancel", "ko": "취소", "zh": "取消"}, "log.empty": {"ja": "まだ記録がありません — Todayでセットを記録するか、Chartsで体重を記録すると、ここに日ごとの履歴が表示されます", "en": "No records yet — log a set on Today or your weight on Charts, and your daily history will appear here", "ko": "아직 기록이 없습니다 — Today에서 세트를 기록하거나 Charts에서 체중을 기록하면 여기에 일별 기록이 표시됩니다", "zh": "还没有记录 — 在 Today 记录训练组或在 Charts 记录体重后，这里会显示每日记录"}, "hero.sub": {"ja": "今日の達成率", "en": "", "ko": "오늘의 달성률", "zh": "今日完成率"}, "unit.day": {"ja": " 日", "en": " d", "ko": " 일", "zh": " 天"}, "timer.sub": {"ja": "インターバル", "en": "", "ko": "인터벌", "zh": "组间休息"}, "opt.sound": {"ja": "終了音（音楽と重ねて鳴らす）", "en": "End sound (plays over music)", "ko": "종료음 (음악과 함께 재생)", "zh": "结束提示音（与音乐同时播放）"}, "opt.wake": {"ja": "画面を消さない", "en": "Keep screen on", "ko": "화면 꺼짐 방지", "zh": "保持屏幕常亮"}, "spotify": {"ja": "Spotifyを開く", "en": "Open Spotify", "ko": "Spotify 열기", "zh": "打开 Spotify"}, "adhoc.ph": {"ja": "種目名を入力（新しい種目もOK）", "en": "Exercise name (new ones OK)", "ko": "종목명 입력 (새 종목도 가능)", "zh": "输入动作名称（可新建）"}, "btn.add": {"ja": "追加", "en": "Add", "ko": "추가", "zh": "添加"}, "memo.sub": {"ja": "今日のメモ", "en": "Notes", "ko": "오늘의 메모", "zh": "今日笔记"}, "memo.ph": {"ja": "調子、睡眠、フォームの気づきなど", "en": "Condition, sleep, form notes…", "ko": "컨디션, 수면, 자세 메모 등", "zh": "状态、睡眠、动作要点等"}, "body.sub": {"ja": "体重", "en": "", "ko": "체중", "zh": "体重"}, "btn.record": {"ja": "記録する", "en": "Save", "ko": "기록하기", "zh": "记录"}, "latest.sub": {"ja": "最新の記録", "en": "", "ko": "최근 기록", "zh": "最新记录"}, "trend.sub": {"ja": "日ごとの体重", "en": "Daily weight", "ko": "일별 체중", "zh": "每日体重"}, "r30": {"ja": "30日", "en": "30D", "ko": "30일", "zh": "30天"}, "r90": {"ja": "90日", "en": "90D", "ko": "90일", "zh": "90天"}, "r365": {"ja": "1年", "en": "1Y", "ko": "1년", "zh": "1年"}, "rAll": {"ja": "全期間", "en": "All", "ko": "전체", "zh": "全部"}, "setup.menu.sub": {"ja": "トレーニングメニュー", "en": "Training menu", "ko": "트레이닝 메뉴", "zh": "训练计划"}, "rtAdd": {"ja": "+ メニューに種目を追加", "en": "+ Add exercise", "ko": "+ 종목 추가", "zh": "+ 添加动作"}, "ex.sub": {"ja": "種目マスタ", "en": "Exercise list", "ko": "종목 목록", "zh": "动作库"}, "newex.sub": {"ja": "新しい種目", "en": "", "ko": "새 종목", "zh": "新动作"}, "nx.ph": {"ja": "種目名（例：ダンベルプレス）", "en": "Name (e.g. Dumbbell Press)", "ko": "종목명 (예: 덤벨 프레스)", "zh": "名称（例：哑铃卧推）"}, "nx.add": {"ja": "種目を登録", "en": "Register exercise", "ko": "종목 등록", "zh": "添加动作"}, "settings.sub": {"ja": "設定", "en": "", "ko": "설정", "zh": "设置"}, "set.rest": {"ja": "インターバル（秒）", "en": "Rest interval (sec)", "ko": "인터벌 (초)", "zh": "休息时间（秒）"}, "set.day": {"ja": "日付の切り替え時刻", "en": "New day starts at", "ko": "날짜 변경 시각", "zh": "日期切换时间"}, "set.lang": {"ja": "言語", "en": "Language", "ko": "언어", "zh": "语言"}, "dlBtn": {"ja": "ファイル保存", "en": "Save file", "ko": "파일 저장", "zh": "保存文件"}, "ulBtn": {"ja": "ファイル復元", "en": "Restore file", "ko": "파일 복원", "zh": "从文件恢复"}, "exportBtn": {"ja": "表示", "en": "Show", "ko": "표시", "zh": "显示"}, "copyBtn": {"ja": "コピー", "en": "Copy", "ko": "복사", "zh": "复制"}, "importBtn": {"ja": "貼り付けから復元", "en": "Restore pasted", "ko": "붙여넣기로 복원", "zh": "从粘贴恢复"}, "backup.ph": {"ja": "「表示」でJSONがここに出ます。復元するときはJSONを貼り付けて「貼り付けから復元」を押してください。旧バージョンのバックアップも読み込めます。", "en": "Press \"Show\" to display JSON here. To restore, paste JSON and press \"Restore pasted\". Old-version backups are also supported.", "ko": "\"표시\"를 누르면 여기에 JSON이 나옵니다. 복원하려면 JSON을 붙여넣고 \"붙여넣기로 복원\"을 누르세요. 이전 버전 백업도 읽을 수 있습니다.", "zh": "点击\"显示\"后 JSON 会出现在这里。恢复时请粘贴 JSON 并点击\"从粘贴恢复\"。也支持旧版本的备份。"}, "note": {"ja": "データはこの端末のブラウザ内にのみ保存されます。機種変更やキャッシュ削除の前に「ファイル保存」でバックアップを取っておくと安心です。", "en": "Data is stored only in this browser on this device. Use \"Save file\" to back up before changing phones or clearing the cache.", "ko": "데이터는 이 기기의 브라우저에만 저장됩니다. 기기 변경이나 캐시 삭제 전에 \"파일 저장\"으로 백업해 두세요.", "zh": "数据仅保存在本设备的浏览器中。更换手机或清除缓存前，请先用\"保存文件\"备份。"}, "toast.migrated": {"ja": "旧バージョンのデータを移行しました", "en": "Migrated data from the old version", "ko": "이전 버전 데이터를 이전했습니다", "zh": "已迁移旧版本数据"}, "toast.saveFail": {"ja": "保存できませんでした（容量・プライベートモードを確認）", "en": "Could not save (check storage / private mode)", "ko": "저장하지 못했습니다 (용량·시크릿 모드 확인)", "zh": "无法保存（请检查存储空间或隐私模式）"}, "unknownEx": {"ja": "不明な種目", "en": "Unknown exercise", "ko": "알 수 없는 종목", "zh": "未知动作"}, "bw": {"ja": "自重", "en": "BW", "ko": "맨몸", "zh": "自重"}, "today.empty1": {"ja": "{wd}のメニューはありません（休養日）", "en": "No menu for {wd} (rest day)", "ko": "{wd} 메뉴가 없습니다 (휴식일)", "zh": "{wd}没有训练计划（休息日）"}, "today.empty2": {"ja": "下から種目を追加するか、SETUPで作成できます", "en": "Add an exercise below, or create a menu in SETUP", "ko": "아래에서 종목을 추가하거나 SETUP에서 만들 수 있습니다", "zh": "可在下方添加动作，或在 SETUP 中创建"}, "adhoc.save": {"ja": "{wd}のメニューにも保存する", "en": "Also save to the {wd} menu", "ko": "{wd} 메뉴에도 저장", "zh": "同时保存到{wd}的计划"}, "free": {"ja": "フリー", "en": "Free", "ko": "자유", "zh": "自由"}, "target": {"ja": "目標 {t}", "en": "Target {t}", "ko": "목표 {t}", "zh": "目标 {t}"}, "prev": {"ja": "前回", "en": "Last", "ko": "지난번", "zh": "上次"}, "addSet": {"ja": "+ セット記録", "en": "+ Log set", "ko": "+ 세트 기록", "zh": "+ 记录一组"}, "copyPrev": {"ja": "前回をコピー", "en": "Copy last", "ko": "지난번 복사", "zh": "复制上次"}, "a.weight": {"ja": "重量", "en": "Weight", "ko": "무게", "zh": "重量"}, "a.reps": {"ja": "回数", "en": "Reps", "ko": "횟수", "zh": "次数"}, "a.warm": {"ja": "ウォームアップ", "en": "Warm-up", "ko": "워밍업", "zh": "热身"}, "a.warmT": {"ja": "ウォームアップ（集計から除外）", "en": "Warm-up (excluded from stats)", "ko": "워밍업 (집계 제외)", "zh": "热身（不计入统计）"}, "a.del": {"ja": "削除", "en": "Delete", "ko": "삭제", "zh": "删除"}, "a.up": {"ja": "上へ", "en": "Up", "ko": "위로", "zh": "上移"}, "a.down": {"ja": "下へ", "en": "Down", "ko": "아래로", "zh": "下移"}, "a.remove": {"ja": "メニューから外す", "en": "Remove from menu", "ko": "메뉴에서 제외", "zh": "从计划中移除"}, "a.name": {"ja": "種目名", "en": "Exercise name", "ko": "종목명", "zh": "动作名称"}, "toast.copiedPrev": {"ja": "前回のセットをコピーしました", "en": "Copied last session's sets", "ko": "지난번 세트를 복사했습니다", "zh": "已复制上次的组"}, "toast.needName": {"ja": "種目名を入力してください", "en": "Enter an exercise name", "ko": "종목명을 입력하세요", "zh": "请输入动作名称"}, "toast.createdEx": {"ja": "「{name}」を新しい種目として登録しました", "en": "Registered \"{name}\" as a new exercise", "ko": "\"{name}\"을(를) 새 종목으로 등록했습니다", "zh": "已将\"{name}\"添加为新动作"}, "toast.addedEx": {"ja": "「{name}」を追加しました", "en": "Added \"{name}\"", "ko": "\"{name}\"을(를) 추가했습니다", "zh": "已添加\"{name}\""}, "toast.wakeNA": {"ja": "この端末のブラウザは「画面を消さない」に未対応です", "en": "This browser does not support \"Keep screen on\"", "ko": "이 브라우저는 \"화면 꺼짐 방지\"를 지원하지 않습니다", "zh": "此浏览器不支持\"保持屏幕常亮\""}, "toast.needWeight": {"ja": "体重を入力してください", "en": "Enter your weight", "ko": "체중을 입력하세요", "zh": "请输入体重"}, "toast.recorded": {"ja": "記録しました", "en": "Saved", "ko": "기록했습니다", "zh": "已记录"}, "prevDiff": {"ja": "前回比", "en": "vs last", "ko": "지난번 대비", "zh": "较上次"}, "confirm.delBw": {"ja": "この体重記録を削除しますか？", "en": "Delete this weight entry?", "ko": "이 체중 기록을 삭제할까요?", "zh": "删除这条体重记录吗？"}, "stat.min": {"ja": "最小", "en": "Min", "ko": "최소", "zh": "最低"}, "stat.max": {"ja": "最大", "en": "Max", "ko": "최대", "zh": "最高"}, "stat.chg": {"ja": "変化", "en": "Change", "ko": "변화", "zh": "变化"}, "log.delBtn": {"ja": "この日のトレーニング記録を削除", "en": "Delete this day's workout", "ko": "이날 운동 기록 삭제", "zh": "删除当天训练记录"}, "log.free": {"ja": "フリートレーニング", "en": "Free training", "ko": "자유 트레이닝", "zh": "自由训练"}, "log.rate": {"ja": "達成率 {p}%", "en": "Achieved {p}%", "ko": "달성률 {p}%", "zh": "完成率 {p}%"}, "log.rest": {"ja": "休養日", "en": "Rest day", "ko": "휴식일", "zh": "休息日"}, "log.sets": {"ja": "{n}セット", "en": "{n} set(s)", "ko": "{n}세트", "zh": "{n}组"}, "confirm.delDay": {"ja": "この日のトレーニング記録を削除しますか？（体重の記録は残ります）", "en": "Delete this day's workout? (Weight entries are kept)", "ko": "이날 운동 기록을 삭제할까요? (체중 기록은 유지됩니다)", "zh": "删除当天训练记录吗？（体重记录会保留）"}, "toast.deleted": {"ja": "削除しました", "en": "Deleted", "ko": "삭제했습니다", "zh": "已删除"}, "restShort": {"ja": "休", "en": "Rest", "ko": "휴", "zh": "休"}, "wdTitle": {"ja": "{wd}のメニュー", "en": "{wd} menu", "ko": "{wd} 메뉴", "zh": "{wd}的计划"}, "todayMark": {"ja": "（今日）", "en": " (today)", "ko": " (오늘)", "zh": "（今天）"}, "copyFrom": {"ja": "コピーして作る…", "en": "Copy from…", "ko": "복사해서 만들기…", "zh": "从…复制"}, "copyOpt": {"ja": "{wd}のメニューをコピー", "en": "Copy {wd} menu", "ko": "{wd} 메뉴 복사", "zh": "复制{wd}的计划"}, "nxLabel": {"ja": "{wd}のメニューにも追加する", "en": "Also add to the {wd} menu", "ko": "{wd} 메뉴에도 추가", "zh": "同时添加到{wd}的计划"}, "confirm.replace": {"ja": "{to}のメニューを{from}の内容で置き換えます。よろしいですか？", "en": "Replace the {to} menu with {from}'s?", "ko": "{to} 메뉴를 {from} 내용으로 바꿀까요?", "zh": "用{from}的内容替换{to}的计划吗？"}, "toast.copiedWd": {"ja": "{wd}のメニューをコピーしました", "en": "Copied the {wd} menu", "ko": "{wd} 메뉴를 복사했습니다", "zh": "已复制{wd}的计划"}, "wdRest": {"ja": "{wd}は休養日（メニューなし）", "en": "{wd} is a rest day (no menu)", "ko": "{wd}은(는) 휴식일 (메뉴 없음)", "zh": "{wd}为休息日（无计划）"}, "muscle": {"ja": "部位", "en": "Muscle", "ko": "부위", "zh": "部位"}, "equip": {"ja": "器具", "en": "Equipment", "ko": "기구", "zh": "器械"}, "restore": {"ja": "戻す", "en": "Show", "ko": "복원", "zh": "恢复"}, "hide": {"ja": "隠す", "en": "Hide", "ko": "숨기기", "zh": "隐藏"}, "confirm.delEx": {"ja": "「{name}」を削除しますか？", "en": "Delete \"{name}\"?", "ko": "\"{name}\"을(를) 삭제할까요?", "zh": "删除\"{name}\"吗？"}, "confirm.archive": {"ja": "「{name}」をメニューからも外します。記録は残ります。よろしいですか？", "en": "\"{name}\" will also be removed from menus. Records are kept. Continue?", "ko": "\"{name}\"을(를) 메뉴에서도 제외합니다. 기록은 유지됩니다. 계속할까요?", "zh": "\"{name}\"也会从计划中移除，记录会保留。确定吗？"}, "toast.needExFirst": {"ja": "先に種目マスタで種目を登録してください", "en": "Register an exercise in the exercise list first", "ko": "먼저 종목 목록에 종목을 등록하세요", "zh": "请先在动作库中添加动作"}, "toast.dupName": {"ja": "同じ名前の種目があります", "en": "An exercise with that name already exists", "ko": "같은 이름의 종목이 있습니다", "zh": "已存在同名动作"}, "toast.registered": {"ja": "「{name}」を登録しました", "en": "Registered \"{name}\"", "ko": "\"{name}\"을(를) 등록했습니다", "zh": "已添加\"{name}\""}, "say.exported": {"ja": "表示しました。コピーして安全な場所に保存してください。", "en": "Shown. Copy it and keep it somewhere safe.", "ko": "표시했습니다. 복사해서 안전한 곳에 보관하세요.", "zh": "已显示。请复制并保存到安全的地方。"}, "say.copied": {"ja": "コピーしました。", "en": "Copied.", "ko": "복사했습니다.", "zh": "已复制。"}, "say.copyManual": {"ja": "手動で選択してコピーしてください。", "en": "Please select and copy manually.", "ko": "직접 선택해서 복사하세요.", "zh": "请手动选择并复制。"}, "say.fileSaved": {"ja": "バックアップファイルを保存しました。", "en": "Backup file saved.", "ko": "백업 파일을 저장했습니다.", "zh": "已保存备份文件。"}, "say.fileFail": {"ja": "保存できませんでした。「表示」→「コピー」をお使いください。", "en": "Could not save. Use \"Show\" → \"Copy\" instead.", "ko": "저장하지 못했습니다. \"표시\" → \"복사\"를 이용하세요.", "zh": "无法保存。请使用\"显示\"→\"复制\"。"}, "say.needJson": {"ja": "復元するJSONを貼り付けてください。", "en": "Paste the JSON to restore.", "ko": "복원할 JSON을 붙여넣으세요.", "zh": "请粘贴要恢复的 JSON。"}, "say.badFormat": {"ja": "形式が正しくありません", "en": "Invalid format", "ko": "형식이 올바르지 않습니다", "zh": "格式不正确"}, "confirm.restore": {"ja": "現在のデータを上書きして復元します。よろしいですか？", "en": "This will overwrite your current data. Continue?", "ko": "현재 데이터를 덮어쓰고 복원합니다. 계속할까요?", "zh": "将覆盖当前数据并恢复。确定吗？"}, "say.restoredOld": {"ja": "旧バージョンのデータを変換して復元しました。", "en": "Converted and restored old-version data.", "ko": "이전 버전 데이터를 변환해 복원했습니다.", "zh": "已转换并恢复旧版本数据。"}, "say.restored": {"ja": "復元が完了しました。", "en": "Restore complete.", "ko": "복원이 완료되었습니다.", "zh": "恢复完成。"}, "say.loadFail": {"ja": "読み込みに失敗しました：", "en": "Failed to load: ", "ko": "불러오기에 실패했습니다: ", "zh": "读取失败："}, "dayOpt": {"ja": "午前{i}時", "en": "{i}:00 AM", "ko": "오전 {i}시", "zh": "凌晨{i}点"}, "seed.bench": {"ja": "ベンチプレス", "en": "Bench Press", "ko": "벤치프레스", "zh": "卧推"}, "seed.squat": {"ja": "スクワット", "en": "Squat", "ko": "스쿼트", "zh": "深蹲"}, "seed.pullup": {"ja": "懸垂", "en": "Pull-up", "ko": "턱걸이", "zh": "引体向上"}, "c.胸": {"ja": "胸", "en": "Chest", "ko": "가슴", "zh": "胸"}, "c.背中": {"ja": "背中", "en": "Back", "ko": "등", "zh": "背"}, "c.脚": {"ja": "脚", "en": "Legs", "ko": "하체", "zh": "腿"}, "c.肩": {"ja": "肩", "en": "Shoulders", "ko": "어깨", "zh": "肩"}, "c.腕": {"ja": "腕", "en": "Arms", "ko": "팔", "zh": "手臂"}, "c.腹": {"ja": "腹", "en": "Abs", "ko": "복근", "zh": "腹"}, "c.全身": {"ja": "全身", "en": "Full body", "ko": "전신", "zh": "全身"}, "c.有酸素": {"ja": "有酸素", "en": "Cardio", "ko": "유산소", "zh": "有氧"}, "c.フリーウェイト": {"ja": "フリーウェイト", "en": "Free weights", "ko": "프리웨이트", "zh": "自由重量"}, "c.マシン": {"ja": "マシン", "en": "Machine", "ko": "머신", "zh": "器械"}, "c.ケーブル": {"ja": "ケーブル", "en": "Cable", "ko": "케이블", "zh": "绳索"}, "c.自重": {"ja": "自重", "en": "Bodyweight", "ko": "맨몸", "zh": "自重"}, "c.その他": {"ja": "その他", "en": "Other", "ko": "기타", "zh": "其他"}, "plan.weekly": {"ja": "曜日ごとに固定", "en": "Fixed by weekday", "ko": "요일별 고정", "zh": "按星期固定"}, "plan.daily": {"ja": "日ごとに決める", "en": "Plan by date", "ko": "날짜별로 정하기", "zh": "按日期安排"}, "plan.hint.weekly": {"ja": "毎週、同じ曜日に同じメニューをくり返します", "en": "Repeats the same menu on the same weekday every week", "ko": "매주 같은 요일에 같은 메뉴를 반복합니다", "zh": "每周同一天重复相同的计划"}, "plan.hint.daily": {"ja": "日付ごとに好きなメニューを決めます。決めていない日も、Todayで自由に種目を追加できます", "en": "Plan a menu for any date. On unplanned days you can still add exercises freely on Today", "ko": "날짜마다 원하는 메뉴를 정합니다. 정하지 않은 날도 Today에서 자유롭게 종목을 추가할 수 있습니다", "zh": "可按日期安排任意计划。未安排的日子也能在 Today 自由添加动作"}, "copyLast": {"ja": "前回のトレーニング内容をコピー", "en": "Copy last workout", "ko": "지난 운동 내용 복사", "zh": "复制上次训练"}, "copyWd": {"ja": "{wd}のメニューをコピー", "en": "Copy {wd} menu", "ko": "{wd} 메뉴 복사", "zh": "复制{wd}的计划"}, "dateRest": {"ja": "{wd}のメニューはまだありません", "en": "No menu for {wd} yet", "ko": "{wd} 메뉴가 아직 없습니다", "zh": "{wd}还没有计划"}, "adhoc.saveDate": {"ja": "今日のメニューとして保存する", "en": "Save to today's menu", "ko": "오늘 메뉴로 저장", "zh": "保存为今天的计划"}, "today.emptyDaily": {"ja": "今日のメニューはまだありません", "en": "No menu for today yet", "ko": "오늘 메뉴가 아직 없습니다", "zh": "今天还没有计划"}, "today.emptyDaily2": {"ja": "下から種目を追加するか、「前回の種目を呼び出す」が使えます", "en": "Add an exercise below, or use \"Recall last exercises\"", "ko": "아래에서 종목을 추가하거나 \"지난 종목 불러오기\"를 사용하세요", "zh": "可在下方添加动作，或使用\"调出上次的动作\""}, "recall": {"ja": "↺ 前回の種目を呼び出す", "en": "↺ Recall last exercises", "ko": "↺ 지난 종목 불러오기", "zh": "↺ 调出上次的动作"}, "toast.noPrev": {"ja": "前回のトレーニング記録がありません", "en": "No previous workout found", "ko": "지난 운동 기록이 없습니다", "zh": "没有上次的训练记录"}, "toast.recalled": {"ja": "前回の種目を呼び出しました", "en": "Recalled your last exercises", "ko": "지난 종목을 불러왔습니다", "zh": "已调出上次的动作"}, "daylog.sub": {"ja": "その日の種目・時間・メモ", "en": "Exercises, time & notes", "ko": "그날의 종목·시간·메모", "zh": "当天动作·时间·笔记"}, "daylog.date": {"ja": "日付", "en": "", "ko": "날짜", "zh": "日期"}, "daylog.ex": {"ja": "やった種目", "en": "Exercises done", "ko": "한 종목", "zh": "完成的动作"}, "daylog.start": {"ja": "開始時刻", "en": "Start time", "ko": "시작 시각", "zh": "开始时间"}, "daylog.dur": {"ja": "時間（分）", "en": "Duration (min)", "ko": "운동 시간 (분)", "zh": "时长（分钟）"}, "daylog.memo": {"ja": "メモ", "en": "Notes", "ko": "메모", "zh": "笔记"}, "daylog.save": {"ja": "保存する", "en": "Save", "ko": "저장", "zh": "保存"}, "daylog.none": {"ja": "この日のセット記録はありません（セットはTodayで記録できます）", "en": "No sets logged this day (log sets on Today)", "ko": "이날 세트 기록이 없습니다 (세트는 Today에서 기록)", "zh": "当天没有训练组记录（可在 Today 记录）"}, "daylog.empty": {"ja": "入力されていません", "en": "Nothing to save", "ko": "입력된 내용이 없습니다", "zh": "没有输入内容"}, "daylog.min": {"ja": "{n}分", "en": "{n} min", "ko": "{n}분", "zh": "{n}分钟"}, "log.q": {"ja": "メモや種目名で検索", "en": "Search notes or exercises", "ko": "메모나 종목명 검색", "zh": "搜索笔记或动作"}, "log.fAll": {"ja": "すべて", "en": "All", "ko": "전체", "zh": "全部"}, "log.fTrain": {"ja": "トレーニング", "en": "Workouts", "ko": "운동", "zh": "训练"}, "log.fMemo": {"ja": "メモ・時間", "en": "Notes & time", "ko": "메모·시간", "zh": "笔记·时间"}, "log.fPr": {"ja": "PR", "en": "PR", "ko": "PR", "zh": "PR"}, "log.none": {"ja": "条件に合う記録がありません", "en": "No matching records", "ko": "조건에 맞는 기록이 없습니다", "zh": "没有符合条件的记录"}, "log.count": {"ja": "{n}日分の記録", "en": "{n} days of records", "ko": "{n}일분의 기록", "zh": "共 {n} 天的记录"}, "log.edit": {"ja": "Day Logで編集", "en": "Edit in Day Log", "ko": "Day Log에서 편집", "zh": "在 Day Log 中编辑"}, "wm.exit": {"ja": "通常表示", "en": "Normal view", "ko": "일반 화면", "zh": "普通视图"}, "wm.open": {"ja": "▶ ワークアウトモード", "en": "▶ Workout mode", "ko": "▶ 워크아웃 모드", "zh": "▶ 训练模式"}, "wm.log": {"ja": "＋ セット記録 → タイマー", "en": "+ Log set → Timer", "ko": "+ 세트 기록 → 타이머", "zh": "+ 记录一组 → 计时"}, "wm.none": {"ja": "今日の種目がありません", "en": "No exercises for today", "ko": "오늘 종목이 없습니다", "zh": "今天没有动作"}, "wm.noneHint": {"ja": "「通常表示」に戻って種目を追加してください", "en": "Go back to Normal view to add exercises", "ko": "\"일반 화면\"으로 돌아가 종목을 추가하세요", "zh": "请回到\"普通视图\"添加动作"}, "wm.needReps": {"ja": "回数を入力してください", "en": "Enter reps", "ko": "횟수를 입력하세요", "zh": "请输入次数"}, "wm.next": {"ja": "次は「{name}」", "en": "Next: {name}", "ko": "다음: {name}", "zh": "下一个：{name}"}, "wm.done": {"ja": "✓ 目標達成", "en": "✓ Target met", "ko": "✓ 목표 달성", "zh": "✓ 已达成目标"}};
+  const LANGS = ['ja','en','ko','zh'];
+  const detectLang = () => { const l = (navigator.language || 'ja').toLowerCase(); return l.startsWith('ko') ? 'ko' : l.startsWith('zh') ? 'zh' : l.startsWith('ja') ? 'ja' : l.startsWith('en') ? 'en' : 'ja'; };
+  let LANG = detectLang();
+  const t = (k, v) => { const e = I18N[k]; let r = e ? (e[LANG] != null ? e[LANG] : e.ja) : k; if(v) for(const x in v) r = r.split('{' + x + '}').join(v[x]); return r; };
+  const catLabel = v => I18N['c.' + v] ? t('c.' + v) : v;
+  const WD_SHORT = {ja:'日月火水木金土'.split(''), en:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], ko:'일월화수목금토'.split(''), zh:'日一二三四五六'.split('')};
+  const WD_FULL = {ja:WD_SHORT.ja.map(d => d + '曜日'), en:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], ko:WD_SHORT.ko.map(d => d + '요일'), zh:WD_SHORT.zh.map(d => '周' + d)};
+  const wdS = wd => WD_SHORT[LANG][wd], wdF = wd => WD_FULL[LANG][wd];
+  const MUSCLES = ['胸','背中','脚','肩','腕','腹','全身','有酸素'];
+  const EQUIP = ['フリーウェイト','マシン','ケーブル','自重','その他'];
+  const RPES = ['',6,6.5,7,7.5,8,8.5,9,9.5,10];
+  const uid = p => p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+  const now = () => new Date().toISOString();
+  const num = v => { const n = parseFloat(v); return isFinite(n) ? n : null; };
+  const kg = v => (Math.round(v*10)/10).toLocaleString('ja-JP',{maximumFractionDigits:1});
+
+  function h(tag, props, ...kids){
+    const el = document.createElement(tag);
+    if(props) for(const k in props){
+      const v = props[k];
+      if(v == null || v === false) continue;
+      if(k === 'class') el.className = v;
+      else if(k === 'html') el.innerHTML = v;
+      else if(k === 'style') el.style.cssText = v;
+      else if(k.slice(0,2) === 'on') el[k] = v;
+      else if(k === 'value' || k === 'checked') el[k] = v;
+      else el.setAttribute(k, v === true ? '' : v);
+    }
+    kids.flat(Infinity).forEach(c => { if(c == null || c === false) return; el.append(c.nodeType ? c : document.createTextNode(String(c))); });
+    return el;
+  }
+  let toastT;
+  function toast(s){ const t = $('toast'); t.textContent = s; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200); }
+
+  /* ---------- DB ---------- */
+  let db;
+  const TABLES = ['exercises','routine_items','workout_logs','workout_sets','body_weights'];
+  function emptyDB(){ return {version:2, exercises:[], routine_items:[], workout_logs:[], workout_sets:[], body_weights:[], settings:{rest_sec:90, day_start_hour:4, sound:true, keep_awake:false, plan_mode:'weekly'}}; }
+  function normalize(d){
+    const e = emptyDB();
+    TABLES.forEach(k => { if(Array.isArray(d[k])) e[k] = d[k]; });
+    e.settings = Object.assign(e.settings, d.settings || {});
+    // 曜日なしのメニュー（旧形式）は全曜日へ展開
+    const flat = e.routine_items.filter(r => typeof r.weekday !== 'number' && !r.date);
+    if(flat.length){
+      e.routine_items = e.routine_items.filter(r => typeof r.weekday === 'number' || r.date);
+      for(let wd = 0; wd < 7; wd++) flat.forEach(r => e.routine_items.push(Object.assign({}, r, {id:uid('ri'), weekday:wd})));
+    }
+    return e;
+  }
+  function seed(){
+    const d = emptyDB(), ct = now();
+    const mk = (name, m, eq) => { const x = {id:uid('ex'), name, muscle_group:m, equipment:eq, archived_at:null, created_at:ct}; d.exercises.push(x); return x; };
+    const b = mk(t('seed.bench'),'胸','フリーウェイト'), s = mk(t('seed.squat'),'脚','フリーウェイト'), p = mk(t('seed.pullup'),'背中','自重');
+    [1,3,5].forEach(wd => [[b,3,10,40],[s,3,10,60],[p,3,8,0]].forEach(([x,ts,tr,tw],i) => d.routine_items.push({id:uid('ri'), weekday:wd, exercise_id:x.id, target_sets:ts, target_reps:tr, target_weight:tw, order:i})));
+    return d;
+  }
+  const isV1 = d => d && Array.isArray(d.plan) && d.logs && typeof d.logs === 'object';
+  const isV2 = d => d && (d.version === 2 || Array.isArray(d.workout_sets));
+  function migrateV1(plan, logs){
+    const d = emptyDB(), t = now();
+    plan.forEach((p,i) => {
+      d.exercises.push({id:p.id, name:p.name, muscle_group:'', equipment:'', archived_at:null, created_at:t});
+      d.routine_items.push({id:uid('ri'), exercise_id:p.id, target_sets:1, target_reps:p.target||0, target_weight:0, order:i});
+    });
+    const snap = plan.map(p => ({exercise_id:p.id, target_sets:1, target_reps:p.target||0, target_weight:0}));
+    Object.keys(logs).sort().forEach(date => {
+      const e = logs[date] || {};
+      if(e.weight != null) d.body_weights.push({id:uid('bw'), measured_at:new Date(date+'T08:00:00').toISOString(), weight_kg:e.weight});
+      const exs = Object.entries(e.exercises || {}).filter(([,r]) => r && r.actual > 0);
+      if(!exs.length) return;
+      const log = {id:uid('wl'), executed_at:new Date(date+'T12:00:00').toISOString(), memo:'', routine_snapshot:snap};
+      d.workout_logs.push(log);
+      exs.forEach(([id, r]) => {
+        if(!d.exercises.some(x => x.id === id)) d.exercises.push({id, name:'不明な種目', muscle_group:'', equipment:'', archived_at:t, created_at:t});
+        d.workout_sets.push({id:uid('ws'), workout_log_id:log.id, exercise_id:id, set_number:1, weight:null, reps:r.actual, rpe:null, is_warmup:false});
+      });
+    });
+    return normalize(d);
+  }
+  function load(){
+    let raw = null;
+    try{ raw = localStorage.getItem(KEY); }catch(e){}
+    if(raw){ try{ db = normalize(JSON.parse(raw)); if(LANGS.includes(db.settings.lang)) LANG = db.settings.lang; return; }catch(e){} }
+    let migrated = false;
+    try{
+      const p = localStorage.getItem(OLD_PLAN), l = localStorage.getItem(OLD_LOGS);
+      if(p || l){ db = migrateV1(p ? JSON.parse(p) : [], l ? JSON.parse(l) : {}); migrated = true; }
+    }catch(e){ db = null; }
+    if(!db) db = seed();
+    save();
+    if(migrated) setTimeout(() => toast(t('toast.migrated')), 400);
+  }
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast(t('toast.saveFail')); } }
+
+  /* ---------- queries ---------- */
+  const exById = id => db.exercises.find(e => e.id === id);
+  const exName = id => { const e = exById(id); return e ? e.name : t('unknownEx'); };
+  const logById = id => db.workout_logs.find(l => l.id === id);
+  const dayKey = ts => { const hh = +db.settings.day_start_hour || 0; return fmt(new Date(new Date(ts).getTime() - hh*3600000)); };
+  const todayKey = () => dayKey(Date.now());
+  const wdOf = k => new Date(k + 'T12:00:00').getDay();
+  const todayWd = () => wdOf(todayKey());
+  const routine = (wd = todayWd()) => db.routine_items.filter(r => r.weekday === wd && !r.date).sort((a,b) => a.order - b.order);
+  // メニューの決め方: weekly=曜日ごとに固定 / daily=日付ごとに決める（日付指定のメニューはどちらのモードでも優先）
+  const isDaily = () => db.settings.plan_mode === 'daily';
+  const dateItems = k => db.routine_items.filter(r => r.date === k).sort((a,b) => a.order - b.order);
+  const planFor = k => { const d = dateItems(k); return d.length || isDaily() ? d : routine(wdOf(k)); };
+  const snapshot = (k = todayKey()) => planFor(k).filter(r => exById(r.exercise_id)).map(r => ({exercise_id:r.exercise_id, target_sets:r.target_sets, target_reps:r.target_reps, target_weight:r.target_weight}));
+  const logsDesc = () => db.workout_logs.slice().sort((a,b) => a.executed_at < b.executed_at ? 1 : -1);
+  function todayLog(create){
+    const k = todayKey();
+    let l = db.workout_logs.find(x => dayKey(x.executed_at) === k);
+    if(!l && create){ l = {id:uid('wl'), executed_at:now(), memo:'', routine_snapshot:snapshot()}; db.workout_logs.push(l); }
+    return l;
+  }
+  function syncToday(){ const l = todayLog(false); if(l) l.routine_snapshot = snapshot(); }
+  const setsOf = logId => db.workout_sets.filter(s => s.workout_log_id === logId);
+  const setsFor = (logId, exId) => setsOf(logId).filter(s => s.exercise_id === exId).sort((a,b) => a.set_number - b.set_number);
+  const isWork = s => !s.is_warmup && (s.reps || 0) > 0;
+  const e1rm = s => s.weight > 0 && s.reps > 0 ? s.weight * (s.reps === 1 ? 1 : 1 + s.reps/30) : 0;
+  const volOf = sets => sets.filter(isWork).reduce((a,s) => a + (s.weight > 0 ? s.weight*s.reps : 0), 0);
+  const fmtSet = s => `${s.weight > 0 ? kg(s.weight) : t('bw')}×${s.reps}${s.rpe != null ? '@' + s.rpe : ''}${s.is_warmup ? '(W)' : ''}`;
+
+  function itemRate(log, it){
+    if(!(it.target_sets > 0)) return null;
+    const c = log ? setsFor(log.id, it.exercise_id).filter(s => isWork(s) && s.reps >= (it.target_reps || 0) && (!(it.target_weight > 0) || (s.weight || 0) >= it.target_weight)).length : 0;
+    return Math.min(1, c / it.target_sets);
+  }
+  function logRate(log, items){
+    items = items || (log && log.routine_snapshot) || [];
+    const rs = items.map(it => itemRate(log, it)).filter(r => r != null);
+    return rs.length ? rs.reduce((a,b) => a+b, 0) / rs.length : null;
+  }
+  function prevSession(exId, beforeIso){
+    for(const l of logsDesc()){
+      if(l.executed_at >= beforeIso) continue;
+      const s = setsFor(l.id, exId);
+      if(s.length) return {log:l, sets:s};
+    }
+    return null;
+  }
+  function bestBefore(exId, beforeIso){
+    const b = {e1:0, reps:0};
+    const lm = new Map(db.workout_logs.map(l => [l.id, l]));
+    db.workout_sets.forEach(s => {
+      if(s.exercise_id !== exId || !isWork(s)) return;
+      const l = lm.get(s.workout_log_id);
+      if(!l || l.executed_at >= beforeIso) return;
+      b.e1 = Math.max(b.e1, e1rm(s));
+      if(!(s.weight > 0)) b.reps = Math.max(b.reps, s.reps);
+    });
+    return b;
+  }
+  function isPR(log, exId){
+    const sets = setsFor(log.id, exId).filter(isWork);
+    if(!sets.length) return false;
+    const b = bestBefore(exId, log.executed_at);
+    if(!(b.e1 > 0 || b.reps > 0)) return false;
+    const e = Math.max(...sets.map(e1rm));
+    const r = Math.max(0, ...sets.filter(s => !(s.weight > 0)).map(s => s.reps));
+    return (e > 0 && e > b.e1 + 1e-9) || (r > 0 && b.reps > 0 && r > b.reps);
+  }
+  function activeDays(){
+    const lm = new Map(db.workout_logs.map(l => [l.id, l])), set = new Set();
+    db.workout_sets.forEach(s => { if(isWork(s)){ const l = lm.get(s.workout_log_id); if(l) set.add(dayKey(l.executed_at)); } });
+    return set;
+  }
+  function streak(days){
+    const d = new Date(todayKey() + 'T12:00:00'); let n = 0;
+    if(!days.has(fmt(d))) d.setDate(d.getDate()-1);
+    while(days.has(fmt(d))){ n++; d.setDate(d.getDate()-1); }
+    return n;
+  }
+  function bwMap(){
+    const m = {};
+    db.body_weights.slice().sort((a,b) => a.measured_at < b.measured_at ? -1 : 1).forEach(b => { m[dayKey(b.measured_at)] = b.weight_kg; });
+    return m;
+  }
+
+  /* ---------- tabs ---------- */
+  const TITLES = {today:'Today', body:'Charts', log:'Log', setup:'Setup'};
+  let current = 'today';
+  function go(v){
+    current = v;
+    if(v === 'today') shownRate = undefined;
+    document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.id === 'v-' + v));
+    document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.dataset.view === v));
+    $('viewTitle').textContent = TITLES[v];
+    window.scrollTo(0,0);
+    ({today:renderToday, body:renderBody, log:renderLog, setup:renderSetup})[v]();
+    renderWM(); renderTimer();
+  }
+  document.querySelectorAll('.tab').forEach(t => t.onclick = () => go(t.dataset.view));
+
+  let lastDay;
+  function renderBar(){
+    const k = todayKey(), d = new Date(k + 'T12:00:00');
+    $('barSub').innerHTML = `<b>${WD[d.getDay()]}</b><br>${k.replace(/-/g,'.')}`;
+  }
+  function checkDay(){
+    const k = todayKey();
+    if(k !== lastDay){ lastDay = k; extraEx = []; renderBar(); if(current === 'today') renderToday(); }
+  }
+
+  /* ---------- TODAY ---------- */
+  let extraEx = [], cardRefs = {};
+  const todayItems = log => log ? (log.routine_snapshot || []) : snapshot();
+
+  function renderToday(){
+    const log = todayLog(false), items = todayItems(log);
+    const ids = items.map(i => i.exercise_id);
+    if(log) setsOf(log.id).forEach(s => { if(!ids.includes(s.exercise_id)) ids.push(s.exercise_id); });
+    extraEx.forEach(id => { if(!ids.includes(id)) ids.push(id); });
+
+    const wrap = $('exList'); wrap.innerHTML = ''; cardRefs = {};
+    const wj = wdF(todayWd());
+    if(!ids.length) wrap.append(h('div', {class:'empty'}, isDaily() ? t('today.emptyDaily') : t('today.empty1', {wd:wj}), h('br'), isDaily() ? t('today.emptyDaily2') : t('today.empty2')));
+    ids.forEach(id => wrap.append(exCard(id, items.find(i => i.exercise_id === id), log)));
+    $('menuCount').textContent = `${wj} · ${ids.length} ITEMS`;
+
+    const dl = $('adhocList'); dl.innerHTML = '';
+    db.exercises.filter(e => !ids.includes(e.id)).forEach(e => dl.append(h('option', {value:e.name})));
+    $('adhocSaveLabel').textContent = isDaily() ? t('adhoc.saveDate') : t('adhoc.save', {wd:wj});
+
+    if(document.activeElement !== $('memo')) $('memo').value = log ? (log.memo || '') : '';
+    updateStats();
+    renderWM();
+  }
+
+  function exCard(exId, item, log){
+    const ex = exById(exId) || {name:t('unknownEx')};
+    const sets = log ? setsFor(log.id, exId) : [];
+    const prev = prevSession(exId, log ? log.executed_at : now());
+    const tgt = item && item.target_sets > 0
+      ? `${item.target_sets}×${item.target_reps}${item.target_weight > 0 ? ' @' + kg(item.target_weight) + 'kg' : ''}`
+      : t('free');
+    const pctEl = h('div', {class:'ex-pct'});
+    const prEl = h('span', {class:'tg pr', hidden:true}, 'PR');
+    const barI = h('i');
+    const card = h('div', {class:'ex'},
+      h('div', {class:'ex-top'},
+        h('div', {class:'ex-head'},
+          h('div', {class:'ex-title'}, ex.name, prEl),
+          h('div', {class:'tags'},
+            h('span', {class:'tg'}, t('target', {t:tgt})),
+            ex.muscle_group && h('span', {class:'tg plain'}, catLabel(ex.muscle_group)),
+            ex.equipment && h('span', {class:'tg plain'}, catLabel(ex.equipment)))),
+        pctEl),
+      prev && h('div', {class:'prev'}, h('span', {class:'label dim'}, t('prev') + ' ' + sd(dayKey(prev.log.executed_at))), prev.sets.map(fmtSet).join(' · ')),
+      sets.length > 0 && h('div', {class:'sets'},
+        h('div', {class:'set-h label dim'}, h('span',null,'SET'), h('span',null,'KG'), h('span',null,'REP'), h('span',null,'RPE'), h('span',null,'W'), h('span')),
+        sets.map(s => setRow(s, exId))),
+      h('div', {class:'ex-actions'},
+        h('button', {class:'btn sm', onclick:() => addSet(exId, item)}, t('addSet')),
+        (!sets.length && prev) && h('button', {class:'btn sm line', onclick:() => copyPrev(exId, prev)}, t('copyPrev'))),
+      h('div', {class:'ex-bar'}, barI));
+    cardRefs[exId] = {card, pctEl, prEl, barI, item};
+    refreshCard(exId);
+    return card;
+  }
+
+  function refreshCard(exId){
+    const r = cardRefs[exId]; if(!r) return;
+    const log = todayLog(false);
+    const rate = r.item ? itemRate(log, r.item) : null;
+    if(rate == null){
+      const n = log ? setsFor(log.id, exId).filter(isWork).length : 0;
+      r.pctEl.innerHTML = `${n}<small> SETS</small>`; r.barI.style.width = '0%'; r.card.classList.remove('done');
+    } else {
+      const p = Math.round(rate*100);
+      r.pctEl.innerHTML = `${p}<small>%</small>`; r.barI.style.width = p + '%'; r.card.classList.toggle('done', p >= 100);
+    }
+    r.prEl.hidden = !(log && isPR(log, exId));
+  }
+
+  function setRow(s, exId){
+    const w = h('input', {type:'number', step:'0.5', min:'0', inputmode:'decimal', placeholder:t('bw'), 'aria-label':t('a.weight'), value: s.weight > 0 ? s.weight : ''});
+    const r = h('input', {type:'number', step:'1', min:'0', inputmode:'numeric', 'aria-label':t('a.reps'), value: s.reps || ''});
+    const rp = h('select', {'aria-label':'RPE'});
+    RPES.forEach(v => rp.append(h('option', {value:String(v)}, v === '' ? '–' : String(v))));
+    rp.value = s.rpe != null ? String(s.rpe) : '';
+    const wu = h('button', {class:'wu' + (s.is_warmup ? ' on' : ''), 'aria-label':t('a.warm'), title:t('a.warmT')}, 'W');
+    const row = h('div', {class:'set-row' + (s.is_warmup ? ' warm' : '')},
+      h('span', {class:'sn'}, String(s.set_number)), w, r, rp, wu,
+      h('button', {class:'del', 'aria-label':t('a.del'), onclick:() => delSet(s)}, '×'));
+    const commit = () => {
+      const wv = num(w.value);
+      s.weight = wv && wv > 0 ? wv : null;
+      s.reps = Math.max(0, parseInt(r.value) || 0);
+      s.rpe = rp.value === '' ? null : parseFloat(rp.value);
+      save(); refreshCard(exId); updateStats();
+    };
+    w.onchange = commit; r.onchange = commit; rp.onchange = commit;
+    wu.onclick = () => {
+      s.is_warmup = !s.is_warmup;
+      wu.classList.toggle('on', s.is_warmup); row.classList.toggle('warm', s.is_warmup);
+      save(); refreshCard(exId); updateStats();
+    };
+    return row;
+  }
+
+  function addSet(exId, item){
+    const log = todayLog(true);
+    const cur = setsFor(log.id, exId), last = cur[cur.length-1];
+    let w = null, r = 0;
+    if(last){ w = last.weight; r = last.reps; }
+    else {
+      const p = prevSession(exId, log.executed_at), ws = p && p.sets.find(isWork);
+      if(ws){ w = ws.weight; r = ws.reps; }
+      else if(item){ w = item.target_weight > 0 ? item.target_weight : null; r = item.target_reps || 0; }
+    }
+    db.workout_sets.push({id:uid('ws'), workout_log_id:log.id, exercise_id:exId, set_number:cur.length+1, weight:w, reps:r, rpe:null, is_warmup:false});
+    save(); renderToday(); startRest();
+  }
+  function copyPrev(exId, prev){
+    const log = todayLog(true);
+    prev.sets.forEach((s,i) => db.workout_sets.push({id:uid('ws'), workout_log_id:log.id, exercise_id:exId, set_number:i+1, weight:s.weight, reps:s.reps, rpe:null, is_warmup:!!s.is_warmup}));
+    save(); renderToday(); toast(t('toast.copiedPrev'));
+  }
+  function delSet(s){
+    db.workout_sets = db.workout_sets.filter(x => x !== s);
+    setsFor(s.workout_log_id, s.exercise_id).forEach((x,i) => x.set_number = i+1);
+    const log = logById(s.workout_log_id);
+    if(log && !setsOf(log.id).length && !log.memo && !log.duration_min && !log.start_time) db.workout_logs = db.workout_logs.filter(l => l !== log);
+    save(); renderToday();
+  }
+
+  // ジジジ演出: 数字だけをランダムに乱し、左の桁から確定させる（記号や文字はそのまま）
+  const anims = new Map();
+  const reduceMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function scramble(el, host, key, dur, done){
+    if(reduceMotion() || typeof requestAnimationFrame !== 'function'){ el.textContent = key; done && done(); return; }
+    cancelAnimationFrame(anims.get(el));
+    host.classList.remove('lock'); host.classList.add('glitch');
+    const start = performance.now(), n = key.length;
+    let last = 0;
+    const frame = now => {
+      const k = (now - start) / dur;
+      if(k >= 1){
+        el.textContent = key;
+        host.classList.remove('glitch'); host.style.removeProperty('--gx'); host.style.removeProperty('--gs');
+        void host.offsetWidth; host.classList.add('lock');
+        anims.delete(el); done && done();
+        return;
+      }
+      if(now - last > 40){
+        last = now;
+        let out = '';
+        for(let i = 0; i < n; i++){
+          const ch = key[i];
+          out += /\d/.test(ch) && !(k > 0.35 + 0.65*(i+1)/n) ? Math.floor(Math.random()*10) : ch;
+        }
+        el.textContent = out;
+        host.style.setProperty('--gx', (Math.random()*6 - 3).toFixed(1) + 'px');
+        host.style.setProperty('--gs', (Math.random()*6 - 3).toFixed(1) + 'deg');
+      }
+      anims.set(el, requestAnimationFrame(frame));
+    };
+    anims.set(el, requestAnimationFrame(frame));
+  }
+  let shownRate;
+  function animateRate(v){
+    const el = $('rateNum'), key = v == null ? '--' : String(v);
+    if(key === shownRate) return;
+    shownRate = key;
+    if(v == null){ el.textContent = key; return; }
+    scramble(el, $('heroNum'), key, 700);
+  }
+  function updateStats(){
+    const log = todayLog(false), items = todayItems(log), rate = logRate(log, items);
+    const p = rate == null ? 0 : Math.round(rate*100);
+    animateRate(rate == null ? null : p);
+    $('heroBar').style.width = p + '%';
+    const tgtSets = items.reduce((a,i) => a + (i.target_sets || 0), 0);
+    const work = log ? setsOf(log.id).filter(isWork).length : 0;
+    $('doneBig').textContent = `${work}/${tgtSets}`;
+    const v = log ? volOf(setsOf(log.id)) : 0;
+    $('mVol').innerHTML = v >= 10000 ? `${(v/1000).toFixed(1)}<small> t</small>` : `${Math.round(v).toLocaleString()}<small> kg</small>`;
+    const days = activeDays();
+    $('mStreak').textContent = streak(days);
+    $('mDays').textContent = days.size;
+  }
+
+  $('adhocBtn').onclick = () => {
+    const name = $('adhocName').value.trim();
+    if(!name){ toast(t('toast.needName')); return; }
+    let ex = db.exercises.find(e => e.name === name), created = false;
+    if(!ex){
+      ex = {id:uid('ex'), name, muscle_group:'', equipment:'', archived_at:null, created_at:now()};
+      db.exercises.push(ex); created = true;
+    } else if(ex.archived_at) ex.archived_at = null;
+    if($('adhocSave').checked && !planFor(todayKey()).some(r => r.exercise_id === ex.id)){
+      const scope = isDaily() || dateItems(todayKey()).length ? {date:todayKey()} : {weekday:todayWd()};
+      db.routine_items.push(Object.assign({id:uid('ri'), exercise_id:ex.id, target_sets:3, target_reps:10, target_weight:0, order:planFor(todayKey()).length}, scope));
+      syncToday();
+    }
+    if(!extraEx.includes(ex.id)) extraEx.push(ex.id);
+    $('adhocName').value = '';
+    save(); renderToday();
+    toast(t(created ? 'toast.createdEx' : 'toast.addedEx', {name}));
+  };
+  function lastWorkout(beforeKey){
+    return logsDesc().find(l => dayKey(l.executed_at) < beforeKey && setsOf(l.id).some(isWork));
+  }
+  $('recallBtn').onclick = () => {
+    const l = lastWorkout(todayKey());
+    if(!l){ toast(t('toast.noPrev')); return; }
+    setsOf(l.id).forEach(s => { if(!extraEx.includes(s.exercise_id)) extraEx.push(s.exercise_id); });
+    renderToday(); toast(t('toast.recalled'));
+  };
+  $('adhocName').addEventListener('keydown', e => { if(e.key === 'Enter') $('adhocBtn').click(); });
+  let memoT;
+  $('memo').addEventListener('input', () => {
+    clearTimeout(memoT);
+    memoT = setTimeout(() => {
+      const v = $('memo').value, log = todayLog(!!v.trim());
+      if(log){ log.memo = v; save(); }
+    }, 400);
+  });
+
+  /* ---------- rest timer ---------- */
+  let restEnd = 0, restTimer = null, finUntil = 0, cardVisible = true, actx = null, wakeLock = null;
+  const fmtT = sec => `${Math.floor(sec/60)}:${pad(sec%60)}`;
+  function unlockAudio(){
+    if(!db.settings.sound) return;
+    try{
+      // iOS 17+: 'ambient' にするとSpotifyなどの再生を止めずに音を重ねる
+      if(navigator.audioSession) navigator.audioSession.type = 'ambient';
+      if(!actx){ const AC = window.AudioContext || window.webkitAudioContext; if(AC) actx = new AC(); }
+      if(actx && actx.state === 'suspended') actx.resume();
+    }catch(e){}
+  }
+  function beep(){
+    if(!db.settings.sound || !actx) return;
+    try{
+      [0, .22, .44].forEach((d, i) => {
+        const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime + d;
+        o.frequency.value = i === 2 ? 1320 : 880;
+        o.connect(g); g.connect(actx.destination);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.35, t + .01); g.gain.exponentialRampToValueAtTime(0.0001, t + .18);
+        o.start(t); o.stop(t + .2);
+      });
+    }catch(e){}
+  }
+  function renderTimer(){
+    const running = !!restTimer, fin = !running && Date.now() < finUntil;
+    const left = running ? Math.max(0, Math.ceil((restEnd - Date.now())/1000)) : (+db.settings.rest_sec || 0);
+    const txt = fin ? 'GO!' : fmtT(left);
+    if(!timerScr) $('tBig').textContent = txt;
+    $('restT').textContent = txt;
+    $('tStart').textContent = running ? 'STOP' : 'START';
+    $('tState').textContent = running ? 'RUNNING' : fin ? 'TIME UP' : 'READY';
+    $('timerCard').classList.toggle('run', running); $('timerCard').classList.toggle('fin', fin);
+    $('rest').classList.toggle('fin', fin);
+    $('rest').hidden = !(running || fin) || (current === 'today' && cardVisible) || !$('wm').hidden;
+    renderWMTimer();
+  }
+  let timerScr = false;
+  function scrambleTimer(){
+    if(timerScr) return;
+    timerScr = true;
+    const running = !!restTimer, fin = !running && Date.now() < finUntil;
+    const left = running ? Math.max(0, Math.ceil((restEnd - Date.now())/1000)) : (+db.settings.rest_sec || 0);
+    scramble($('tBig'), $('tBig'), fin ? 'GO!' : fmtT(left), 450, () => { timerScr = false; renderTimer(); });
+  }
+  function startRest(sec){
+    sec = sec || (+db.settings.rest_sec || 0);
+    if(sec <= 0) return;
+    unlockAudio();
+    restEnd = Date.now() + sec*1000; finUntil = 0; restTotal = sec;
+    clearInterval(restTimer); restTimer = setInterval(tick, 250); tick();
+    scrambleTimer();
+  }
+  function stopRest(){ clearInterval(restTimer); restTimer = null; finUntil = 0; renderTimer(); }
+  function tick(){
+    if(restTimer && Date.now() >= restEnd){
+      clearInterval(restTimer); restTimer = null; finUntil = Date.now() + 4000;
+      const wmEl = $('wm'); wmEl.classList.remove('flash'); void wmEl.offsetWidth; wmEl.classList.add('flash');
+      beep();
+      try{ navigator.vibrate && navigator.vibrate([200,100,200]); }catch(e){}
+      setTimeout(renderTimer, 4100);
+      renderTimer(); scrambleTimer(); return;
+    }
+    renderTimer();
+  }
+  // 動作中は残り時間を、停止中は次回の秒数（設定値）を ±10秒
+  function adjTimer(d){
+    if(restTimer){ restEnd += d*1000; restTotal = Math.max(10, restTotal + d); tick(); }
+    else { db.settings.rest_sec = Math.min(3600, Math.max(10, (+db.settings.rest_sec || 0) + d)); save(); renderTimer(); }
+  }
+  // タイマーの手入力（数字をタップ → 分・秒を入力）
+  function openTimerEdit(){
+    const cur = restTimer ? Math.max(0, Math.ceil((restEnd - Date.now())/1000)) : (+db.settings.rest_sec || 0);
+    $('tMin').value = Math.floor(cur/60); $('tSec').value = pad(cur % 60);
+    $('tBig').hidden = true; $('tEdit').hidden = false;
+    try{ $('tMin').focus(); $('tMin').select(); }catch(e){}
+  }
+  function closeTimerEdit(){ $('tEdit').hidden = true; $('tBig').hidden = false; }
+  function applyTimerEdit(sec){
+    sec = Math.min(3600, Math.max(5, Math.round(sec) || 0));
+    closeTimerEdit();
+    if(restTimer){ restEnd = Date.now() + sec*1000; restTotal = sec; }
+    else { db.settings.rest_sec = sec; save(); finUntil = 0; }
+    renderTimer(); scrambleTimer();
+  }
+  $('tBig').onclick = openTimerEdit;
+  $('tSet').onclick = () => applyTimerEdit((parseInt($('tMin').value) || 0)*60 + (parseInt($('tSec').value) || 0));
+  $('tCancel').onclick = closeTimerEdit;
+  ['tMin','tSec'].forEach(id => $(id).addEventListener('keydown', e => { if(e.key === 'Enter') $('tSet').click(); if(e.key === 'Escape') closeTimerEdit(); }));
+  document.querySelectorAll('#tPre button').forEach(b => b.onclick = () => applyTimerEdit(+b.dataset.s));
+  $('tMinus').onclick = () => adjTimer(-10);
+  $('tPlus').onclick = () => adjTimer(10);
+  $('tStart').onclick = () => { restTimer ? stopRest() : startRest(); };
+  $('restMinus').onclick = () => adjTimer(-10);
+  $('restPlus').onclick = () => adjTimer(10);
+  $('restStop').onclick = stopRest;
+  if('IntersectionObserver' in window){
+    new window.IntersectionObserver(es => { cardVisible = es[0].isIntersecting; renderTimer(); }).observe($('timerCard'));
+  }
+  async function applyWake(){
+    try{
+      if(db.settings.keep_awake && navigator.wakeLock && !document.hidden){
+        if(!wakeLock){ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+      } else if(!db.settings.keep_awake && wakeLock){ await wakeLock.release(); wakeLock = null; }
+    }catch(e){ wakeLock = null; }
+  }
+  $('optSound').onchange = () => { db.settings.sound = $('optSound').checked; save(); if(db.settings.sound) unlockAudio(); };
+  $('optWake').onchange = () => {
+    db.settings.keep_awake = $('optWake').checked; save();
+    if(db.settings.keep_awake && !navigator.wakeLock) toast(t('toast.wakeNA'));
+    applyWake();
+  };
+
+  /* ---------- WORKOUT MODE（スマホ横向き: 左に大型タイマー、右に今の種目と記録） ---------- */
+  const mqLand = window.matchMedia ? window.matchMedia('(orientation: landscape) and (max-height: 520px)') : null;
+  let wmOff = false, restTotal = 0;
+  const wm = {exId:null, w:null, r:0};
+  const RING = 2 * Math.PI * 90;
+  const wmOn = () => !!(mqLand && mqLand.matches) && current === 'today' && !wmOff;
+  function todayIds(){
+    const log = todayLog(false), items = todayItems(log), ids = items.map(i => i.exercise_id);
+    if(log) setsOf(log.id).forEach(s => { if(!ids.includes(s.exercise_id)) ids.push(s.exercise_id); });
+    extraEx.forEach(id => { if(!ids.includes(id)) ids.push(id); });
+    return {log, items, ids};
+  }
+  function wmDefaults(exId){
+    const {log, items} = todayIds(), item = items.find(i => i.exercise_id === exId);
+    const cur = log ? setsFor(log.id, exId) : [], last = cur[cur.length-1];
+    if(last) return {w:last.weight, r:last.reps};
+    const p = prevSession(exId, log ? log.executed_at : now()), ws = p && p.sets.find(isWork);
+    if(ws) return {w:ws.weight, r:ws.reps};
+    if(item) return {w:item.target_weight > 0 ? item.target_weight : null, r:item.target_reps || 0};
+    return {w:null, r:0};
+  }
+  function wmPick(exId){ wm.exId = exId; const d = wmDefaults(exId); wm.w = d.w; wm.r = d.r; }
+  function wmFirstOpen(ids, log, items){
+    for(const id of ids){
+      const it = items.find(i => i.exercise_id === id), n = log ? setsFor(log.id, id).filter(isWork).length : 0;
+      if(!it || !(it.target_sets > 0) || n < it.target_sets) return id;
+    }
+    return ids[0];
+  }
+  function renderWM(){
+    const show = wmOn(), el = $('wm');
+    el.hidden = !show;
+    if(!show) return;
+    const {log, items, ids} = todayIds();
+    el.classList.toggle('empty', !ids.length);
+    if(!ids.length){
+      wm.exId = null; $('wmName').textContent = t('wm.none'); $('wmMeta').textContent = t('wm.noneHint');
+      $('wmDone').textContent = ''; $('wmPos').textContent = ''; renderWMTimer(); return;
+    }
+    if(!ids.includes(wm.exId)) wmPick(wmFirstOpen(ids, log, items));
+    const item = items.find(i => i.exercise_id === wm.exId);
+    const sets = log ? setsFor(log.id, wm.exId) : [], work = sets.filter(isWork).length;
+    const hasT = item && item.target_sets > 0;
+    $('wmName').textContent = exName(wm.exId);
+    $('wmPos').textContent = `${ids.indexOf(wm.exId) + 1}/${ids.length}`;
+    const tgt = hasT ? `${item.target_sets}×${item.target_reps}${item.target_weight > 0 ? ' @' + kg(item.target_weight) + 'kg' : ''}` : t('free');
+    const prev = prevSession(wm.exId, log ? log.executed_at : now());
+    const meta = $('wmMeta'); meta.innerHTML = '';
+    meta.append(`SET ${work + 1}${hasT ? ' / ' + item.target_sets : ''} · ${t('target', {t:tgt})}`);
+    if(hasT && work >= item.target_sets) meta.append(' ', h('span', {class:'ok'}, t('wm.done')));
+    if(prev) meta.append(h('br'), `${t('prev')} ${prev.sets.filter(isWork).map(fmtSet).join(' · ')}`);
+    if(document.activeElement !== $('wmW')) $('wmW').value = wm.w > 0 ? wm.w : '';
+    if(document.activeElement !== $('wmR')) $('wmR').value = wm.r || '';
+    $('wmDone').textContent = sets.map(fmtSet).join(' · ');
+    $('wmPrev').disabled = $('wmNext').disabled = ids.length < 2;
+    renderWMTimer();
+  }
+  function renderWMTimer(){
+    const el = $('wm');
+    if(el.hidden) return;
+    const running = !!restTimer, fin = !running && Date.now() < finUntil;
+    const leftMs = running ? Math.max(0, restEnd - Date.now()) : 0;
+    const left = running ? Math.ceil(leftMs/1000) : (+db.settings.rest_sec || 0);
+    $('wmTime').textContent = fin ? 'GO!' : fmtT(left);
+    const total = Math.max(restTotal, left, 1);
+    const prog = running ? leftMs/1000/total : (fin ? 0 : 1);
+    $('wmArc').style.strokeDashoffset = (RING * (1 - Math.max(0, Math.min(1, prog)))).toFixed(1);
+    $('wmStart').textContent = running ? 'STOP' : 'START';
+    $('wmState').textContent = running ? 'REST' : fin ? 'TIME UP' : 'READY';
+    el.classList.toggle('warn', running && left <= 10);
+    el.classList.toggle('run', running);
+  }
+  const wmMove = d => { const {ids} = todayIds(); if(!ids.length) return; const i = ids.indexOf(wm.exId); wmPick(ids[(i + d + ids.length) % ids.length]); renderWM(); };
+  $('wmPrev').onclick = () => wmMove(-1);
+  $('wmNext').onclick = () => wmMove(1);
+  document.querySelectorAll('#wm [data-k]').forEach(b => b.onclick = () => {
+    const d = +b.dataset.d;
+    if(b.dataset.k === 'w') wm.w = Math.max(0, Math.round(((wm.w || 0) + d)*10)/10) || null;
+    else wm.r = Math.max(0, (wm.r || 0) + d);
+    renderWM();
+  });
+  $('wmW').onchange = () => { const v = num($('wmW').value); wm.w = v && v > 0 ? v : null; };
+  $('wmR').onchange = () => { wm.r = Math.max(0, parseInt($('wmR').value) || 0); };
+  $('wmLog').onclick = () => {
+    if(!wm.exId) return;
+    const v = num($('wmW').value); wm.w = v && v > 0 ? v : null;
+    wm.r = Math.max(0, parseInt($('wmR').value) || 0);
+    if(!(wm.r > 0)){ toast(t('wm.needReps')); return; }
+    const log = todayLog(true), cur = setsFor(log.id, wm.exId);
+    db.workout_sets.push({id:uid('ws'), workout_log_id:log.id, exercise_id:wm.exId, set_number:cur.length + 1, weight:wm.w, reps:wm.r, rpe:null, is_warmup:false});
+    save(); startRest();
+    // 目標セット数に届いたら、次の未完了の種目へ自動で移動
+    const {items, ids} = todayIds(), it = items.find(i => i.exercise_id === wm.exId);
+    const n = setsFor(log.id, wm.exId).filter(isWork).length;
+    if(it && it.target_sets > 0 && n >= it.target_sets){
+      const nx = wmFirstOpen(ids, log, items);
+      if(nx !== wm.exId){ wmPick(nx); toast(t('wm.next', {name:exName(nx)})); }
+    }
+    renderToday();
+  };
+  $('wmMinus').onclick = () => adjTimer(-10);
+  $('wmPlus').onclick = () => adjTimer(10);
+  $('wmStart').onclick = () => { restTimer ? stopRest() : startRest(); };
+  $('wmExit').onclick = () => { wmOff = true; renderWM(); renderTimer(); };
+  $('wmOpen').onclick = () => { wmOff = false; renderWM(); renderTimer(); };
+  if(mqLand){
+    const onMq = () => { if(!mqLand.matches) wmOff = false; renderWM(); renderTimer(); };
+    mqLand.addEventListener ? mqLand.addEventListener('change', onMq) : mqLand.addListener(onMq);
+  }
+
+  /* ---------- BODY ---------- */
+  $('bBtn').onclick = () => {
+    const v = num($('bInput').value);
+    if(v == null || v <= 0){ toast(t('toast.needWeight')); return; }
+    const date = $('bDate').value || todayKey();
+    const iso = date === todayKey() ? now() : new Date(date + 'T08:00:00').toISOString();
+    const ex = db.body_weights.find(b => dayKey(b.measured_at) === date);
+    if(ex){ ex.weight_kg = v; ex.measured_at = iso; }
+    else db.body_weights.push({id:uid('bw'), measured_at:iso, weight_kg:v});
+    $('bInput').value = '';
+    save(); renderBody(); toast(t('toast.recorded'));
+  };
+  function renderBody(){
+    if(!$('bDate').value) $('bDate').value = todayKey();
+    $('bDate').max = todayKey();
+    renderBodyChart();
+    renderDayLog();
+    const list = db.body_weights.slice().sort((a,b) => a.measured_at < b.measured_at ? -1 : 1);
+    if(!list.length){ $('bLast').textContent = '--'; $('bDelta').innerHTML = ''; $('bList').innerHTML = '<div class="empty">NO DATA</div>'; return; }
+    const last = list[list.length-1].weight_kg;
+    $('bLast').innerHTML = `${last.toFixed(1)}<span> kg</span>`;
+    if(list.length > 1){
+      const diff = last - list[list.length-2].weight_kg;
+      const sign = diff > 0 ? '+' : diff < 0 ? '−' : '±';
+      $('bDelta').innerHTML = `<div>${t('prevDiff')}</div><b>${sign}${Math.abs(diff).toFixed(1)} kg</b>`;
+    } else $('bDelta').innerHTML = '';
+    const box = $('bList'); box.innerHTML = '';
+    list.slice(-10).reverse().forEach(b => box.append(
+      h('div', {class:'wl-item'},
+        h('div', {class:'tl-d'}, dayKey(b.measured_at).replace(/-/g,'.')),
+        h('div', {class:'tl-w', html:`${b.weight_kg.toFixed(1)}<span style="font-size:12px"> kg</span>`}),
+        h('button', {class:'del', 'aria-label':t('a.del'), onclick:() => { if(confirm(t('confirm.delBw'))){ db.body_weights = db.body_weights.filter(x => x !== b); save(); renderBody(); } }}, '×'))));
+  }
+
+  /* ---------- DAY LOG（その日の種目・時間・メモ） ---------- */
+  const logsOnDay = k => db.workout_logs.filter(l => dayKey(l.executed_at) === k);
+  function renderDayLog(){
+    if(!$('dDate').value) $('dDate').value = todayKey();
+    $('dDate').max = todayKey();
+    const k = $('dDate').value, logs = logsOnDay(k), l = logs[0];
+    const box = $('dEx'); box.innerHTML = '';
+    const ids = [...new Set(logs.flatMap(x => setsOf(x.id)).map(s => s.exercise_id))];
+    if(!ids.length) box.append(h('div', {class:'label dim', style:'text-transform:none; letter-spacing:.04em;'}, t('daylog.none')));
+    ids.forEach(id => box.append(h('div', null, h('b', null, exName(id)), logs.flatMap(x => setsFor(x.id, id)).map(fmtSet).join(' · '))));
+    $('dStart').value = (l && l.start_time) || '';
+    $('dDur').value = (l && l.duration_min) || '';
+    if(document.activeElement !== $('dMemo')) $('dMemo').value = l ? (l.memo || '') : '';
+  }
+  $('dDate').onchange = renderDayLog;
+  $('dSave').onclick = () => {
+    const k = $('dDate').value || todayKey();
+    const st = $('dStart').value, du = Math.max(0, parseInt($('dDur').value) || 0), me = $('dMemo').value;
+    let l = logsOnDay(k)[0];
+    if(!l){
+      if(!st && !du && !me.trim()){ toast(t('daylog.empty')); return; }
+      l = {id:uid('wl'), executed_at: k === todayKey() ? now() : new Date(k + 'T12:00:00').toISOString(), memo:'', routine_snapshot: k === todayKey() ? snapshot() : []};
+      db.workout_logs.push(l);
+    }
+    l.start_time = st || null; l.duration_min = du || null; l.memo = me;
+    save(); renderDayLog(); toast(t('toast.recorded'));
+  };
+
+  /* ---------- CHARTS ---------- */
+  let gid = 0;
+  function drawChart(box, pts){
+    if(!pts.length){ box.innerHTML = '<div class="empty">NO DATA</div>'; return; }
+    const id = 'cg' + (++gid);
+    const W = 460, H = 220, L = 46, R = 16, T = 16, B = 30;
+    const ys = pts.map(p => p.y);
+    let lo = Math.min(...ys), hi = Math.max(...ys);
+    if(lo === hi){ lo -= 1; hi += 1; }
+    const r = hi - lo; lo -= r*.12; hi += r*.12;
+    const pw = W-L-R, ph = H-T-B;
+    const step = pts.length > 1 ? pw/(pts.length-1) : 0;
+    // p.t（時刻）があれば日付の間隔どおりに配置、なければ等間隔
+    const t0 = pts[0].t, t1 = pts[pts.length-1].t, timed = t0 != null && t1 > t0;
+    const X = i => timed ? L + (pts[i].t - t0)/(t1 - t0)*pw : pts.length > 1 ? L + step*i : L + pw/2;
+    const Y = v => T + ph - (v-lo)/(hi-lo)*ph;
+    const line = pts.map((p,i) => (i?'L':'M') + X(i).toFixed(1) + ',' + Y(p.y).toFixed(1)).join(' ');
+    const area = `${line} L${X(pts.length-1).toFixed(1)},${T+ph} L${X(0).toFixed(1)},${T+ph} Z`;
+    let grid = '';
+    for(let g = 0; g <= 3; g++){ const y = T + ph/3*g; grid += `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="#eeeeee"/>`; }
+    const every = Math.max(1, Math.ceil(pts.length/5));
+    let labels = '';
+    const lab = (x, s) => `<text x="${x.toFixed(1)}" y="${H-8}" font-size="10" fill="#aaaaaa" font-family="JetBrains Mono, monospace" text-anchor="middle">${s}</text>`;
+    if(timed){
+      for(let k = 0; k <= 4; k++){ const d = new Date(t0 + (t1-t0)*k/4); labels += lab(L + pw*k/4, `${pad(d.getMonth()+1)}/${pad(d.getDate())}`); }
+    } else pts.forEach((p,i) => { if(i % every === 0 || i === pts.length-1) labels += lab(X(i), p.x); });
+    const rr = pts.length > 40 ? 3 : 5;
+    const dots = pts.map((p,i) => `<circle cx="${X(i)}" cy="${Y(p.y)}" r="${rr}" fill="#ceff00" stroke="#000000" stroke-width="2"/>`).join('');
+    box.innerHTML = `
+      <svg class="chart" viewBox="0 0 ${W} ${H}">
+        <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ceff00" stop-opacity=".85"/><stop offset="1" stop-color="#ceff00" stop-opacity="0"/>
+        </linearGradient></defs>
+        ${grid}
+        <text x="${L-8}" y="${T+4}" font-size="10" fill="#aaaaaa" font-family="JetBrains Mono, monospace" text-anchor="end">${hi.toFixed(1)}</text>
+        <text x="${L-8}" y="${T+ph+4}" font-size="10" fill="#aaaaaa" font-family="JetBrains Mono, monospace" text-anchor="end">${lo.toFixed(1)}</text>
+        <path d="${area}" fill="url(#${id})"/>
+        <path d="${line}" fill="none" stroke="#000000" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+        ${dots}${labels}
+      </svg>`;
+  }
+  function weightPts(days){
+    const m = bwMap();
+    let keys = Object.keys(m).sort();
+    if(days > 0){
+      const c = new Date(todayKey() + 'T12:00:00'); c.setDate(c.getDate() - days + 1);
+      const ck = fmt(c); keys = keys.filter(k => k >= ck);
+    }
+    return keys.map(k => ({x:sd(k), y:m[k], t:new Date(k + 'T12:00:00').getTime(), k}));
+  }
+  let bRange = 30;
+  function renderBodyChart(){
+    const pts = weightPts(bRange);
+    drawChart($('bChart'), pts);
+    if(pts.length){
+      const ys = pts.map(p => p.y), diff = ys[ys.length-1] - ys[0];
+      const sign = diff > 0 ? '+' : diff < 0 ? '−' : '±';
+      $('bStats').innerHTML = `${t('stat.min')}<b>${Math.min(...ys).toFixed(1)}</b>kg　${t('stat.max')}<b>${Math.max(...ys).toFixed(1)}</b>kg　${t('stat.chg')}<b>${sign}${Math.abs(diff).toFixed(1)}</b>kg`;
+      $('bStats').hidden = false;
+    } else $('bStats').hidden = true;
+  }
+  document.querySelectorAll('#bSeg button').forEach(b => b.onclick = () => {
+    bRange = +b.dataset.r;
+    document.querySelectorAll('#bSeg button').forEach(x => x.classList.toggle('on', x === b));
+    renderBodyChart();
+  });
+  /* ---------- LOG ---------- */
+  let logFilter = 'all', logQT;
+  document.querySelectorAll('#logSeg button').forEach(b => b.onclick = () => {
+    logFilter = b.dataset.f;
+    document.querySelectorAll('#logSeg button').forEach(x => x.classList.toggle('on', x === b));
+    renderLog();
+  });
+  $('logQ').addEventListener('input', () => { clearTimeout(logQT); logQT = setTimeout(renderLog, 200); });
+  function openDayLog(d){
+    go('body');
+    $('dDate').value = d; renderDayLog();
+    try{ $('dDate').closest('.daylog').scrollIntoView({behavior:'smooth', block:'start'}); }catch(e){}
+  }
+  function renderLog(){
+    const box = $('tl'); box.innerHTML = '';
+    const bw = bwMap(), by = {};
+    db.workout_logs.forEach(l => { const k = dayKey(l.executed_at); (by[k] = by[k] || []).push(l); });
+    Object.keys(bw).forEach(k => { by[k] = by[k] || []; });
+    const all = Object.keys(by).sort().reverse();
+    if(!all.length){ $('logCount').textContent = ''; box.append(h('div', {class:'empty', style:'line-height:2; letter-spacing:.06em;'}, 'NO DATA', h('br'), t('log.empty'))); return; }
+    // 振り返り用の絞り込み（種類）と検索（メモ・種目名）
+    const q = ($('logQ').value || '').trim().toLowerCase();
+    const days = all.filter(d => {
+      const logs = by[d], sets = logs.flatMap(l => setsOf(l.id));
+      if(logFilter === 'train' && !sets.some(isWork)) return false;
+      if(logFilter === 'memo' && !logs.some(l => (l.memo && l.memo.trim()) || l.start_time || l.duration_min)) return false;
+      if(logFilter === 'pr'){ const ids = [...new Set(sets.map(s => s.exercise_id))]; if(!logs.some(l => ids.some(id => isPR(l, id)))) return false; }
+      if(q){
+        const text = (logs.map(l => l.memo || '').join(' ') + ' ' + [...new Set(sets.map(s => exName(s.exercise_id)))].join(' ')).toLowerCase();
+        if(!text.includes(q)) return false;
+      }
+      return true;
+    }).slice(0, 365);
+    $('logCount').textContent = t('log.count', {n:days.length});
+    if(!days.length){ box.append(h('div', {class:'empty'}, t('log.none'))); return; }
+    const months = {};
+    days.forEach(d => (months[d.slice(0,7)] = months[d.slice(0,7)] || []).push(d));
+    Object.keys(months).sort().reverse().forEach(m => {
+      const [y, mo] = m.split('-');
+      const tl = h('div', {class:'tl'});
+      months[m].forEach(d => tl.append(logItem(d, by[d], bw[d])));
+      box.append(h('div', {class:'tl-month'}, h('h3', null, `${y}.${mo}`, h('small', null, `${months[m].length} DAYS`)), tl));
+    });
+  }
+  function logItem(d, logs, w){
+    const sets = logs.flatMap(l => setsOf(l.id)), work = sets.filter(isWork);
+    const rate = logs.length ? logRate(logs[0]) : null;
+    const pct = rate == null ? null : Math.round(rate*100);
+    const exIds = [...new Set(sets.map(s => s.exercise_id))];
+    const pr = logs.some(l => exIds.some(id => isPR(l, id)));
+    const tags = [];
+    if(d === todayKey()) tags.push(['#TODAY','']);
+    if(!work.length) tags.push(['#REST','plain']);
+    else if(pct == null) tags.push(['#FREE','']);
+    else if(pct >= 100) tags.push(['#PERFECT','']);
+    else if(pct >= 70) tags.push(['#GOOD','']);
+    else tags.push(['#PARTIAL','plain']);
+    if(pr) tags.push(['#PR','pr']);
+    if(w != null) tags.push(['#WEIGHT','plain']);
+    const memos = logs.filter(l => l.memo && l.memo.trim());
+    const times = logs.filter(l => l.start_time || l.duration_min).map(l => '⏱ ' + [l.start_time ? l.start_time + '〜' : '', l.duration_min ? t('daylog.min', {n:l.duration_min}) : ''].filter(Boolean).join(' '));
+    const detail = h('div', {class:'tl-detail', hidden:true},
+      exIds.map(id => h('div', {class:'exl'}, h('b', null, exName(id)), logs.flatMap(l => setsFor(l.id, id)).map(fmtSet).join(' · '))),
+      memos.map(l => h('div', {class:'memo-v'}, l.memo)),
+      h('div', {class:'acts'},
+        h('button', {class:'btn sm', onclick:ev => { ev.stopPropagation(); openDayLog(d); }}, t('log.edit')),
+        logs.length > 0 && h('button', {class:'btn sm line', onclick:ev => { ev.stopPropagation(); delDay(logs); }}, t('log.delBtn'))));
+    const it = h('div', {class:'tl-item' + (pct >= 100 ? ' full' : '')},
+      h('div', null,
+        h('div', {class:'tl-d'}, `${d.slice(5,7)}.${d.slice(8)} ${WD[new Date(d + 'T12:00:00').getDay()]}`),
+        h('div', {class:'tl-t'}, work.length ? (pct == null ? t('log.free') : t('log.rate', {p:pct})) : t('log.rest'),
+          work.length > 0 && h('span', null, t('log.sets', {n:work.length}) + (volOf(sets) > 0 ? ` · ${kg(volOf(sets))}kg` : ''))),
+        pct != null && h('div', {class:'tl-bar'}, h('i', {style:`width:${pct}%`})),
+        h('div', {class:'tags'}, tags.map(([t,c]) => h('span', {class:'tg ' + c}, t))),
+        times.length > 0 && h('div', {class:'tl-time'}, times.join(' / ')),
+        memos.length > 0 && h('div', {class:'tl-memo'}, memos.map(l => l.memo.trim()).join(' / '))),
+      h('div', {class:'tl-w', html: w != null ? `${w.toFixed(1)}<span style="font-size:12px"> kg</span>` : '—'}),
+      detail);
+    if(true){ it.classList.add('tap'); it.onclick = () => { detail.hidden = !detail.hidden; it.classList.toggle('open', !detail.hidden); }; }
+    return it;
+  }
+  function delDay(logs){
+    if(!confirm(t('confirm.delDay'))) return;
+    const ids = new Set(logs.map(l => l.id));
+    db.workout_sets = db.workout_sets.filter(s => !ids.has(s.workout_log_id));
+    db.workout_logs = db.workout_logs.filter(l => !ids.has(l.id));
+    save(); renderLog(); toast(t('toast.deleted'));
+  }
+
+  /* ---------- SETUP ---------- */
+  function mkSel(opts, val, ph){
+    const s = h('select', {class:'sm-sel'}, h('option', {value:''}, ph + ' —'));
+    const all = val && !opts.includes(val) ? opts.concat([val]) : opts;
+    all.forEach(o => s.append(h('option', {value:o}, catLabel(o))));
+    s.value = val || '';
+    return s;
+  }
+  const WD_ORDER = [1,2,3,4,5,6,0];
+  let editWd = null, editDate = null;
+  const fmtDateL = k => `${sd(k)} (${wdS(wdOf(k))})`;
+  const scopeItems = () => isDaily() ? dateItems(editDate) : routine(editWd);
+  const scopeProps = () => isDaily() ? {date:editDate} : {weekday:editWd};
+  const scopeName = () => isDaily() ? fmtDateL(editDate) : wdF(editWd);
+  const inScope = r => isDaily() ? r.date === editDate : (r.weekday === editWd && !r.date);
+  function commitRt(rerender){
+    for(let wd = 0; wd < 7; wd++) routine(wd).forEach((x,i) => x.order = i);
+    [...new Set(db.routine_items.filter(r => r.date).map(r => r.date))].forEach(d => dateItems(d).forEach((x,i) => x.order = i));
+    save(); syncToday();
+    if(rerender !== false) renderSetup();
+  }
+  function moveRt(i, d){
+    const arr = scopeItems(), a = arr[i], b = arr[i+d];
+    if(!a || !b) return;
+    const tmp = a.order; a.order = b.order; b.order = tmp;
+    commitRt();
+  }
+  function renderWdTabs(){
+    const tw = todayWd(), daily = isDaily();
+    document.querySelectorAll('#planSeg button').forEach(b => b.classList.toggle('on', b.dataset.p === (daily ? 'daily' : 'weekly')));
+    $('planHint').textContent = t(daily ? 'plan.hint.daily' : 'plan.hint.weekly');
+    $('wdTabs').hidden = daily; $('planDate').hidden = !daily;
+    const box = $('wdTabs'); box.innerHTML = '';
+    WD_ORDER.forEach(wd => {
+      const n = routine(wd).length;
+      box.append(h('button', {class:(wd === editWd ? 'on ' : '') + (wd === tw ? 'today' : ''), onclick:() => { editWd = wd; renderSetup(); }},
+        wdS(wd), h('small', null, n ? String(n) : t('restShort'))));
+    });
+    $('planDate').value = editDate;
+    const isToday = daily ? editDate === todayKey() : editWd === tw;
+    $('wdTitle').textContent = t('wdTitle', {wd:scopeName()}) + (isToday ? t('todayMark') : '');
+    const cp = $('wdCopy'); cp.innerHTML = '';
+    cp.append(h('option', {value:''}, t('copyFrom')));
+    if(lastWorkout(daily ? editDate : '9999-12-31')) cp.append(h('option', {value:'last'}, t('copyLast')));
+    WD_ORDER.filter(wd => (daily || wd !== editWd) && routine(wd).length).forEach(wd => cp.append(h('option', {value:'wd:' + wd}, t('copyWd', {wd:wdF(wd)}))));
+    $('nxRoutineLabel').textContent = t('nxLabel', {wd:scopeName()});
+  }
+  document.querySelectorAll('#planSeg button').forEach(b => b.onclick = () => {
+    db.settings.plan_mode = b.dataset.p; save(); syncToday(); renderSetup();
+  });
+  $('planDate').onchange = () => { editDate = $('planDate').value || todayKey(); renderSetup(); };
+  $('wdCopy').onchange = () => {
+    const v = $('wdCopy').value;
+    if(!v) return;
+    let src, label;
+    if(v === 'last'){
+      const l = lastWorkout(isDaily() ? editDate : '9999-12-31');
+      const byEx = new Map();
+      setsOf(l.id).filter(isWork).sort((a,b) => a.set_number - b.set_number).forEach(s => {
+        const e = byEx.get(s.exercise_id) || {exercise_id:s.exercise_id, target_sets:0, target_reps:s.reps, target_weight:s.weight || 0};
+        e.target_sets++; byEx.set(s.exercise_id, e);
+      });
+      src = [...byEx.values()]; label = fmtDateL(dayKey(l.executed_at));
+    } else {
+      const wd = +v.slice(3); src = routine(wd); label = wdF(wd);
+    }
+    if(scopeItems().length && !confirm(t('confirm.replace', {to:scopeName(), from:label}))){ $('wdCopy').value = ''; return; }
+    db.routine_items = db.routine_items.filter(r => !inScope(r));
+    src.forEach((r,i) => db.routine_items.push(Object.assign({id:uid('ri'), exercise_id:r.exercise_id, target_sets:r.target_sets, target_reps:r.target_reps, target_weight:r.target_weight, order:i}, scopeProps())));
+    commitRt(); toast(t('toast.copiedWd', {wd:label}));
+  };
+  function renderSetup(){
+    if(editWd == null) editWd = todayWd();
+    if(!editDate) editDate = todayKey();
+    renderWdTabs();
+    const rt = $('rtList'); rt.innerHTML = '';
+    const items = scopeItems(), active = db.exercises.filter(e => !e.archived_at);
+    if(!items.length) rt.append(h('div', {class:'empty'}, isDaily() ? t('dateRest', {wd:scopeName()}) : t('wdRest', {wd:wdF(editWd)})));
+    items.forEach((it, i) => {
+      const sel = h('select', {class:'sm-sel'});
+      const opts = active.some(e => e.id === it.exercise_id) ? active : active.concat([exById(it.exercise_id)].filter(Boolean));
+      opts.forEach(e => sel.append(h('option', {value:e.id}, e.name)));
+      sel.value = it.exercise_id;
+      sel.onchange = () => { it.exercise_id = sel.value; commitRt(); };
+      const n = (label, key, step) => {
+        const inp = h('input', {type:'number', min:'0', step:step || '1', inputmode:step ? 'decimal' : 'numeric', value: it[key] || ''});
+        inp.onchange = () => {
+          let v = Math.max(0, num(inp.value) || 0);
+          if(key !== 'target_weight') v = Math.round(v);
+          it[key] = v; commitRt(false);
+        };
+        return h('label', {class:'num'}, h('span', {class:'label dim'}, label), inp);
+      };
+      rt.append(h('div', {class:'srow'},
+        h('div', {class:'srow-top'}, h('span', {class:'sn'}, String(i+1)), sel),
+        h('div', {class:'rt-grid'},
+          n('SETS','target_sets'), n('REPS','target_reps'), n('KG','target_weight','0.5'),
+          h('button', {class:'ibtn', 'aria-label':t('a.up'), disabled:i === 0, onclick:() => moveRt(i,-1)}, '↑'),
+          h('button', {class:'ibtn', 'aria-label':t('a.down'), disabled:i === items.length-1, onclick:() => moveRt(i,1)}, '↓'),
+          h('button', {class:'ibtn', 'aria-label':t('a.remove'), onclick:() => { db.routine_items = db.routine_items.filter(x => x !== it); commitRt(); }}, '×'))));
+    });
+
+    const em = $('exMaster'); em.innerHTML = '';
+    const used = new Set(db.workout_sets.map(s => s.exercise_id));
+    db.exercises.slice().sort((a,b) => (!!a.archived_at) - (!!b.archived_at)).forEach(e => {
+      const name = h('input', {class:'txt', value:e.name, 'aria-label':t('a.name')});
+      name.onchange = () => { const v = name.value.trim(); if(v) e.name = v; else name.value = e.name; save(); };
+      const ms = mkSel(MUSCLES, e.muscle_group, t('muscle')); ms.onchange = () => { e.muscle_group = ms.value; save(); };
+      const eq = mkSel(EQUIP, e.equipment, t('equip')); eq.onchange = () => { e.equipment = eq.value; save(); };
+      em.append(h('div', {class:'srow' + (e.archived_at ? ' arch' : '')}, name,
+        h('div', {class:'ex-grid'}, ms, eq,
+          h('button', {class:'ibtn', onclick:() => toggleArchive(e)}, e.archived_at ? t('restore') : t('hide')),
+          !used.has(e.id) && h('button', {class:'ibtn', 'aria-label':t('a.del'), onclick:() => {
+            if(!confirm(t('confirm.delEx', {name:e.name}))) return;
+            db.exercises = db.exercises.filter(x => x !== e);
+            db.routine_items = db.routine_items.filter(r => r.exercise_id !== e.id);
+            save(); syncToday(); renderSetup();
+          }}, '×'))));
+    });
+
+    $('setRest').value = db.settings.rest_sec;
+    $('setDay').value = String(db.settings.day_start_hour);
+  }
+  function toggleArchive(e){
+    if(!e.archived_at){
+      const inR = db.routine_items.some(r => r.exercise_id === e.id);
+      if(inR && !confirm(t('confirm.archive', {name:e.name}))) return;
+      e.archived_at = now();
+      db.routine_items = db.routine_items.filter(r => r.exercise_id !== e.id);
+    } else e.archived_at = null;
+    commitRt();
+  }
+  $('rtAdd').onclick = () => {
+    const inR = new Set(scopeItems().map(r => r.exercise_id));
+    const cand = db.exercises.find(e => !e.archived_at && !inR.has(e.id)) || db.exercises.find(e => !e.archived_at);
+    if(!cand){ toast(t('toast.needExFirst')); return; }
+    db.routine_items.push(Object.assign({id:uid('ri'), exercise_id:cand.id, target_sets:3, target_reps:10, target_weight:0, order:scopeItems().length}, scopeProps()));
+    commitRt();
+  };
+  $('nxAdd').onclick = () => {
+    const name = $('nxName').value.trim();
+    if(!name){ toast(t('toast.needName')); return; }
+    if(db.exercises.some(e => e.name === name)){ toast(t('toast.dupName')); return; }
+    const e = {id:uid('ex'), name, muscle_group:$('nxMuscle').value, equipment:$('nxEquip').value, archived_at:null, created_at:now()};
+    db.exercises.push(e);
+    if($('nxRoutine').checked) db.routine_items.push(Object.assign({id:uid('ri'), exercise_id:e.id, target_sets:3, target_reps:10, target_weight:0, order:scopeItems().length}, scopeProps()));
+    $('nxName').value = '';
+    commitRt(); toast(t('toast.registered', {name}));
+  };
+  $('nxName').addEventListener('keydown', e => { if(e.key === 'Enter') $('nxAdd').click(); });
+  $('setRest').onchange = () => {
+    db.settings.rest_sec = Math.min(3600, Math.max(0, parseInt($('setRest').value) || 0));
+    $('setRest').value = db.settings.rest_sec; save(); renderTimer();
+  };
+  $('setDay').onchange = () => { db.settings.day_start_hour = parseInt($('setDay').value) || 0; save(); checkDay(); renderBar(); };
+
+  /* ---------- backup ---------- */
+  const say = s => { $('msg').textContent = s; };
+  const backupJSON = () => JSON.stringify(db, null, 2);
+  $('exportBtn').onclick = () => { $('backupArea').value = backupJSON(); say(t('say.exported')); };
+  $('copyBtn').onclick = async () => {
+    const ta = $('backupArea');
+    if(!ta.value) ta.value = backupJSON();
+    ta.select();
+    try{ await navigator.clipboard.writeText(ta.value); say(t('say.copied')); }
+    catch(e){ try{ document.execCommand('copy'); say(t('say.copied')); }catch(_){ say(t('say.copyManual')); } }
+  };
+  $('dlBtn').onclick = () => {
+    try{
+      const blob = new Blob([backupJSON()], {type:'application/json'});
+      const a = h('a', {href:URL.createObjectURL(blob), download:`training-backup-${todayKey().replace(/-/g,'')}.json`});
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      say(t('say.fileSaved'));
+    }catch(e){ say(t('say.fileFail')); }
+  };
+  $('ulBtn').onclick = () => $('ulFile').click();
+  $('ulFile').onchange = () => {
+    const f = $('ulFile').files[0]; if(!f) return;
+    const rd = new FileReader();
+    rd.onload = () => { importData(String(rd.result)); $('ulFile').value = ''; };
+    rd.readAsText(f);
+  };
+  $('importBtn').onclick = () => {
+    const raw = $('backupArea').value.trim();
+    if(!raw){ say(t('say.needJson')); return; }
+    importData(raw);
+  };
+  function importData(raw){
+    try{
+      const data = JSON.parse(raw);
+      let next;
+      if(isV2(data)) next = normalize(data);
+      else if(isV1(data)) next = migrateV1(data.plan, data.logs);
+      else throw new Error(t('say.badFormat'));
+      if(!confirm(t('confirm.restore'))) return;
+      db = next; extraEx = []; editWd = null; editDate = null;
+      save(); renderSetup(); renderBar();
+      say(isV1(data) ? t('say.restoredOld') : t('say.restored'));
+    }catch(e){ say(t('say.loadFail') + e.message); }
+  }
+
+  /* ---------- language ---------- */
+  function fillSel(sel, opts, ph){
+    const v = sel.value; sel.innerHTML = '';
+    sel.append(h('option', {value:''}, ph + ' —'));
+    opts.forEach(o => sel.append(h('option', {value:o}, catLabel(o))));
+    sel.value = v;
+  }
+  function applyLang(){
+    document.documentElement.lang = LANG === 'zh' ? 'zh-CN' : LANG;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+    fillSel($('nxMuscle'), MUSCLES, t('muscle'));
+    fillSel($('nxEquip'), EQUIP, t('equip'));
+    const sd0 = $('setDay').value; $('setDay').innerHTML = '';
+    for(let i = 0; i <= 6; i++) $('setDay').append(h('option', {value:String(i)}, t('dayOpt', {i})));
+    $('setDay').value = sd0 || String(db.settings.day_start_hour);
+    $('setLang').value = LANG;
+    renderBar();
+    ({today:renderToday, body:renderBody, log:renderLog, setup:renderSetup})[current]();
+    renderTimer();
+  }
+  const setLangFrom = sel => {
+    LANG = sel.value; db.settings.lang = LANG; save();
+    if(window.TDIV) TDIV.setLang(LANG, true);
+    applyLang();
+  };
+  // 右上メニューで言語を変えたとき
+  window.addEventListener('tdiv:lang', e => { if(e.detail === LANG) return; LANG = e.detail; db.settings.lang = LANG; save(); applyLang(); });
+  $('setLang').onchange = () => setLangFrom($('setLang'));
+
+  /* ---------- init ---------- */
+  load();
+  if(window.TDIV && LANGS.includes(TDIV.lang())) LANG = TDIV.lang();
+  if(db.settings.lang !== LANG){ db.settings.lang = LANG; save(); }
+  lastDay = todayKey();
+  applyLang();
+  // アプリ化（PWA）: https で公開したときだけオフライン用の service worker を登録
+  if('serviceWorker' in navigator && location.protocol === 'https:'){
+    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+  }
+  $('optSound').checked = !!db.settings.sound;
+  $('optWake').checked = !!db.settings.keep_awake;
+  renderTimer(); applyWake();
+  setInterval(checkDay, 30000);
+  document.addEventListener('visibilitychange', () => { if(!document.hidden){ checkDay(); if(restTimer) tick(); applyWake(); } });
+})();
+</script>
+</body>
+</html>

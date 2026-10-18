@@ -1,7 +1,7 @@
 // TRAINING DIVISION - offline support
 // 更新したら CACHE の番号を上げると、利用者の端末で新しい版に切り替わります
-const CACHE = 'tdiv-v9';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
+const CACHE = 'tdiv-v10';
+const SHELL = ['./', './index.html', './workout.html', './run.html', './menu.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -15,8 +15,9 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   // ページ本体: ネット優先（最新版を取得）、圏外ならキャッシュ
   if(req.mode === 'navigate'){
-    e.respondWith(fetch(req).then(res => { const cp = res.clone(); caches.open(CACHE).then(c => c.put('./index.html', cp)); return res; })
-      .catch(() => caches.match('./index.html')));
+    // ページごとに保存（ホーム / workout.html / run.html）。圏外ならそのページ → だめならホーム
+    e.respondWith(fetch(req).then(res => { if(res.ok){ const cp = res.clone(); caches.open(CACHE).then(c => c.put(req, cp)); } return res; })
+      .catch(() => caches.match(req, {ignoreSearch:true}).then(hit => hit || caches.match('./index.html'))));
     return;
   }
   // 同じサイトのファイルと Google Fonts: キャッシュを使いつつ裏で更新

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TRAINING">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>RUNNING — TRAINING DIVISION</title>
+<script src="menu.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fdfdfd; --white:#ffffff; --black:#000000; --lime:#ceff00;
+    --g1:#eeeeee; --g2:#cccccc; --g3:#aaaaaa; --shadow:rgba(0,0,0,.1);
+    --tabh:64px; --appw:480px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  [hidden]{display:none !important;}
+  ::selection{background:var(--lime); color:var(--black);}
+  html,body{height:100%;}
+  body{background:var(--g1); color:var(--black); font-family:'Noto Sans JP',sans-serif; -webkit-font-smoothing:antialiased;}
+  button,input,textarea{font-family:inherit; color:var(--black);}
+  .app{max-width:var(--appw); margin:0 auto; min-height:100%; background:var(--bg); position:relative; box-shadow:0 0 40px var(--shadow);
+    padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 40px);}
+  .appbar{position:sticky; top:0; z-index:20; background:var(--white); border-bottom:1px solid var(--g1);
+    padding:calc(env(safe-area-inset-top) + 12px) 20px 12px; display:flex; align-items:center; justify-content:space-between; gap:12px;}
+  .appbar h1{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase; font-size:34px; line-height:.95;}
+  .appbar h1::after{content:''; display:block; width:30px; height:4px; background:var(--lime); margin-top:6px; transform:skewX(-20deg);}
+  .bar-r{display:flex; align-items:center; gap:12px;}
+  .appbar .sub{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.1em; text-align:right; line-height:1.5;}
+  .appbar .sub b{display:inline-block; background:var(--lime); padding:1px 6px; font-weight:700;}
+
+  .view{display:none; padding:20px 20px 0; animation:in .5s ease;}
+  .view.active{display:block;}
+  @keyframes in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+
+  .tabbar{position:fixed; left:50%; transform:translateX(-50%); bottom:0; z-index:30; width:100%; max-width:var(--appw); background:var(--white);
+    border-top:1px solid var(--g1); display:grid; grid-template-columns:repeat(3,1fr); padding-bottom:env(safe-area-inset-bottom); box-shadow:0 -4px 16px var(--shadow);}
+  .tab{position:relative; height:var(--tabh); background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    color:var(--g3); font-family:'Barlow Condensed',sans-serif; font-weight:700; letter-spacing:.1em; font-size:12px; text-transform:uppercase;}
+  .tab svg{width:22px; height:22px;}
+  .tab::before{content:''; position:absolute; top:-1px; left:20%; right:20%; height:3px; background:var(--lime); transform:scaleX(0); transition:transform .5s;}
+  .tab.active{color:var(--black);}
+  .tab.active::before{transform:scaleX(1);}
+
+  .label{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase;}
+  .dim{color:var(--g3);}
+  .section-t{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase; font-size:24px; margin:26px 0 12px; display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
+  .section-t small{font-family:'JetBrains Mono',monospace; font-style:normal; font-weight:500; font-size:11px; letter-spacing:.1em;}
+  .empty{padding:30px 0; text-align:center; color:var(--g3); font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.14em;}
+  .btn{height:50px; border:2px solid var(--black); background:var(--white); cursor:pointer; padding:0 16px;
+    font-family:'Barlow Condensed','Noto Sans JP',sans-serif; font-weight:800; font-size:18px; letter-spacing:.12em; text-transform:uppercase;}
+  .btn.lime{background:var(--lime); border-color:var(--lime);}
+  .btn.dark{background:var(--black); color:var(--white);}
+  .btn.ghost{border-color:var(--g2); color:var(--g3); font-size:15px;}
+  .btn.block{display:block; width:100%;}
+  .btn:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime);}
+  .btn:active{transform:translateY(1px);}
+
+  /* ---------- RUN hero ---------- */
+  .hero{background:var(--black); color:var(--white); padding:18px 20px 20px; position:relative; overflow:hidden;}
+  .hero::after{content:''; position:absolute; right:-30px; top:0; bottom:0; width:90px; background:var(--lime); transform:skewX(-20deg); opacity:.08;}
+  .hero .top{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+  .gps{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.1em; padding:3px 8px; border:1px solid #444; color:var(--g3); white-space:nowrap;}
+  .gps.ok{border-color:var(--lime); color:var(--lime);}
+  .gps.weak{border-color:#fff; color:#fff;}
+  .clock{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:84px; line-height:1; color:var(--lime); margin:10px 0 14px; font-variant-numeric:tabular-nums; letter-spacing:.01em;}
+  .hero.paused .clock{animation:blink 1.2s steps(2) infinite;}
+  @keyframes blink{50%{opacity:.35}}
+  .stats{display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid #333;}
+  .stats > div{padding:12px 0 0; min-width:0;}
+  .stats > div + div{border-left:1px solid #333; padding-left:12px;}
+  .stats .n{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:32px; line-height:1; margin-top:4px; white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .stats .n small{font-size:14px; margin-left:2px; color:var(--g3);}
+  .stats .label{color:var(--g3);}
+  .ctrl{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;}
+  .ctrl .btn{height:64px; font-size:22px;}
+  .ctrl .full{grid-column:1 / -1;}
+  .opt{display:flex; align-items:center; gap:10px; margin-top:12px; font-size:13px;}
+  .opt input{width:20px; height:20px; accent-color:var(--black);}
+  .note{font-size:12px; color:var(--g3); margin-top:8px; line-height:1.6;}
+
+  .splits{border-top:2px solid var(--black);}
+  .sp{display:grid; grid-template-columns:56px 1fr auto; gap:10px; align-items:center; padding:10px 2px; border-bottom:1px solid var(--g1); font-family:'JetBrains Mono',monospace; font-size:13px;}
+  .sp b{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:20px;}
+  .sp .bar{height:8px; background:var(--g1); position:relative;}
+  .sp .bar i{position:absolute; left:0; top:0; bottom:0; background:var(--black);}
+  .sp.best .bar i{background:var(--lime);}
+  .sp .lap{color:var(--g3); font-size:11px;}
+
+  /* finish sheet */
+  .card{background:var(--white); border:1px solid var(--g1); padding:16px; margin-top:12px;}
+  .card.hl{border:2px solid var(--black);}
+  .field{display:block; margin-top:12px;}
+  .field .label{display:block; margin-bottom:6px;}
+  .in{width:100%; height:46px; border:1px solid var(--g2); background:var(--bg); padding:0 12px; font-size:16px; border-radius:0;}
+  .in.big{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:28px;}
+  textarea.in{height:80px; padding:10px 12px; resize:vertical;}
+  .in:focus{outline:none; border-color:var(--black); box-shadow:inset 0 0 0 1px var(--black);}
+  .hms{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:6px; align-items:center;}
+  .hms b{font-family:'Barlow Condensed',sans-serif; font-size:24px;}
+  .hms .in{text-align:center;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px;}
+  details.man summary{cursor:pointer; list-style:none; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; text-transform:uppercase; font-size:20px; padding:14px 0; border-bottom:1px solid var(--g1); display:flex; justify-content:space-between;}
+  details.man summary::-webkit-details-marker{display:none;}
+  details.man summary::after{content:'+'; font-style:normal;}
+  details.man[open] summary::after{content:'−';}
+
+  /* week */
+  .week{display:flex; align-items:flex-end; justify-content:space-between; gap:12px;}
+  .week .v{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:52px; line-height:.9;}
+  .week .v small{font-size:20px; margin-left:4px; font-style:normal;}
+  .week .g{font-family:'JetBrains Mono',monospace; font-size:12px; text-align:right; line-height:1.6;}
+  .pbar{height:10px; background:var(--g1); margin-top:12px; position:relative; overflow:hidden;}
+  .pbar i{position:absolute; left:0; top:0; bottom:0; background:var(--lime); border-right:3px solid var(--black); transition:width .8s ease;}
+  .wdots{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-top:12px;}
+  .wdots div{text-align:center; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--g3);}
+  .wdots i{display:block; height:28px; background:var(--g1); margin-bottom:4px; position:relative;}
+  .wdots i.on{background:var(--black);}
+  .wdots i.today{box-shadow:inset 0 0 0 2px var(--lime);}
+  .wdots i em{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-style:normal; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:13px; color:var(--lime);}
+
+  /* ---------- LOG ---------- */
+  .totals{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+  .mini{background:var(--white); border:1px solid var(--g1); padding:12px;}
+  .mini .n{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:28px; line-height:1; margin-top:4px; white-space:nowrap;}
+  .mini .n small{font-size:13px; margin-left:2px;}
+  .month h3{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:26px; text-transform:uppercase; display:flex; align-items:baseline; justify-content:space-between; margin:22px 0 6px;}
+  .month h3 small{font-family:'JetBrains Mono',monospace; font-style:normal; font-weight:500; font-size:11px; letter-spacing:.1em;}
+  .rn{background:var(--white); border:1px solid var(--g1); border-left:6px solid var(--black); margin-bottom:8px;}
+  .rn > button{all:unset; box-sizing:border-box; width:100%; cursor:pointer; display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:12px 14px;}
+  .rn > button:focus-visible{box-shadow:inset 0 0 0 2px var(--lime);}
+  .rn .d{font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; line-height:1.4;}
+  .rn .d small{display:block; font-weight:500; color:var(--g3);}
+  .rn .m{font-size:13px; color:#555; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;}
+  .rn .k{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:26px; text-align:right; white-space:nowrap; line-height:1;}
+  .rn .k small{display:block; font-family:'JetBrains Mono',monospace; font-weight:500; font-size:11px;}
+  .rn.pr{border-left-color:var(--lime);}
+  .rn .det{padding:0 14px 14px; font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.8; border-top:1px dashed var(--g2);}
+  .rn .det p{white-space:pre-wrap; font-family:'Noto Sans JP',sans-serif; font-size:13px; margin-top:8px;}
+  .rn .det .del{margin-top:10px; height:36px; font-size:13px;}
+  .tg{font-family:'JetBrains Mono',monospace; font-size:10px; background:var(--lime); color:var(--black); padding:2px 7px; font-weight:700; white-space:nowrap; vertical-align:2px; margin-left:6px;}
+
+  /* ---------- CHARTS ---------- */
+  .chart{background:var(--black); color:var(--white); padding:16px 14px 10px;}
+  .chart svg{display:block; width:100%; height:auto; overflow:visible;}
+  .chart .ax{font-family:'JetBrains Mono',monospace; font-size:10px; fill:var(--g3);}
+  .chart .vl{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:13px; fill:var(--white);}
+  .rec{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .rec .mini .n{font-size:30px;}
+  .rec .mini .s{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--g3); margin-top:6px;}
+  .goalrow{display:flex; gap:8px; align-items:center;}
+  .goalrow .in{max-width:140px;}
+
+  .toast{position:fixed; left:50%; bottom:calc(var(--tabh) + env(safe-area-inset-bottom) + 16px); transform:translate(-50%, 20px); background:var(--black); color:var(--lime);
+    padding:12px 18px; font-family:'JetBrains Mono',monospace; font-size:13px; z-index:60; opacity:0; transition:all .3s; pointer-events:none; white-space:nowrap;}
+  .toast.on{opacity:1; transform:translate(-50%, 0);}
+
+  @media (min-width:768px){
+    :root{--appw:100%;}
+    .app{box-shadow:none;}
+    .view{padding-top:24px; padding-left:max(28px, env(safe-area-inset-left)); padding-right:max(28px, env(safe-area-inset-right));}
+    .appbar{padding-left:max(28px, env(safe-area-inset-left)); padding-right:max(28px, env(safe-area-inset-right));}
+    .cols{display:grid; grid-template-columns:minmax(340px, 2fr) 3fr; gap:28px; align-items:start;}
+    .col{min-width:0;}
+    .col-r > .section-t:first-child{margin-top:0;}
+    .tab{flex-direction:row; gap:8px; font-size:14px;}
+    .clock{font-size:104px;}
+  }
+  @media (orientation:landscape) and (max-height:520px){
+    :root{--tabh:46px;}
+    .appbar{position:static; padding-top:calc(env(safe-area-inset-top) + 8px); padding-bottom:8px;}
+    .appbar h1{font-size:24px;}
+    .appbar h1::after{display:none;}
+    .view{padding-top:14px;}
+    .clock{font-size:64px; margin:4px 0 8px;}
+    .ctrl .btn{height:52px;}
+    .tab{flex-direction:row; gap:8px; font-size:13px;}
+    .tab svg{width:18px; height:18px;}
+  }
+  @media (prefers-reduced-motion: reduce){ .view{animation:none;} .hero.paused .clock{animation:none;} }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="appbar">
+    <h1 id="viewTitle">Run</h1>
+    <div class="bar-r">
+      <div class="sub" id="barSub">—</div>
+      <div data-menu-slot></div>
+    </div>
+  </header>
+
+  <!-- RUN -->
+  <main class="view active" id="v-run">
+    <div class="cols"><div class="col col-l">
+      <div class="hero" id="hero">
+        <div class="top"><div class="label dim" id="heroLabel">RUN TIMER</div><div class="gps" id="gpsChip">GPS —</div></div>
+        <div class="clock" id="clock">0:00:00</div>
+        <div class="stats">
+          <div><div class="label">DISTANCE</div><div class="n" id="sDist">0.00<small>km</small></div></div>
+          <div><div class="label">AVG PACE</div><div class="n" id="sAvg">--'--"</div></div>
+          <div><div class="label">NOW</div><div class="n" id="sNow">--'--"</div></div>
+        </div>
+      </div>
+      <div class="ctrl" id="ctrl"></div>
+      <label class="opt" id="gpsOpt"><input type="checkbox" id="optGps"><span data-i18n="useGps"></span></label>
+      <p class="note" data-i18n="gpsNote"></p>
+
+      <!-- 終了後の保存 -->
+      <div class="card hl" id="finish" hidden>
+        <div class="section-t" style="margin-top:0;" data-i18n="saveRun"></div>
+        <div class="label dim" id="fSummary"></div>
+        <label class="field"><span class="label">DISTANCE (km)</span><input class="in big" id="fDist" type="number" inputmode="decimal" step="0.01" min="0"></label>
+        <label class="field"><span class="label" data-i18n="memo"></span><textarea class="in" id="fMemo" data-i18n-ph="memoPh"></textarea></label>
+        <div class="row2"><button class="btn ghost" id="fBack" data-i18n="back"></button><button class="btn lime" id="fSave" data-i18n="save"></button></div>
+      </div>
+    </div><div class="col col-r">
+      <div class="section-t"><span>This week</span><small id="wkRange"></small></div>
+      <div class="card">
+        <div class="week"><div class="v" id="wkKm">0<small>km</small></div><div class="g" id="wkGoal"></div></div>
+        <div class="pbar"><i id="wkBar" style="width:0"></i></div>
+        <div class="wdots" id="wkDots"></div>
+      </div>
+
+      <div class="section-t" id="splitsT" hidden><span>Splits</span><small data-i18n="perKm"></small></div>
+      <div class="splits" id="splits" hidden></div>
+
+      <details class="man" id="man">
+        <summary><span data-i18n="manual"></span></summary>
+        <div class="card">
+          <label class="field" style="margin-top:0;"><span class="label">DATE</span><input class="in" id="mDate" type="date"></label>
+          <label class="field"><span class="label">DISTANCE (km)</span><input class="in big" id="mDist" type="number" inputmode="decimal" step="0.01" min="0" placeholder="5.00"></label>
+          <div class="field"><span class="label">TIME (h : m : s)</span>
+            <div class="hms"><input class="in" id="mH" type="number" inputmode="numeric" min="0" placeholder="0" aria-label="hours"><b>:</b><input class="in" id="mM" type="number" inputmode="numeric" min="0" max="59" placeholder="30" aria-label="minutes"><b>:</b><input class="in" id="mS" type="number" inputmode="numeric" min="0" max="59" placeholder="00" aria-label="seconds"></div>
+          </div>
+          <label class="field"><span class="label" data-i18n="memo"></span><textarea class="in" id="mMemo" data-i18n-ph="memoPh"></textarea></label>
+          <button class="btn dark block" id="mAdd" style="margin-top:14px;" data-i18n="add"></button>
+        </div>
+      </details>
+    </div></div>
+  </main>
+
+  <!-- LOG -->
+  <main class="view" id="v-log">
+    <div class="totals" id="totals"></div>
+    <div id="logList"></div>
+  </main>
+
+  <!-- CHARTS -->
+  <main class="view" id="v-charts">
+    <div class="cols"><div class="col col-l">
+      <div class="section-t" style="margin-top:0;"><span>Weekly km</span><small data-i18n="last12"></small></div>
+      <div class="chart" id="chWeek"></div>
+      <div class="section-t"><span>Goal</span><small data-i18n="perWeek"></small></div>
+      <div class="goalrow"><input class="in big" id="goalIn" type="number" inputmode="decimal" min="0" step="1"><b style="font-family:'Barlow Condensed';font-size:22px;">km</b><button class="btn dark" id="goalSave" data-i18n="save"></button></div>
+    </div><div class="col col-r">
+      <div class="section-t"><span>Pace</span><small data-i18n="paceNote"></small></div>
+      <div class="chart" id="chPace"></div>
+      <div class="section-t"><span>Records</span></div>
+      <div class="rec" id="records"></div>
+    </div></div>
+  </main>
+
+  <nav class="tabbar" id="tabbar">
+    <button class="tab active" data-v="run"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M10 2h4"/></svg>Run</button>
+    <button class="tab" data-v="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Log</button>
+    <button class="tab" data-v="charts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Charts</button>
+  </nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  /* ===== データ（ブラウザの localStorage に保存）=====
+   * tdiv_run_v1 : { runs:[{id, started_at, duration_sec, distance_km, memo, splits:[秒/km], source:'gps'|'manual'}],
+   *                 settings:{ week_goal_km, gps } }
+   * tdiv_run_cur: 計測中のラン（画面を閉じても続きから）
+   */
+  const KEY = 'tdiv_run_v1', CUR = 'tdiv_run_cur';
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2, '0');
+  const fmtD = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const uid = () => 'rn_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const lsGet = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
+  const lsSet = (k, v) => { try{ localStorage.setItem(k, v); }catch(e){} };
+  const lsDel = k => { try{ localStorage.removeItem(k); }catch(e){} };
+
+  /* ===== 言語 ===== */
+  const I18N = {
+    start:{ja:'スタート', en:'Start', ko:'시작', zh:'开始'},
+    pause:{ja:'一時停止', en:'Pause', ko:'일시정지', zh:'暂停'},
+    resume:{ja:'再開', en:'Resume', ko:'재개', zh:'继续'},
+    finish:{ja:'終了', en:'Finish', ko:'종료', zh:'结束'},
+    lap:{ja:'ラップ', en:'Lap', ko:'랩', zh:'计圈'},
+    discard:{ja:'破棄', en:'Discard', ko:'삭제', zh:'放弃'},
+    discardSure:{ja:'もう一度で破棄', en:'Tap again', ko:'한 번 더', zh:'再点一次'},
+    useGps:{ja:'GPSで距離を測る', en:'Measure distance with GPS', ko:'GPS로 거리 측정', zh:'使用GPS测距离'},
+    gpsNote:{ja:'GPSは画面をつけている間だけ正確に測れます。画面ロック中は直線距離で補います。時間だけ測ってあとで距離を入れることもできます。', en:'GPS is most accurate while the screen is on; while locked, distance is filled in as a straight line. You can also time only and enter the distance later.', ko:'GPS는 화면이 켜져 있을 때 가장 정확합니다. 잠금 중에는 직선 거리로 보정합니다. 시간만 재고 나중에 거리를 입력할 수도 있습니다.', zh:'屏幕亮着时GPS最准确，锁屏期间以直线距离补足。也可以只计时，之后再输入距离。'},
+    saveRun:{ja:'記録を保存', en:'Save run', ko:'기록 저장', zh:'保存记录'},
+    memo:{ja:'メモ', en:'Notes', ko:'메모', zh:'备注'},
+    memoPh:{ja:'コース・体調・天気など', en:'Route, how you felt, weather…', ko:'코스, 컨디션, 날씨 등', zh:'路线、状态、天气等'},
+    back:{ja:'計測に戻る', en:'Back', ko:'돌아가기', zh:'返回'},
+    save:{ja:'保存', en:'Save', ko:'저장', zh:'保存'},
+    add:{ja:'記録を追加', en:'Add run', ko:'기록 추가', zh:'添加记录'},
+    manual:{ja:'手入力で追加', en:'Add manually', ko:'직접 입력', zh:'手动添加'},
+    perKm:{ja:'1kmごと', en:'per km', ko:'1km마다', zh:'每公里'},
+    last12:{ja:'直近12週', en:'last 12 weeks', ko:'최근 12주', zh:'最近12周'},
+    perWeek:{ja:'1週間の目標距離', en:'weekly distance goal', ko:'주간 목표 거리', zh:'每周目标距离'},
+    paceNote:{ja:'直近20回・上ほど速い', en:'last 20 · higher is faster', ko:'최근 20회 · 위일수록 빠름', zh:'最近20次 · 越高越快'},
+    goal:{ja:'目標 {g} km', en:'Goal {g} km', ko:'목표 {g} km', zh:'目标 {g} km'},
+    left:{ja:'あと {k} km', en:'{k} km to go', ko:'{k} km 남음', zh:'还差 {k} km'},
+    done:{ja:'目標達成！', en:'Goal reached!', ko:'목표 달성!', zh:'目标达成！'},
+    runs:{ja:'{n}回', en:'{n} runs', ko:'{n}회', zh:'{n}次'},
+    noRuns:{ja:'まだ記録がありません', en:'NO RUNS YET', ko:'아직 기록이 없습니다', zh:'还没有记录'},
+    del:{ja:'この記録を削除', en:'Delete this run', ko:'이 기록 삭제', zh:'删除此记录'},
+    delSure:{ja:'もう一度押すと削除', en:'Tap again to delete', ko:'한 번 더 누르면 삭제', zh:'再点一次删除'},
+    saved:{ja:'保存しました', en:'Saved', ko:'저장했습니다', zh:'已保存'},
+    deleted:{ja:'削除しました', en:'Deleted', ko:'삭제했습니다', zh:'已删除'},
+    needDist:{ja:'距離か時間を入れてください', en:'Enter a distance or time', ko:'거리나 시간을 입력하세요', zh:'请输入距离或时间'},
+    gpsOff:{ja:'GPS オフ', en:'GPS OFF', ko:'GPS 끔', zh:'GPS 关'},
+    gpsWait:{ja:'GPS 探索中', en:'GPS SEARCHING', ko:'GPS 검색 중', zh:'GPS 搜索中'},
+    gpsNg:{ja:'GPS 使用不可', en:'GPS UNAVAILABLE', ko:'GPS 사용 불가', zh:'GPS 不可用'},
+    total:{ja:'合計', en:'Total', ko:'합계', zh:'总计'},
+    longest:{ja:'最長距離', en:'Longest', ko:'최장 거리', zh:'最长距离'},
+    fastest:{ja:'最速ペース', en:'Fastest pace', ko:'최고 페이스', zh:'最快配速'},
+    month:{ja:'今月', en:'This month', ko:'이번 달', zh:'本月'},
+    allTime:{ja:'これまで', en:'All time', ko:'누적', zh:'累计'},
+    fastNote:{ja:'1km以上の記録', en:'runs of 1 km+', ko:'1km 이상', zh:'1公里以上'},
+    lapN:{ja:'ラップ{n}', en:'Lap {n}', ko:'랩{n}', zh:'第{n}圈'},
+    timeOnly:{ja:'時間のみ', en:'time only', ko:'시간만', zh:'仅时间'}
+  };
+  const WD = {ja:['日','月','火','水','木','金','土'], en:['S','M','T','W','T','F','S'], ko:['일','월','화','수','목','금','토'], zh:['日','一','二','三','四','五','六']};
+  let LANG = window.TDIV ? TDIV.lang() : 'ja';
+  const t = (k, v) => { const e = I18N[k]; let r = e ? (e[LANG] != null ? e[LANG] : e.ja) : k; if(v) for(const x in v) r = r.split('{' + x + '}').join(v[x]); return r; };
+
+  /* ===== 保存データ ===== */
+  let db = {runs:[], settings:{week_goal_km:20, gps:true}};
+  try{ const r = JSON.parse(lsGet(KEY) || 'null'); if(r && Array.isArray(r.runs)){ db.runs = r.runs; Object.assign(db.settings, r.settings || {}); } }catch(e){}
+  const save = () => lsSet(KEY, JSON.stringify(db));
+
+  /* ===== 表示用の書式 ===== */
+  const hms = sec => { sec = Math.max(0, Math.floor(sec)); const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60), s = sec%60; return `${h}:${pad(m)}:${pad(s)}`; };
+  const ms = sec => { sec = Math.max(0, Math.round(sec)); const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60), s = sec%60; return h ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`; };
+  const pace = secPerKm => (!isFinite(secPerKm) || secPerKm <= 0 || secPerKm > 3600) ? `--'--"` : `${Math.floor(secPerKm/60)}'${pad(Math.round(secPerKm%60) % 60)}"`;
+  const km = v => (v || 0).toFixed(2);
+  const runPace = r => r.distance_km > 0 && r.duration_sec > 0 ? r.duration_sec / r.distance_km : NaN;
+  const dOf = r => new Date(r.started_at);
+  const weekStart = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; }; // 月曜はじまり
+
+  let toastT;
+  function toast(m){ const el = $('toast'); el.textContent = m; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), 1800); }
+
+  /* ===== 計測（ストップウォッチ + GPS）===== */
+  // cur = {state:'run'|'pause', acc, seg, dist, last, splits:[], laps:[], recent:[], gps}
+  let cur = null;
+  try{ cur = JSON.parse(lsGet(CUR) || 'null'); }catch(e){}
+  const saveCur = () => cur ? lsSet(CUR, JSON.stringify(cur)) : lsDel(CUR);
+  const elapsed = () => !cur ? 0 : (cur.acc + (cur.state === 'run' ? Date.now() - cur.seg : 0)) / 1000;
+
+  let watchId = null, tick = null, gpsState = 'off', gpsAcc = null, wakeLock = null, finishing = false, discardArm = false;
+
+  function hav(a, b){
+    const R = 6371000, r = x => x * Math.PI / 180;
+    const dLat = r(b.lat - a.lat), dLon = r(b.lon - a.lon);
+    const s = Math.sin(dLat/2)**2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLon/2)**2;
+    return 2 * R * Math.asin(Math.sqrt(s));
+  }
+  function onPos(p){
+    const acc = p.coords.accuracy;
+    gpsAcc = Math.round(acc);
+    gpsState = acc <= 30 ? 'ok' : 'weak';
+    if(!cur || cur.state !== 'run' || acc > 30){ renderGps(); return; }
+    const pt = {lat:p.coords.latitude, lon:p.coords.longitude, t:Date.now()};
+    if(!cur.last){ cur.last = pt; saveCur(); renderGps(); return; }
+    const d = hav(cur.last, pt), dt = (pt.t - cur.last.t) / 1000;
+    if(d < Math.max(5, acc * 0.6)){ renderGps(); return; }     // 立ち止まっているときの揺れは数えない
+    if(dt > 0 && d / dt > 11){ cur.last = pt; saveCur(); return; } // ありえない速さ（位置の飛び）は捨てる
+    cur.dist += d; cur.last = pt;
+    const e = elapsed();
+    cur.recent.push({t:e, d:cur.dist});
+    cur.recent = cur.recent.filter(x => e - x.t <= 45);
+    while(cur.dist >= (cur.splits.length + 1) * 1000){
+      cur.splits.push(e - cur.splits.reduce((a, b) => a + b, 0));
+      if(navigator.vibrate) navigator.vibrate([120, 80, 120]);
+      toast(`${cur.splits.length} km  ${pace(cur.splits[cur.splits.length - 1])}`);
+    }
+    saveCur(); render();
+  }
+  // 1=許可されていない → 使用不可。電波が一時的に取れない(2,3)は探索中のまま待つ
+  function onPosErr(e){ if(e && e.code === 1) gpsState = 'ng'; else if(gpsState !== 'ok' && gpsState !== 'weak') gpsState = 'wait'; renderGps(); }
+  function gpsStart(){
+    if(watchId != null || !cur || !cur.gps) return;
+    if(!('geolocation' in navigator)){ gpsState = 'ng'; renderGps(); return; }
+    gpsState = 'wait'; renderGps();
+    watchId = navigator.geolocation.watchPosition(onPos, onPosErr, {enableHighAccuracy:true, maximumAge:0, timeout:20000});
+  }
+  function gpsStop(){ if(watchId != null){ navigator.geolocation.clearWatch(watchId); watchId = null; } gpsState = 'off'; gpsAcc = null; renderGps(); }
+  async function wake(on){
+    try{
+      if(on && 'wakeLock' in navigator && !wakeLock){ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+      if(!on && wakeLock){ await wakeLock.release(); wakeLock = null; }
+    }catch(e){}
+  }
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && cur && cur.state === 'run') wake(true); });
+
+  function startTick(){ if(!tick) tick = setInterval(renderClock, 250); }
+  function stopTick(){ clearInterval(tick); tick = null; }
+
+  function start(){
+    cur = {state:'run', started_at:new Date().toISOString(), acc:0, seg:Date.now(), dist:0, last:null, splits:[], laps:[], recent:[], gps:$('optGps').checked};
+    db.settings.gps = cur.gps; save(); saveCur();
+    gpsStart(); wake(true); startTick(); render();
+  }
+  function pause(){
+    if(!cur || cur.state !== 'run') return;
+    cur.acc += Date.now() - cur.seg; cur.state = 'pause'; cur.last = null; cur.recent = [];
+    saveCur(); stopTick(); wake(false); render();
+  }
+  function resume(){
+    if(!cur || cur.state !== 'pause') return;
+    cur.state = 'run'; cur.seg = Date.now(); cur.last = null;
+    saveCur(); gpsStart(); wake(true); startTick(); render();
+  }
+  function lap(){
+    if(!cur) return;
+    cur.laps.push({t:elapsed(), d:cur.dist}); saveCur();
+    if(navigator.vibrate) navigator.vibrate(60);
+    renderSplits(); toast(t('lapN', {n:cur.laps.length}) + '  ' + ms(elapsed()));
+  }
+  function openFinish(){
+    pause(); finishing = true;
+    $('fDist').value = cur.dist > 0 ? (cur.dist / 1000).toFixed(2) : '';
+    $('fMemo').value = '';
+    render();
+    setTimeout(() => $('fDist').focus(), 50);
+  }
+  function discard(){
+    if(!discardArm){ discardArm = true; render(); setTimeout(() => { discardArm = false; render(); }, 2500); return; }
+    discardArm = false; cur = null; saveCur(); gpsStop(); stopTick(); wake(false); finishing = false; render();
+  }
+
+  $('fBack').onclick = () => { finishing = false; render(); };
+  $('fSave').onclick = () => {
+    const dist = parseFloat($('fDist').value) || 0, dur = Math.round(elapsed());
+    if(!(dist > 0) && !(dur > 0)){ toast(t('needDist')); return; }
+    db.runs.push({id:uid(), started_at:cur.started_at, duration_sec:dur, distance_km:Math.round(dist * 100) / 100, memo:$('fMemo').value.trim(),
+      splits:cur.splits.map(Math.round), source:cur.gps && cur.dist > 0 ? 'gps' : 'manual'});
+    save(); cur = null; saveCur(); gpsStop(); finishing = false; toast(t('saved')); render();
+  };
+  $('mAdd').onclick = () => {
+    const dist = parseFloat($('mDist').value) || 0;
+    const dur = (parseInt($('mH').value) || 0) * 3600 + (parseInt($('mM').value) || 0) * 60 + (parseInt($('mS').value) || 0);
+    if(!(dist > 0) && !(dur > 0)){ toast(t('needDist')); return; }
+    const day = $('mDate').value || fmtD(new Date());
+    db.runs.push({id:uid(), started_at:new Date(day + 'T07:00:00').toISOString(), duration_sec:dur, distance_km:Math.round(dist * 100) / 100, memo:$('mMemo').value.trim(), splits:[], source:'manual'});
+    save();
+    ['mDist','mH','mM','mS','mMemo'].forEach(i => $(i).value = '');
+    toast(t('saved')); render();
+  };
+  $('optGps').onchange = () => { db.settings.gps = $('optGps').checked; save(); };
+
+  /* ===== 描画 ===== */
+  function renderGps(){
+    const c = $('gpsChip');
+    const g = cur ? cur.gps : $('optGps').checked;
+    c.className = 'gps' + (gpsState === 'ok' ? ' ok' : gpsState === 'weak' ? ' weak' : '');
+    c.textContent = !g ? t('gpsOff') : gpsState === 'ok' || gpsState === 'weak' ? `GPS ±${gpsAcc}m` : gpsState === 'ng' ? t('gpsNg') : gpsState === 'wait' ? t('gpsWait') : 'GPS —';
+  }
+  function renderClock(){
+    const e = elapsed();
+    $('clock').textContent = hms(e);
+    const d = cur ? cur.dist / 1000 : 0;
+    $('sDist').innerHTML = `${km(d)}<small>km</small>`;
+    $('sAvg').textContent = d >= 0.05 ? pace(e / d) : `--'--"`;
+    let now = NaN;
+    if(cur && cur.state === 'run' && cur.recent.length >= 2){
+      const a = cur.recent[0], b = cur.recent[cur.recent.length - 1];
+      if(b.d - a.d > 10 && e - a.t < 60) now = (e - a.t) / ((b.d - a.d) / 1000);
+    }
+    $('sNow').textContent = pace(now);
+  }
+  function renderCtrl(){
+    const c = $('ctrl'); c.innerHTML = '';
+    const b = (cls, key, fn) => { const x = document.createElement('button'); x.className = 'btn ' + cls; x.textContent = t(key); x.onclick = fn; c.append(x); return x; };
+    $('hero').classList.toggle('paused', !!cur && cur.state === 'pause');
+    $('heroLabel').textContent = !cur ? 'RUN TIMER' : cur.state === 'run' ? '● RUNNING' : 'Ⅱ PAUSED';
+    $('gpsOpt').hidden = !!cur;
+    if(!cur){ b('lime full', 'start', start); return; }
+    if(finishing){ c.hidden = true; return; }
+    c.hidden = false;
+    if(cur.state === 'run'){ b('dark', 'pause', pause); b('', 'lap', lap); }
+    else { b('lime', 'resume', resume); b('dark', 'finish', openFinish); b('ghost full', discardArm ? 'discardSure' : 'discard', discard); }
+  }
+  function renderSplits(){
+    const list = $('splits'), has = cur && (cur.splits.length || cur.laps.length);
+    $('splits').hidden = $('splitsT').hidden = !has;
+    if(!has) return;
+    const best = Math.min(...cur.splits), worst = Math.max(...cur.splits);
+    let html = cur.splits.map((s, i) => `<div class="sp${s === best && cur.splits.length > 1 ? ' best' : ''}"><b>${i + 1} km</b><div class="bar"><i style="width:${Math.round(40 + 60 * (worst === best ? 1 : (worst - s) / (worst - best)))}%"></i></div><span>${pace(s)}</span></div>`).reverse().join('');
+    html += cur.laps.map((l, i) => `<div class="sp"><b class="lap">L${i + 1}</b><span class="lap">${km(l.d / 1000)} km</span><span>${ms(l.t)}</span></div>`).reverse().join('');
+    list.innerHTML = html;
+  }
+  function renderWeek(){
+    const ws = weekStart(new Date()), we = new Date(ws); we.setDate(we.getDate() + 7);
+    const runs = db.runs.filter(r => dOf(r) >= ws && dOf(r) < we);
+    const tot = runs.reduce((a, r) => a + (r.distance_km || 0), 0), goal = +db.settings.week_goal_km || 0;
+    $('wkKm').innerHTML = `${tot.toFixed(1)}<small>km</small>`;
+    $('wkGoal').innerHTML = (goal ? `${t('goal', {g:goal})}<br><b>${tot >= goal ? t('done') : t('left', {k:(goal - tot).toFixed(1)})}</b>` : '') + `<br>${t('runs', {n:runs.length})}`;
+    $('wkBar').style.width = (goal ? Math.min(100, tot / goal * 100) : 0) + '%';
+    const end = new Date(ws); end.setDate(end.getDate() + 6);
+    $('wkRange').textContent = `${ws.getMonth() + 1}/${ws.getDate()} – ${end.getMonth() + 1}/${end.getDate()}`;
+    const today = fmtD(new Date());
+    let h = '';
+    for(let i = 0; i < 7; i++){
+      const d = new Date(ws); d.setDate(d.getDate() + i);
+      const k = fmtD(d), dk = runs.filter(r => fmtD(dOf(r)) === k).reduce((a, r) => a + (r.distance_km || 0), 0);
+      h += `<div><i class="${dk > 0 ? 'on' : ''}${k === today ? ' today' : ''}">${dk > 0 ? `<em>${dk >= 10 ? Math.round(dk) : dk.toFixed(1)}</em>` : ''}</i>${WD[LANG][d.getDay()]}</div>`;
+    }
+    $('wkDots').innerHTML = h;
+  }
+  function renderRun(){
+    renderCtrl(); renderClock(); renderGps(); renderSplits(); renderWeek();
+    $('finish').hidden = !finishing;
+    if(finishing) $('fSummary').textContent = `${hms(elapsed())}  ·  ${km(cur.dist / 1000)} km (GPS)`;
+  }
+
+  /* LOG */
+  const openRuns = new Set();
+  let delArm = null;
+  function renderLog(){
+    const runs = db.runs.slice().sort((a, b) => a.started_at < b.started_at ? 1 : -1);
+    const tot = runs.reduce((a, r) => a + (r.distance_km || 0), 0), time = runs.reduce((a, r) => a + (r.duration_sec || 0), 0);
+    $('totals').innerHTML = `<div class="mini"><div class="label dim">${t('allTime')}</div><div class="n">${tot.toFixed(1)}<small>km</small></div></div>
+      <div class="mini"><div class="label dim">TIME</div><div class="n">${Math.floor(time / 3600)}<small>h</small>${pad(Math.floor(time % 3600 / 60))}<small>m</small></div></div>
+      <div class="mini"><div class="label dim">RUNS</div><div class="n">${runs.length}</div></div>`;
+    const list = $('logList');
+    if(!runs.length){ list.innerHTML = `<div class="empty">${t('noRuns')}</div>`; return; }
+    const fast = Math.min(...runs.filter(r => r.distance_km >= 1).map(runPace).filter(isFinite));
+    const long = Math.max(...runs.map(r => r.distance_km || 0));
+    const groups = {};
+    runs.forEach(r => { const d = dOf(r), k = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`; (groups[k] = groups[k] || []).push(r); });
+    list.innerHTML = '';
+    Object.keys(groups).forEach(k => {
+      const g = groups[k], sum = g.reduce((a, r) => a + (r.distance_km || 0), 0);
+      const sec = document.createElement('section'); sec.className = 'month';
+      sec.innerHTML = `<h3>${k.replace('-', '.')}<small>${sum.toFixed(1)} km · ${t('runs', {n:g.length})}</small></h3>`;
+      g.forEach(r => {
+        const d = dOf(r), p = runPace(r), isPr = (r.distance_km >= 1 && p === fast) || (r.distance_km > 0 && r.distance_km === long);
+        const el = document.createElement('div'); el.className = 'rn' + (isPr ? ' pr' : '');
+        el.innerHTML = `<button aria-expanded="${openRuns.has(r.id)}"><div class="d">${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${WD[LANG][d.getDay()]}<small>${r.duration_sec ? ms(r.duration_sec) : '—'}</small></div>
+          <div class="m">${r.distance_km > 0 ? pace(p) + ' /km' : ''}${isPr ? '<span class="tg">PB</span>' : ''}${r.memo ? ' · ' + esc(r.memo) : ''}</div>
+          <div class="k">${r.distance_km > 0 ? r.distance_km.toFixed(2) : '—'}<small>km</small></div></button>`;
+        if(openRuns.has(r.id)){
+          const det = document.createElement('div'); det.className = 'det';
+          det.innerHTML = `${pad(d.getHours())}:${pad(d.getMinutes())} · ${r.source === 'gps' ? 'GPS' : 'MANUAL'}` +
+            (r.splits && r.splits.length ? '<br>' + r.splits.map((s, i) => `${i + 1}km ${pace(s)}`).join('  ') : '') +
+            (r.memo ? `<p>${esc(r.memo)}</p>` : '');
+          const del = document.createElement('button'); del.className = 'btn ghost del'; del.textContent = delArm === r.id ? t('delSure') : t('del');
+          del.onclick = () => {
+            if(delArm !== r.id){ delArm = r.id; renderLog(); setTimeout(() => { if(delArm === r.id){ delArm = null; renderLog(); } }, 2500); return; }
+            db.runs = db.runs.filter(x => x.id !== r.id); delArm = null; save(); toast(t('deleted')); renderLog();
+          };
+          det.append(del); el.append(det);
+        }
+        el.querySelector('button').onclick = () => { openRuns.has(r.id) ? openRuns.delete(r.id) : openRuns.add(r.id); renderLog(); };
+        sec.append(el);
+      });
+      list.append(sec);
+    });
+  }
+
+  /* CHARTS */
+  function renderCharts(){
+    // 週ごとの距離（12週）
+    const W = 340, H = 170, L = 26, B = 22, T = 16;
+    const ws0 = weekStart(new Date());
+    const weeks = [];
+    for(let i = 11; i >= 0; i--){
+      const s = new Date(ws0); s.setDate(s.getDate() - 7 * i); const e = new Date(s); e.setDate(e.getDate() + 7);
+      weeks.push({s, v:db.runs.filter(r => dOf(r) >= s && dOf(r) < e).reduce((a, r) => a + (r.distance_km || 0), 0)});
+    }
+    const goal = +db.settings.week_goal_km || 0;
+    const max = Math.max(5, goal, ...weeks.map(w => w.v)) * 1.15;
+    const bw = (W - L) / 12, y = v => T + (H - T - B) * (1 - v / max);
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="weekly distance">`;
+    [0, .5, 1].forEach(f => { const v = max / 1.15 * f; s += `<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="#333"/><text class="ax" x="${L - 4}" y="${y(v) + 3}" text-anchor="end">${Math.round(v)}</text>`; });
+    weeks.forEach((w, i) => {
+      const x = L + i * bw + 3, cur = i === 11;
+      if(w.v > 0) s += `<rect x="${x}" y="${y(w.v)}" width="${bw - 6}" height="${H - B - y(w.v)}" fill="${cur ? '#ceff00' : '#ffffff'}"/>`;
+      if(w.v > 0 && (cur || i % 2 === 1)) s += `<text class="vl" x="${x + (bw - 6) / 2}" y="${y(w.v) - 4}" text-anchor="middle">${w.v >= 10 ? Math.round(w.v) : w.v.toFixed(1)}</text>`;
+      if(i % 3 === 2 || cur) s += `<text class="ax" x="${x + (bw - 6) / 2}" y="${H - 6}" text-anchor="middle">${w.s.getMonth() + 1}/${w.s.getDate()}</text>`;
+    });
+    if(goal) s += `<line x1="${L}" x2="${W}" y1="${y(goal)}" y2="${y(goal)}" stroke="#ceff00" stroke-dasharray="4 4"/><text class="ax" x="${L + 4}" y="${y(goal) - 4}" text-anchor="start" style="fill:#ceff00">GOAL ${goal}</text>`;
+    $('chWeek').innerHTML = s + '</svg>';
+
+    // ペースの推移（直近20回、上ほど速い）
+    const pr = db.runs.filter(r => r.distance_km >= 1 && isFinite(runPace(r))).sort((a, b) => a.started_at < b.started_at ? -1 : 1).slice(-20);
+    if(pr.length < 2){ $('chPace').innerHTML = `<div class="empty" style="color:#aaa">${t('noRuns')}</div>`; }
+    else{
+      const ps = pr.map(runPace), lo = Math.min(...ps), hi = Math.max(...ps), pad2 = Math.max(10, (hi - lo) * .15);
+      const a = lo - pad2, b = hi + pad2, PL = 40;
+      const px = i => PL + (W - PL - 8) * (i / (pr.length - 1)), py = v => T + (H - T - B) * ((v - a) / (b - a));
+      let p = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="pace trend">`;
+      [lo, (lo + hi) / 2, hi].forEach(v => { p += `<line x1="${PL}" x2="${W}" y1="${py(v)}" y2="${py(v)}" stroke="#333"/><text class="ax" x="${PL - 4}" y="${py(v) + 3}" text-anchor="end">${pace(v)}</text>`; });
+      p += `<polyline fill="none" stroke="#ceff00" stroke-width="2.5" points="${ps.map((v, i) => `${px(i)},${py(v)}`).join(' ')}"/>`;
+      ps.forEach((v, i) => { p += `<circle cx="${px(i)}" cy="${py(v)}" r="${v === lo ? 5 : 3}" fill="${v === lo ? '#ceff00' : '#000'}" stroke="#ceff00" stroke-width="2"><title>${fmtD(dOf(pr[i]))} ${pace(v)}</title></circle>`; });
+      [0, pr.length - 1].forEach(i => { const d = dOf(pr[i]); p += `<text class="ax" x="${px(i)}" y="${H - 6}" text-anchor="${i ? 'end' : 'start'}">${d.getMonth() + 1}/${d.getDate()}</text>`; });
+      $('chPace').innerHTML = p + '</svg>';
+    }
+
+    // 記録
+    const now = new Date(), mo = db.runs.filter(r => dOf(r).getFullYear() === now.getFullYear() && dOf(r).getMonth() === now.getMonth());
+    const longR = db.runs.reduce((m, r) => !m || r.distance_km > m.distance_km ? r : m, null);
+    const fastR = db.runs.filter(r => r.distance_km >= 1 && isFinite(runPace(r))).reduce((m, r) => !m || runPace(r) < runPace(m) ? r : m, null);
+    const tot = db.runs.reduce((a, r) => a + (r.distance_km || 0), 0);
+    $('records').innerHTML = `
+      <div class="mini"><div class="label dim">${t('longest')}</div><div class="n">${longR && longR.distance_km ? longR.distance_km.toFixed(2) : '—'}<small>km</small></div><div class="s">${longR ? fmtD(dOf(longR)) : ''}</div></div>
+      <div class="mini"><div class="label dim">${t('fastest')}</div><div class="n">${fastR ? pace(runPace(fastR)) : '—'}</div><div class="s">${fastR ? fmtD(dOf(fastR)) + ' · ' + t('fastNote') : t('fastNote')}</div></div>
+      <div class="mini"><div class="label dim">${t('month')}</div><div class="n">${mo.reduce((a, r) => a + (r.distance_km || 0), 0).toFixed(1)}<small>km</small></div><div class="s">${t('runs', {n:mo.length})}</div></div>
+      <div class="mini"><div class="label dim">${t('allTime')}</div><div class="n">${tot.toFixed(1)}<small>km</small></div><div class="s">${t('runs', {n:db.runs.length})}</div></div>`;
+    $('goalIn').value = db.settings.week_goal_km || '';
+  }
+  $('goalSave').onclick = () => { db.settings.week_goal_km = Math.max(0, parseFloat($('goalIn').value) || 0); save(); toast(t('saved')); renderCharts(); };
+
+  /* ===== タブ ===== */
+  let current = 'run';
+  const TITLES = {run:'Run', log:'Run Log', charts:'Charts'};
+  function go(v){
+    current = v;
+    document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.id === 'v-' + v));
+    document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.dataset.v === v));
+    $('viewTitle').textContent = TITLES[v];
+    render();
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('.tab').forEach(el => el.onclick = () => go(el.dataset.v));
+
+  function renderBar(){
+    const d = new Date();
+    $('barSub').innerHTML = `<b>RUNNING</b><br>${fmtD(d).replace(/-/g, '.')} ${WD[LANG][d.getDay()]}`;
+  }
+  function render(){
+    renderBar();
+    ({run:renderRun, log:renderLog, charts:renderCharts})[current]();
+  }
+  function applyLang(){
+    document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = t(el.dataset.i18nPh));
+    render();
+  }
+  window.addEventListener('tdiv:lang', e => { LANG = e.detail; applyLang(); });
+
+  /* ===== 起動 ===== */
+  $('optGps').checked = db.settings.gps !== false;
+  $('mDate').value = fmtD(new Date());
+  if(cur && cur.state === 'run'){ gpsStart(); wake(true); startTick(); }
+  applyLang();
+  if('serviceWorker' in navigator && location.protocol === 'https:'){
+    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+  }
+})();
+</script>
+</body>
+</html>
