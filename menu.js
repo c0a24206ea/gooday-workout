@@ -13,7 +13,9 @@
     lang:    {ja:'言語', en:'Language', ko:'언어', zh:'语言'},
     menu:    {ja:'メニュー', en:'Menu', ko:'메뉴', zh:'菜单'},
     close:   {ja:'閉じる', en:'Close', ko:'닫기', zh:'关闭'},
-    spotify: {ja:'Spotifyを開く', en:'Open Spotify', ko:'Spotify 열기', zh:'打开 Spotify'}
+    spotify: {ja:'Spotifyを開く', en:'Open Spotify', ko:'Spotify 열기', zh:'打开 Spotify'},
+    spBig:   {ja:'Spotifyで音楽をかける', en:'Play music on Spotify', ko:'Spotify로 음악 듣기', zh:'用 Spotify 播放音乐'},
+    spSub:   {ja:'タイマーは止まらずに動き続けます', en:'The timer keeps running', ko:'타이머는 멈추지 않고 계속됩니다', zh:'计时器会继续运行'}
   };
   const PAGES = [
     {key:'home', href:'./', en:'HOME', files:['', 'index']},
@@ -57,6 +59,27 @@
   .tm-sp:hover{background:var(--lime,#ceff00); color:var(--black,#000);}
   .tm-sp:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime,#ceff00);}
   @media (min-width:600px){ .tm-sp span{display:inline;} .tm-sp{padding:0 14px;} }
+  /* タイマーの下の大きな Spotify ボタン（data-spotify-btn） */
+  .sp-big{display:grid; grid-template-columns:56px 1fr auto; align-items:center; gap:0; margin-top:10px; min-height:60px; background:var(--black,#000); color:var(--white,#fff);
+    text-decoration:none; border:2px solid var(--black,#000); overflow:hidden; position:relative; transition:transform .2s;}
+  .sp-big .ic{height:100%; min-height:56px; background:var(--lime,#ceff00); color:var(--black,#000); display:flex; align-items:center; justify-content:center;}
+  .sp-big .ic svg{width:26px; height:26px;}
+  .sp-big .tx{padding:8px 14px; min-width:0;}
+  .sp-big .tx b{display:block; font-size:16px; font-weight:700; line-height:1.3;}
+  .sp-big .tx small{display:block; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em; color:var(--g3,#aaa); margin-top:2px;}
+  .sp-big .go{padding:0 16px; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:16px; letter-spacing:.1em; color:var(--lime,#ceff00); white-space:nowrap;}
+  .sp-big::after{content:''; position:absolute; right:-24px; top:0; bottom:0; width:60px; background:var(--lime,#ceff00); transform:skewX(-20deg); opacity:.12; pointer-events:none;}
+  .sp-big:hover .go{text-decoration:underline;}
+  .sp-big:active{transform:translateY(1px);}
+  .sp-big:focus-visible{outline:none; box-shadow:0 0 0 3px var(--lime,#ceff00);}
+  .sp-big[data-spotify-btn="mini"]{display:inline-flex; grid-template-columns:none; min-height:40px; height:40px; margin:0; border-color:#444;}
+  .sp-big[data-spotify-btn="mini"] .ic{min-height:0; width:40px;}
+  .sp-big[data-spotify-btn="mini"] .ic svg{width:20px; height:20px;}
+  .sp-big[data-spotify-btn="mini"] .tx, .sp-big[data-spotify-btn="mini"]::after{display:none;}
+  .sp-big[data-spotify-btn="mini"] .go{padding:0 12px; font-size:14px;}
+  @media (orientation:landscape) and (max-height:520px){ .sp-big{min-height:48px;} .sp-big .ic{min-height:44px;} }
+  .sp-big .go i{font-style:normal;}
+  @media (max-width:479px){ .sp-big:not([data-spotify-btn="mini"]) .go i{display:none;} .sp-big:not([data-spotify-btn="mini"]) .go{font-size:24px; padding:0 18px;} }
   @media (max-width:400px){ .appbar .sub{font-size:10px; letter-spacing:.04em; white-space:nowrap;} .appbar h1{font-size:30px;} }
   .tm-ov{position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity .45s ease;}
   .tm-ov.open{opacity:1; pointer-events:auto;}
@@ -138,11 +161,20 @@
     document.addEventListener('keydown', e => { if(e.key === 'Escape' && panel.classList.contains('open')) close(); });
     paint();
   }
+  const NOTE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>';
+  function fillBig(){
+    document.querySelectorAll('[data-spotify-btn]').forEach(a => {
+      a.innerHTML = `<span class="ic">${NOTE}</span><span class="tx"><b>${tr('spBig')}</b><small>${tr('spSub')}</small></span><span class="go"><i>SPOTIFY </i>↗</span>`;
+      a.setAttribute('aria-label', tr('spBig'));
+    });
+  }
+  window.TDIV.fillSpotify = fillBig;
   function paint(){
     if(!panel) return;
     const l = lang();
     btn.setAttribute('aria-label', tr('menu'));
     if(sp){ sp.setAttribute('aria-label', tr('spotify')); sp.title = tr('spotify'); }
+    fillBig();
     panel.setAttribute('aria-label', tr('menu'));
     panel.querySelector('.tm-x').setAttribute('aria-label', tr('close'));
     panel.querySelectorAll('.tm-nav a').forEach(a => a.querySelector('small').textContent = tr(a.dataset.k));

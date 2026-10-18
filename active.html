@@ -257,6 +257,7 @@
           <div class="days" id="wkDays"></div>
         </div>
       </div>
+      <a class="sp-big" data-spotify-btn href="https://open.spotify.com/" target="_blank" rel="noopener"></a>
 
       <div class="section-t"><span>Today</span><small id="todaySum"></small></div>
       <div id="todayList"></div>
@@ -281,7 +282,8 @@
   <!-- FLOW: ガイド付きセッション -->
   <main class="view" id="v-flow">
     <div id="flowHome">
-      <div class="section-t" style="margin-top:0;"><span>Flows</span><small data-i18n="flowNote"></small></div>
+      <a class="sp-big" style="margin:0 0 6px;" data-spotify-btn href="https://open.spotify.com/" target="_blank" rel="noopener"></a>
+      <div class="section-t"><span>Flows</span><small data-i18n="flowNote"></small></div>
       <div id="flowList"></div>
       <button class="btn block" id="flowNew" style="margin-top:12px;" data-i18n="newFlow"></button>
       <div class="opts">
@@ -314,6 +316,7 @@
         <div class="br-left" id="brLeft"></div>
       </div>
       <button class="btn lime block" id="brGo" style="margin-top:10px; height:60px; font-size:22px;"></button>
+      <a class="sp-big" data-spotify-btn href="https://open.spotify.com/" target="_blank" rel="noopener"></a>
     </div><div class="col col-r">
       <div class="section-t"><span>Pattern</span></div>
       <div class="pat" id="patSel"></div>
@@ -364,7 +367,7 @@
 
 <!-- フロー再生（全画面） -->
 <div class="player" id="player" hidden role="dialog" aria-modal="true" aria-label="Flow player">
-  <div class="pl-top"><div class="label" id="plTitle"></div><button class="pl-x" id="plStop"></button></div>
+  <div class="pl-top"><div class="label" id="plTitle" style="flex:1; min-width:0;"></div><a class="sp-big" data-spotify-btn="mini" href="https://open.spotify.com/" target="_blank" rel="noopener"></a><button class="pl-x" id="plStop"></button></div>
   <div class="pl-prog" id="plProg"></div>
   <div class="pl-main" id="plMain">
     <div class="txt"><div class="pl-step" id="plStep"></div><div class="pl-name" id="plName"></div><div class="pl-next" id="plNext"></div></div>
