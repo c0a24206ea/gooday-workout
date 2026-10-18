@@ -42,7 +42,7 @@
   @keyframes in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
 
   .tabbar{position:fixed; left:50%; transform:translateX(-50%); bottom:0; z-index:30; width:100%; max-width:var(--appw); background:var(--white);
-    border-top:1px solid var(--g1); display:grid; grid-template-columns:repeat(3,1fr); padding-bottom:env(safe-area-inset-bottom); box-shadow:0 -4px 16px var(--shadow);}
+    border-top:1px solid var(--g1); display:grid; grid-template-columns:repeat(4,1fr); padding-bottom:env(safe-area-inset-bottom); box-shadow:0 -4px 16px var(--shadow);}
   .tab{position:relative; height:var(--tabh); background:none; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
     color:var(--g3); font-family:'Barlow Condensed',sans-serif; font-weight:700; letter-spacing:.1em; font-size:12px; text-transform:uppercase;}
   .tab svg{width:22px; height:22px;}
@@ -259,8 +259,6 @@
     <div class="cols"><div class="col col-l">
       <div class="section-t" style="margin-top:0;"><span>Weekly km</span><small data-i18n="last12"></small></div>
       <div class="chart" id="chWeek"></div>
-      <div class="section-t"><span>Goal</span><small data-i18n="perWeek"></small></div>
-      <div class="goalrow"><input class="in big" id="goalIn" type="number" inputmode="decimal" min="0" step="1"><b style="font-family:'Barlow Condensed';font-size:22px;">km</b><button class="btn dark" id="goalSave" data-i18n="save"></button></div>
     </div><div class="col col-r">
       <div class="section-t"><span>Pace</span><small data-i18n="paceNote"></small></div>
       <div class="chart" id="chPace"></div>
@@ -269,10 +267,34 @@
     </div></div>
   </main>
 
+  <!-- SETUP -->
+  <main class="view" id="v-setup">
+    <div class="cols"><div class="col col-l">
+      <div class="section-t" style="margin-top:0;"><span>Goal</span><small data-i18n="perWeek"></small></div>
+      <div class="goalrow"><input class="in big" id="goalIn" type="number" inputmode="decimal" min="0" step="1"><b style="font-family:'Barlow Condensed';font-size:22px;">km</b><button class="btn dark" id="goalSave" data-i18n="save"></button></div>
+      <div class="section-t"><span>GPS</span></div>
+      <label class="opt" style="margin-top:0;"><input type="checkbox" id="optGps2"><span data-i18n="useGps"></span></label>
+      <p class="note" data-i18n="gpsNote"></p>
+    </div><div class="col col-r">
+      <div class="section-t"><span>Backup</span><small data-i18n="bkNote"></small></div>
+      <textarea class="in" id="bkArea" style="height:160px; font-family:'JetBrains Mono',monospace; font-size:12px;" data-i18n-ph="bkPh"></textarea>
+      <div class="row2"><button class="btn" id="bkOut" data-i18n="bkOut"></button><button class="btn dark" id="bkIn" data-i18n="bkIn"></button></div>
+    </div></div>
+  </main>
+
   <nav class="tabbar" id="tabbar">
-    <button class="tab active" data-v="run"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M10 2h4"/></svg>Run</button>
-    <button class="tab" data-v="log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Log</button>
-    <button class="tab" data-v="charts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Charts</button>
+    <button class="tab active" data-v="run">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M7 5l5 7-5 7M13 5l5 7-5 7"/></svg>Run
+    </button>
+    <button class="tab" data-v="charts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M3 18l6-7 4 4 8-10"/></svg>Charts
+    </button>
+    <button class="tab" data-v="log">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Log
+    </button>
+    <button class="tab" data-v="setup">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Setup
+    </button>
   </nav>
 </div>
 <div class="toast" id="toast"></div>
@@ -337,7 +359,13 @@
     allTime:{ja:'これまで', en:'All time', ko:'누적', zh:'累计'},
     fastNote:{ja:'1km以上の記録', en:'runs of 1 km+', ko:'1km 이상', zh:'1公里以上'},
     lapN:{ja:'ラップ{n}', en:'Lap {n}', ko:'랩{n}', zh:'第{n}圈'},
-    timeOnly:{ja:'時間のみ', en:'time only', ko:'시간만', zh:'仅时间'}
+    timeOnly:{ja:'時間のみ', en:'time only', ko:'시간만', zh:'仅时间'},
+    bkNote:{ja:'ランの記録を書き出し・読み込み', en:'export / import runs', ko:'러닝 기록 내보내기·가져오기', zh:'导出 / 导入跑步记录'},
+    bkPh:{ja:'「書き出し」でここにデータが出ます。別の端末で貼り付けて「読み込み」。', en:'Export puts your data here. Paste it on another device and Import.', ko:'내보내기를 누르면 여기에 데이터가 나옵니다. 다른 기기에 붙여넣고 가져오기.', zh:'点“导出”后数据会显示在这里，在其他设备粘贴后点“导入”。'},
+    bkOut:{ja:'書き出し', en:'Export', ko:'내보내기', zh:'导出'},
+    bkIn:{ja:'読み込み', en:'Import', ko:'가져오기', zh:'导入'},
+    bkBad:{ja:'データの形式が正しくありません', en:'Invalid data', ko:'데이터 형식이 올바르지 않습니다', zh:'数据格式不正确'},
+    bkDone:{ja:'{n}件を読み込みました', en:'Imported {n} runs', ko:'{n}건을 가져왔습니다', zh:'已导入{n}条'}
   };
   const WD = {ja:['日','月','火','水','木','金','土'], en:['S','M','T','W','T','F','S'], ko:['일','월','화','수','목','금','토'], zh:['日','一','二','三','四','五','六']};
   let LANG = window.TDIV ? TDIV.lang() : 'ja';
@@ -628,13 +656,26 @@
       <div class="mini"><div class="label dim">${t('fastest')}</div><div class="n">${fastR ? pace(runPace(fastR)) : '—'}</div><div class="s">${fastR ? fmtD(dOf(fastR)) + ' · ' + t('fastNote') : t('fastNote')}</div></div>
       <div class="mini"><div class="label dim">${t('month')}</div><div class="n">${mo.reduce((a, r) => a + (r.distance_km || 0), 0).toFixed(1)}<small>km</small></div><div class="s">${t('runs', {n:mo.length})}</div></div>
       <div class="mini"><div class="label dim">${t('allTime')}</div><div class="n">${tot.toFixed(1)}<small>km</small></div><div class="s">${t('runs', {n:db.runs.length})}</div></div>`;
-    $('goalIn').value = db.settings.week_goal_km || '';
   }
-  $('goalSave').onclick = () => { db.settings.week_goal_km = Math.max(0, parseFloat($('goalIn').value) || 0); save(); toast(t('saved')); renderCharts(); };
+  function renderSetup(){
+    $('goalIn').value = db.settings.week_goal_km || '';
+    $('optGps2').checked = db.settings.gps !== false;
+  }
+  $('optGps2').onchange = () => { db.settings.gps = $('optGps2').checked; $('optGps').checked = db.settings.gps; save(); };
+  $('bkOut').onclick = () => { $('bkArea').value = JSON.stringify(db); $('bkArea').select(); toast(t('saved')); };
+  $('bkIn').onclick = () => {
+    let d; try{ d = JSON.parse($('bkArea').value.trim()); }catch(e){}
+    if(!d || !Array.isArray(d.runs)){ toast(t('bkBad')); return; }
+    const ids = new Set(db.runs.map(r => r.id));
+    const add = d.runs.filter(r => r && r.id && r.started_at && !ids.has(r.id));
+    db.runs = db.runs.concat(add); Object.assign(db.settings, d.settings || {});
+    save(); toast(t('bkDone', {n:add.length})); render();
+  };
+  $('goalSave').onclick = () => { db.settings.week_goal_km = Math.max(0, parseFloat($('goalIn').value) || 0); save(); toast(t('saved')); renderSetup(); };
 
   /* ===== タブ ===== */
   let current = 'run';
-  const TITLES = {run:'Run', log:'Run Log', charts:'Charts'};
+  const TITLES = {run:'Run', log:'Run Log', charts:'Charts', setup:'Setup'};
   function go(v){
     current = v;
     document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.id === 'v-' + v));
@@ -651,7 +692,7 @@
   }
   function render(){
     renderBar();
-    ({run:renderRun, log:renderLog, charts:renderCharts})[current]();
+    ({run:renderRun, log:renderLog, charts:renderCharts, setup:renderSetup})[current]();
   }
   function applyLang(){
     document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = t(el.dataset.i18n));
