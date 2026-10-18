@@ -923,6 +923,13 @@
       save(); refreshCard(exId); updateStats();
     };
     w.onchange = commit; r.onchange = commit; rp.onchange = commit;
+    const quick = () => {
+      const wv = num(w.value);
+      s.weight = wv && wv > 0 ? wv : null;
+      s.reps = Math.max(0, parseInt(r.value) || 0);
+      save();
+    };
+    w.addEventListener('input', quick); r.addEventListener('input', quick);
     wu.onclick = () => {
       s.is_warmup = !s.is_warmup;
       wu.classList.toggle('on', s.is_warmup); row.classList.toggle('warm', s.is_warmup);
@@ -1041,14 +1048,15 @@
     renderToday(); toast(t('toast.recalled'));
   };
   $('adhocName').addEventListener('keydown', e => { if(e.key === 'Enter') $('adhocBtn').click(); });
-  let memoT;
-  $('memo').addEventListener('input', () => {
-    clearTimeout(memoT);
-    memoT = setTimeout(() => {
-      const v = $('memo').value, log = todayLog(!!v.trim());
-      if(log){ log.memo = v; save(); }
-    }, 400);
-  });
+  let memoT = null;
+  function flushMemo(){
+    if(memoT === null) return;
+    clearTimeout(memoT); memoT = null;
+    const v = $('memo').value, log = todayLog(!!v.trim());
+    if(log){ log.memo = v; save(); }
+  }
+  $('memo').addEventListener('input', () => { clearTimeout(memoT); memoT = setTimeout(flushMemo, 400); });
+  $('memo').addEventListener('blur', flushMemo);
 
   let restEnd = 0, restTimer = null, finUntil = 0, cardVisible = true, actx = null, wakeLock = null;
   const fmtT = sec => `${Math.floor(sec/60)}:${pad(sec%60)}`;
@@ -1318,18 +1326,27 @@
     if(document.activeElement !== $('dMemo')) $('dMemo').value = l ? (l.memo || '') : '';
   }
   $('dDate').onchange = renderDayLog;
-  $('dSave').onclick = () => {
+  let dayT = null;
+  function saveDayLog(silent){
+    clearTimeout(dayT); dayT = null;
     const k = $('dDate').value || todayKey();
     const st = $('dStart').value, du = Math.max(0, parseInt($('dDur').value) || 0), me = $('dMemo').value;
     let l = logsOnDay(k)[0];
     if(!l){
-      if(!st && !du && !me.trim()){ toast(t('daylog.empty')); return; }
+      if(!st && !du && !me.trim()){ if(!silent) toast(t('daylog.empty')); return; }
       l = {id:uid('wl'), executed_at: k === todayKey() ? now() : new Date(k + 'T12:00:00').toISOString(), memo:'', routine_snapshot: k === todayKey() ? snapshot() : []};
       db.workout_logs.push(l);
     }
     l.start_time = st || null; l.duration_min = du || null; l.memo = me;
-    save(); renderDayLog(); toast(t('toast.recorded'));
-  };
+    save();
+    if(!silent){ renderDayLog(); toast(t('toast.recorded')); }
+  }
+  $('dSave').onclick = () => saveDayLog(false);
+  ['dStart', 'dDur', 'dMemo'].forEach(id => {
+    $(id).addEventListener('input', () => { clearTimeout(dayT); dayT = setTimeout(() => saveDayLog(true), 600); });
+    $(id).addEventListener('change', () => saveDayLog(true));
+  });
+  function flushDayLog(){ if(dayT !== null) saveDayLog(true); }
 
   let gid = 0;
   function drawChart(box, pts){
@@ -1728,7 +1745,13 @@
   $('optWake').checked = !!db.settings.keep_awake;
   renderTimer(); applyWake();
   setInterval(checkDay, 30000);
-  document.addEventListener('visibilitychange', () => { if(!document.hidden){ checkDay(); if(restTimer) tick(); applyWake(); } });
+  document.addEventListener('visibilitychange', () => { if(!document.hidden){ checkDay(); if(restTimer) tick(); applyWake(); } else flushAll(); });
+  function flushAll(){
+    const a = document.activeElement;
+    if(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) a.blur();
+    flushMemo(); flushDayLog();
+  }
+  window.addEventListener('pagehide', flushAll);
 })();
 </script>
 </body>

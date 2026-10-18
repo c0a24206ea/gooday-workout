@@ -935,6 +935,9 @@
   window.addEventListener('tdiv:lang', e => { LANG = e.detail; applyLang(); if(pl) plRender(); });
   document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && (pl && !pl.done || br)) wake(true); });
 
+  const flushInputs = () => { const a = document.activeElement; if(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) a.blur(); };
+  window.addEventListener('pagehide', flushInputs);
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden') flushInputs(); });
   applyLang();
   if('serviceWorker' in navigator && location.protocol === 'https:'){
     window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });

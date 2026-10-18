@@ -681,6 +681,9 @@
   }
   window.addEventListener('tdiv:lang', e => { LANG = e.detail; applyLang(); });
 
+  const flushInputs = () => { const a = document.activeElement; if(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) a.blur(); };
+  window.addEventListener('pagehide', flushInputs);
+  document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'hidden') flushInputs(); });
   $('optGps').checked = db.settings.gps !== false;
   $('mDate').value = fmtD(new Date());
   if(cur && cur.state === 'run'){ gpsStart(); wake(true); startTick(); }

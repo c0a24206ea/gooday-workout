@@ -65,17 +65,18 @@
 | インターバルタイマー（タップで手入力・±10秒・START/STOP） | `#tBig` `#tEdit` `#tMinus` `#tPlus` `#tStart`、`startRest()` `stopRest()` `adjTimer()` `applyTimerEdit()` |
 | 終了音（音楽と重ねて鳴らす）・画面を消さない | `#optSound` `#optWake`、`beep()` `applyWake()` |
 | Spotify で音楽をかけるボタン | タイマーの下の `a.sp-big` |
-| 今日のメニュー（種目カード・セット入力・前回をコピー） | `#exList`、`renderToday()` `exCard()` `addSet()` `copyPrev()` |
+| 今日のメニュー（種目カード・セット入力・前回をコピー。重量・回数は入力した瞬間に保存） | `#exList`、`renderToday()` `exCard()` `setRow()` `addSet()` `copyPrev()` |
 | 種目を自由に追加 | `#adhocName` `#adhocBtn` |
 | 前回の種目を呼び出す | `#recallBtn`、`lastWorkout()` |
-| 今日のメモ | `#memo` |
+| 今日のメモ（入力すると自動保存） | `#memo`、`flushMemo()` |
+| ページ移動・画面ロック・アプリを閉じる直前に入力中の値を保存 | `flushAll()`（`pagehide` と `visibilitychange`） |
 
 ### CHARTS タブ（`#v-body`）
 | 機能 | 場所 |
 |---|---|
 | 体重の記録 | `#bInput` `#bBtn` |
 | 日ごとの体重グラフ（30日 / 90日 / 1年 / 全期間） | `#bSeg`、`renderBodyChart()` `drawChart()` |
-| Day Log（その日の種目・開始時刻・時間・メモ） | `#dDate` `#dStart` `#dDur` `#dSave`、`renderDayLog()` |
+| Day Log（その日の種目・開始時刻・時間・メモ。入力すると自動保存、保存ボタンでも保存） | `#dDate` `#dStart` `#dDur` `#dMemo` `#dSave`、`renderDayLog()` `saveDayLog()` |
 
 ### LOG タブ（`#v-log`）
 | 機能 | 場所 |
