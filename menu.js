@@ -1,4 +1,4 @@
-/* TRAINING DIVISION - 共通メニュー（右上の ≡）
+/* TIVS - 共通メニュー（右上の ≡）
  * 使い方: ページの見出しの中に <div data-menu-slot></div> を置いて、<script src="menu.js"></script> を読み込むだけ。
  * 言語は全ページ共通（localStorage: tdiv_lang）。変更すると window に 'tdiv:lang' イベントが飛ぶ。
  */
@@ -105,7 +105,7 @@
       '<div class="tm-head"><span>MENU</span><button class="tm-x" type="button">✕</button></div>' +
       '<div class="tm-nav">' + PAGES.map(p => `<a href="${p.href}" data-k="${p.key}" class="${p.key === cur ? 'cur' : ''}"${p.key === cur ? ' aria-current="page"' : ''}><b>${p.en}</b><small></small></a>`).join('') + '</div>' +
       '<div class="tm-lang"><div class="lb"></div><div class="g">' + LANGS.map(l => `<button type="button" data-l="${l}">${LANG_NAME[l]}</button>`).join('') + '</div></div>' +
-      '<div class="tm-foot">TRAINING DIVISION</div>';
+      '<div class="tm-foot">TIVS</div>';
     document.body.append(ov, panel);
 
     btn.onclick = open;

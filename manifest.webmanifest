@@ -1,6 +1,6 @@
 {
-  "name": "TRAINING DIVISION",
-  "short_name": "TRAINING",
+  "name": "TIVS",
+  "short_name": "TIVS",
   "description": "Workout & body-weight tracker",
   "start_url": "./",
   "scope": "./",
