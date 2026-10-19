@@ -60,9 +60,9 @@
 ### TODAY タブ（`#v-today`）
 | 機能 | 場所 |
 |---|---|
-| 今日の達成率（数字が「ジジジ」と出る演出） | `#heroNum`、`animateRate()`、`scramble()` |
+| 今日の達成率（1〜199の数字がランダムに入れ替わる「ジジジ」演出のあと本当の値で止まる） | `#heroNum`、`animateRate()`、`scramble()` |
 | VOLUME / STREAK / DAYS | `#mVol` `#mStreak` `#mDays`、`updateStats()` |
-| インターバルタイマー（タップで手入力・±10秒・START/STOP） | `#tBig` `#tEdit` `#tMinus` `#tPlus` `#tStart`、`startRest()` `stopRest()` `adjTimer()` `applyTimerEdit()` |
+| インターバルタイマー（タップで手入力・±10秒・START/STOP＝一時停止と再開・RESET＝設定の秒数に戻す） | `#tBig` `#tEdit` `#tMinus` `#tPlus` `#tStart` `#tReset`、`startRest()` `toggleRest()` `pauseRest()` `resumeRest()` `resetRest()` `adjTimer()` `applyTimerEdit()` |
 | 終了音（音楽と重ねて鳴らす）・画面を消さない | `#optSound` `#optWake`、`beep()` `applyWake()` |
 | Spotify で音楽をかけるボタン | タイマーの下の `a.sp-big` |
 | 今日のメニュー（種目カード・セット入力・前回をコピー。重量・回数は入力した瞬間に保存） | `#exList`、`renderToday()` `exCard()` `setRow()` `addSet()` `copyPrev()` |
@@ -97,7 +97,7 @@
 ### その他
 | 機能 | 場所 |
 |---|---|
-| 画面下に浮かぶ休憩タイマー | `#rest`、`renderTimer()` |
+| 画面下に浮かぶ休憩タイマー（STOP/START・RESET つき） | `#rest` `#restStop` `#restReset`、`renderTimer()` |
 | スマホ横向き専用のワークアウトモード（左に大きなリングタイマー、右に今の種目とセット記録） | `#wm`、`renderWM()` `renderWMTimer()`、記録は `#wmLog` |
 | 旧バージョンのデータの移行 | `migrateV1()` |
 

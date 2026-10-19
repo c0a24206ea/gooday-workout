@@ -266,11 +266,13 @@
   .tok .btn{height:44px; padding:0; font-size:16px;}
   .tok .btn.line{background:var(--black); color:var(--white); border-color:var(--g3);}
   .tok #tSet{background:var(--lime); color:var(--black); border-color:var(--lime);}
-  .tbtns{display:grid; grid-template-columns:1fr 1.4fr 1fr; gap:8px;}
+  .tbtns{display:grid; grid-template-columns:1fr 1.5fr 1fr 1fr; gap:6px;}
   .tbtns .btn{padding:0; height:52px;}
   .tbtns .btn.line{background:var(--black); color:var(--white); border-color:var(--g3);}
   .tbtns #tStart{background:var(--lime); color:var(--black); border-color:var(--lime);}
   .timer.run #tStart{background:var(--white); border-color:var(--white);}
+  .timer.paused .tbig{opacity:.55;}
+  #tReset, #restReset, #wmReset{font-size:14px; letter-spacing:.06em;}
   .timer.fin{background:var(--lime);}
   .timer.fin .tbig,.timer.fin .label{color:var(--black);}
   .topts{display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px; margin-top:12px;}
@@ -353,7 +355,7 @@
   @keyframes wmpulse{50%{opacity:.55;}}
   .wm.flash{animation:wmflash .3s steps(2) 6;}
   @keyframes wmflash{0%{background:var(--lime);} 100%{background:var(--black);}}
-  .wm-tb{display:grid; grid-template-columns:1fr 1.4fr 1fr; gap:8px; width:min(68vh, 40vw); min-width:220px;}
+  .wm-tb{display:grid; grid-template-columns:1fr 1.5fr 1fr 1fr; gap:6px; width:min(68vh, 40vw); min-width:220px;}
   .wm-tb button{height:46px; background:var(--black); color:var(--white); border:1px solid var(--g3); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:18px; letter-spacing:.08em; cursor:pointer;}
   .wm-tb .go{background:var(--lime); color:var(--black); border-color:var(--lime);}
   .wm.run .wm-tb .go{background:var(--white); border-color:var(--white);}
@@ -431,6 +433,7 @@
       <div class="tbtns">
         <button class="btn line" id="tMinus">−10s</button>
         <button class="btn" id="tStart">START</button>
+        <button class="btn line" id="tReset">RESET</button>
         <button class="btn line" id="tPlus">+10s</button>
       </div>
       <div class="topts">
@@ -570,6 +573,7 @@
     <button id="restMinus">−10s</button>
     <button id="restPlus">+10s</button>
     <button id="restStop">STOP</button>
+    <button id="restReset">RESET</button>
   </div>
 
   <nav class="tabbar">
@@ -596,6 +600,7 @@
     <div class="wm-tb">
       <button id="wmMinus">−10s</button>
       <button id="wmStart" class="go">START</button>
+      <button id="wmReset">RESET</button>
       <button id="wmPlus">+10s</button>
     </div>
   </div>
@@ -967,7 +972,7 @@
   const anims = new Map();
 
   const reduceMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function scramble(el, host, key, dur, done){
+  function scramble(el, host, key, dur, done, gen){
     if(reduceMotion() || typeof requestAnimationFrame !== 'function'){ el.textContent = key; done && done(); return; }
     cancelAnimationFrame(anims.get(el));
     host.classList.remove('lock'); host.classList.add('glitch');
@@ -985,7 +990,8 @@
       if(now - last > 40){
         last = now;
         let out = '';
-        for(let i = 0; i < n; i++){
+        if(gen) out = gen();
+        else for(let i = 0; i < n; i++){
           const ch = key[i];
           out += /\d/.test(ch) && !(k > 0.35 + 0.65*(i+1)/n) ? Math.floor(Math.random()*10) : ch;
         }
@@ -1003,7 +1009,7 @@
     if(key === shownRate) return;
     shownRate = key;
     if(v == null){ el.textContent = key; return; }
-    scramble(el, $('heroNum'), key, 700);
+    scramble(el, $('heroNum'), key, 700, null, () => String(1 + Math.floor(Math.random()*199)));
   }
   function updateStats(){
     const log = todayLog(false), items = todayItems(log), rate = logRate(log, items);
@@ -1058,6 +1064,7 @@
   $('memo').addEventListener('input', () => { clearTimeout(memoT); memoT = setTimeout(flushMemo, 400); });
   $('memo').addEventListener('blur', flushMemo);
 
+  let pausedMs = 0;
   let restEnd = 0, restTimer = null, finUntil = 0, cardVisible = true, actx = null, wakeLock = null;
   const fmtT = sec => `${Math.floor(sec/60)}:${pad(sec%60)}`;
   function unlockAudio(){
@@ -1081,36 +1088,54 @@
       });
     }catch(e){}
   }
+  const isPaused = () => !restTimer && pausedMs > 0;
+  const leftSec = () => restTimer ? Math.max(0, Math.ceil((restEnd - Date.now())/1000)) : pausedMs > 0 ? Math.ceil(pausedMs/1000) : (+db.settings.rest_sec || 0);
   function renderTimer(){
-    const running = !!restTimer, fin = !running && Date.now() < finUntil;
-    const left = running ? Math.max(0, Math.ceil((restEnd - Date.now())/1000)) : (+db.settings.rest_sec || 0);
-    const txt = fin ? 'GO!' : fmtT(left);
+    const running = !!restTimer, paused = isPaused(), fin = !running && !paused && Date.now() < finUntil;
+    const txt = fin ? 'GO!' : fmtT(leftSec());
     if(!timerScr) $('tBig').textContent = txt;
     $('restT').textContent = txt;
     $('tStart').textContent = running ? 'STOP' : 'START';
-    $('tState').textContent = running ? 'RUNNING' : fin ? 'TIME UP' : 'READY';
-    $('timerCard').classList.toggle('run', running); $('timerCard').classList.toggle('fin', fin);
+    $('restStop').textContent = running ? 'STOP' : 'START';
+    $('tState').textContent = running ? 'RUNNING' : paused ? 'PAUSED' : fin ? 'TIME UP' : 'READY';
+    $('timerCard').classList.toggle('run', running); $('timerCard').classList.toggle('fin', fin); $('timerCard').classList.toggle('paused', paused);
     $('rest').classList.toggle('fin', fin);
-    $('rest').hidden = !(running || fin) || (current === 'today' && cardVisible) || !$('wm').hidden;
+    $('rest').hidden = !(running || paused || fin) || (current === 'today' && cardVisible) || !$('wm').hidden;
     renderWMTimer();
   }
   let timerScr = false;
   function scrambleTimer(){
     if(timerScr) return;
     timerScr = true;
-    const running = !!restTimer, fin = !running && Date.now() < finUntil;
-    const left = running ? Math.max(0, Math.ceil((restEnd - Date.now())/1000)) : (+db.settings.rest_sec || 0);
-    scramble($('tBig'), $('tBig'), fin ? 'GO!' : fmtT(left), 450, () => { timerScr = false; renderTimer(); });
+    const fin = !restTimer && !isPaused() && Date.now() < finUntil;
+    scramble($('tBig'), $('tBig'), fin ? 'GO!' : fmtT(leftSec()), 450, () => { timerScr = false; renderTimer(); });
   }
   function startRest(sec){
     sec = sec || (+db.settings.rest_sec || 0);
     if(sec <= 0) return;
     unlockAudio();
-    restEnd = Date.now() + sec*1000; finUntil = 0; restTotal = sec;
+    restEnd = Date.now() + sec*1000; finUntil = 0; restTotal = sec; pausedMs = 0;
     clearInterval(restTimer); restTimer = setInterval(tick, 250); tick();
     scrambleTimer();
   }
-  function stopRest(){ clearInterval(restTimer); restTimer = null; finUntil = 0; renderTimer(); }
+  function pauseRest(){
+    if(!restTimer) return;
+    pausedMs = Math.max(1000, restEnd - Date.now());
+    clearInterval(restTimer); restTimer = null; finUntil = 0;
+    renderTimer();
+  }
+  function resumeRest(){
+    if(!(pausedMs > 0)) return;
+    unlockAudio();
+    restEnd = Date.now() + pausedMs; pausedMs = 0; finUntil = 0;
+    clearInterval(restTimer); restTimer = setInterval(tick, 250); tick();
+  }
+  function resetRest(){
+    clearInterval(restTimer); restTimer = null; pausedMs = 0; finUntil = 0;
+    restTotal = +db.settings.rest_sec || 0;
+    renderTimer(); scrambleTimer();
+  }
+  function toggleRest(){ restTimer ? pauseRest() : isPaused() ? resumeRest() : startRest(); }
   function tick(){
     if(restTimer && Date.now() >= restEnd){
       clearInterval(restTimer); restTimer = null; finUntil = Date.now() + 4000;
@@ -1125,11 +1150,12 @@
 
   function adjTimer(d){
     if(restTimer){ restEnd += d*1000; restTotal = Math.max(10, restTotal + d); tick(); }
+    else if(isPaused()){ pausedMs = Math.max(1000, pausedMs + d*1000); restTotal = Math.max(10, restTotal + d); renderTimer(); }
     else { db.settings.rest_sec = Math.min(3600, Math.max(10, (+db.settings.rest_sec || 0) + d)); save(); renderTimer(); }
   }
 
   function openTimerEdit(){
-    const cur = restTimer ? Math.max(0, Math.ceil((restEnd - Date.now())/1000)) : (+db.settings.rest_sec || 0);
+    const cur = leftSec();
     $('tMin').value = Math.floor(cur/60); $('tSec').value = pad(cur % 60);
     $('tBig').hidden = true; $('tEdit').hidden = false;
     try{ $('tMin').focus(); $('tMin').select(); }catch(e){}
@@ -1139,7 +1165,7 @@
     sec = Math.min(3600, Math.max(5, Math.round(sec) || 0));
     closeTimerEdit();
     if(restTimer){ restEnd = Date.now() + sec*1000; restTotal = sec; }
-    else { db.settings.rest_sec = sec; save(); finUntil = 0; }
+    else { db.settings.rest_sec = sec; save(); finUntil = 0; pausedMs = 0; restTotal = sec; }
     renderTimer(); scrambleTimer();
   }
   $('tBig').onclick = openTimerEdit;
@@ -1149,10 +1175,12 @@
   document.querySelectorAll('#tPre button').forEach(b => b.onclick = () => applyTimerEdit(+b.dataset.s));
   $('tMinus').onclick = () => adjTimer(-10);
   $('tPlus').onclick = () => adjTimer(10);
-  $('tStart').onclick = () => { restTimer ? stopRest() : startRest(); };
+  $('tStart').onclick = toggleRest;
+  $('tReset').onclick = resetRest;
   $('restMinus').onclick = () => adjTimer(-10);
   $('restPlus').onclick = () => adjTimer(10);
-  $('restStop').onclick = stopRest;
+  $('restStop').onclick = toggleRest;
+  $('restReset').onclick = resetRest;
   if('IntersectionObserver' in window){
     new window.IntersectionObserver(es => { cardVisible = es[0].isIntersecting; renderTimer(); }).observe($('timerCard'));
   }
@@ -1229,15 +1257,15 @@
   function renderWMTimer(){
     const el = $('wm');
     if(el.hidden) return;
-    const running = !!restTimer, fin = !running && Date.now() < finUntil;
-    const leftMs = running ? Math.max(0, restEnd - Date.now()) : 0;
-    const left = running ? Math.ceil(leftMs/1000) : (+db.settings.rest_sec || 0);
+    const running = !!restTimer, paused = isPaused(), fin = !running && !paused && Date.now() < finUntil;
+    const leftMs = running ? Math.max(0, restEnd - Date.now()) : paused ? pausedMs : 0;
+    const left = leftSec();
     $('wmTime').textContent = fin ? 'GO!' : fmtT(left);
     const total = Math.max(restTotal, left, 1);
-    const prog = running ? leftMs/1000/total : (fin ? 0 : 1);
+    const prog = (running || paused) ? leftMs/1000/total : (fin ? 0 : 1);
     $('wmArc').style.strokeDashoffset = (RING * (1 - Math.max(0, Math.min(1, prog)))).toFixed(1);
     $('wmStart').textContent = running ? 'STOP' : 'START';
-    $('wmState').textContent = running ? 'REST' : fin ? 'TIME UP' : 'READY';
+    $('wmState').textContent = running ? 'REST' : paused ? 'PAUSED' : fin ? 'TIME UP' : 'READY';
     el.classList.toggle('warn', running && left <= 10);
     el.classList.toggle('run', running);
   }
@@ -1271,7 +1299,8 @@
   };
   $('wmMinus').onclick = () => adjTimer(-10);
   $('wmPlus').onclick = () => adjTimer(10);
-  $('wmStart').onclick = () => { restTimer ? stopRest() : startRest(); };
+  $('wmStart').onclick = toggleRest;
+  $('wmReset').onclick = resetRest;
   $('wmExit').onclick = () => { wmOff = true; renderWM(); renderTimer(); };
   $('wmOpen').onclick = () => { wmOff = false; renderWM(); renderTimer(); };
   if(mqLand){
