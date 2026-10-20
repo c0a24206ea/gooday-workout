@@ -37,7 +37,16 @@
   .today .d{font-family:'Barlow Condensed',sans-serif; font-weight:800; font-style:italic; font-size:76px; line-height:.8; letter-spacing:-.01em;}
   .today .d small{font-size:30px; margin-left:8px;}
   .today .msg{font-size:14px; font-weight:700; text-align:right; line-height:1.5;}
-  .tiles{display:grid; gap:12px; margin-top:16px;}
+  :root{--per:1; --tgap:12px;}
+  .tiles-vp{overflow:hidden; margin:8px -8px 0; padding:8px; touch-action:pan-y;}
+  .tiles{display:flex; gap:var(--tgap); will-change:transform;}
+  .tiles > .tile{flex:0 0 calc((100% - var(--tgap) * (var(--per) - 1)) / var(--per)); min-width:0;}
+  .tdots{display:flex; justify-content:center; gap:8px; margin-top:4px;}
+  .tdots button{width:28px; height:20px; padding:0; border:none; background:none; cursor:pointer; display:flex; align-items:center;}
+  .tdots button i{display:block; width:100%; height:4px; background:var(--g2); transition:background .3s, transform .3s; transform:skewX(-20deg);}
+  .tdots button.on i{background:var(--black);}
+  .tdots button:focus-visible{outline:2px solid var(--lime); outline-offset:2px;}
+  .tdots[hidden]{display:none;}
   .tile{position:relative; display:block; text-decoration:none; color:inherit; padding:18px 20px 20px; overflow:hidden; min-height:220px;
     transition:transform .35s ease, box-shadow .35s ease;}
   .tile:hover{transform:translateY(-3px); box-shadow:0 10px 24px var(--shadow);}
@@ -125,26 +134,24 @@
     .app{box-shadow:none;}
     main,.appbar{padding-left:max(28px, env(safe-area-inset-left)); padding-right:max(28px, env(safe-area-inset-right));}
     main{padding-top:28px;}
-    .tiles{grid-template-columns:1fr 1fr; gap:16px;}
-    .t-ac{grid-column:1 / -1; min-height:0;}
+    :root{--per:2; --tgap:16px;}
     .tile{min-height:280px; padding:24px 28px;}
-    .tile h2{font-size:64px;}
+    .tile h2{font-size:clamp(40px, 5.4vw, 64px);}
+    .tile .hd{gap:14px;}
     .tile .big{font-size:84px;}
     .cols{display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:start;}
     .hm-wd{font-size:10px;}
   }
   @media (min-width:1100px){
-    .tiles{grid-template-columns:repeat(3, 1fr);}
-    .t-ac{grid-column:auto; min-height:280px;}
+    :root{--per:3;}
     .tile{padding:22px 22px;}
     .tile h2{font-size:clamp(40px, 3.4vw, 54px);}
     .tile .go{width:42px; height:42px;}
     .tile .big{font-size:clamp(60px, 5.4vw, 84px);}
   }
   @media (orientation:landscape) and (max-height:520px){
-    .t-ac{grid-column:1 / -1;}
     .appbar{position:static; padding-top:calc(env(safe-area-inset-top) + 8px); padding-bottom:8px;}
-    .tiles{grid-template-columns:1fr 1fr;}
+    :root{--per:2;}
     .tile{min-height:0;}
     .today .d{font-size:56px;}
   }
@@ -164,7 +171,8 @@
       <div class="msg" id="tMsg"></div>
     </div>
 
-    <div class="tiles">
+    <div class="tiles-vp" id="tilesVp" aria-roledescription="carousel">
+    <div class="tiles" id="tiles">
       <a class="tile t-wo" href="workout.html">
         <div class="hd"><h2>Workout<small data-i18n="workout"></small></h2><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
         <div class="big" id="woRate">—</div>
@@ -187,6 +195,8 @@
         <ul id="acList"></ul>
       </a>
     </div>
+    </div>
+    <div class="tdots" id="tdots"></div>
 
     <div class="section-t"><span>Achievement</span><small id="hmRange"></small></div>
     <div class="hm-sum" id="hmSum"></div>
@@ -431,6 +441,111 @@
   document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') render(); });
 
   render();
+
+  const track = $('tiles'), vp = $('tilesVp'), dotsBox = $('tdots');
+  const HOLD = 2000, MOVE = 800;
+  const tiles0 = [...track.children];
+  let pos = 0, holdT = null, busy = false, pausedUntil = 0, startX = null, startY = null, dragX = 0, dragged = false;
+  const perView = () => parseInt(getComputedStyle(document.documentElement).getPropertyValue('--per')) || 1;
+  const stepPx = () => { const c = track.children[0]; return c ? c.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || 0) : 0; };
+  const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canRun = () => perView() < tiles0.length;
+  function paintDots(){
+    dotsBox.hidden = !canRun();
+    dotsBox.innerHTML = '';
+    tiles0.forEach((t, i) => {
+      const b = document.createElement('button'); b.type = 'button';
+      b.setAttribute('aria-label', t.querySelector('h2').firstChild.textContent);
+      b.className = i === pos ? 'on' : ''; b.innerHTML = '<i></i>';
+      b.onclick = () => goTo(i);
+      dotsBox.append(b);
+    });
+  }
+  function schedule(){
+    clearTimeout(holdT);
+    if(!canRun() || reduced() || document.hidden) return;
+    const wait = Math.max(HOLD, pausedUntil - Date.now());
+    holdT = setTimeout(() => { if(Date.now() < pausedUntil){ schedule(); return; } next(); }, wait);
+  }
+  function settle(){
+    track.style.transition = 'none';
+    track.style.transform = 'translateX(0)';
+    void track.offsetWidth;
+  }
+  function next(){
+    if(busy || !canRun()) return;
+    busy = true;
+    track.style.transition = `transform ${MOVE}ms cubic-bezier(.65,0,.35,1)`;
+    track.style.transform = `translateX(${-stepPx()}px)`;
+    setTimeout(() => {
+      track.append(track.firstElementChild);
+      settle();
+      pos = (pos + 1) % tiles0.length; paintDots();
+      busy = false; schedule();
+    }, MOVE);
+  }
+  function prev(){
+    if(busy || !canRun()) return;
+    busy = true;
+    track.style.transition = 'none';
+    track.prepend(track.lastElementChild);
+    track.style.transform = `translateX(${-stepPx()}px)`;
+    void track.offsetWidth;
+    track.style.transition = `transform ${MOVE}ms cubic-bezier(.65,0,.35,1)`;
+    track.style.transform = 'translateX(0)';
+    setTimeout(() => {
+      settle();
+      pos = (pos - 1 + tiles0.length) % tiles0.length; paintDots();
+      busy = false; schedule();
+    }, MOVE);
+  }
+  function goTo(i){
+    if(busy || i === pos) return;
+    clearTimeout(holdT);
+    while(pos !== i){ track.append(track.firstElementChild); pos = (pos + 1) % tiles0.length; }
+    settle(); paintDots(); pausedUntil = Date.now() + 4000; schedule();
+  }
+  function reset(){
+    clearTimeout(holdT); busy = false;
+    tiles0.forEach(t => track.append(t)); pos = 0;
+    settle(); paintDots(); schedule();
+  }
+  vp.addEventListener('mouseenter', () => { pausedUntil = Infinity; clearTimeout(holdT); });
+  vp.addEventListener('mouseleave', () => { pausedUntil = Date.now() + 1000; schedule(); });
+  vp.addEventListener('focusin', () => { pausedUntil = Infinity; clearTimeout(holdT); });
+  vp.addEventListener('focusout', () => { pausedUntil = Date.now() + 1000; schedule(); });
+  vp.addEventListener('touchstart', e => {
+    if(!canRun() || busy) return;
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY; dragX = 0; dragged = false;
+    clearTimeout(holdT); pausedUntil = Infinity;
+  }, {passive:true});
+  vp.addEventListener('touchmove', e => {
+    if(startX === null) return;
+    const dx = e.touches[0].clientX - startX, dy = e.touches[0].clientY - startY;
+    if(!dragged && Math.abs(dy) > Math.abs(dx)) { startX = null; pausedUntil = Date.now() + 3000; schedule(); return; }
+    if(Math.abs(dx) > 8) dragged = true;
+    dragX = dx;
+    track.style.transition = 'none';
+    track.style.transform = `translateX(${dx}px)`;
+  }, {passive:true});
+  vp.addEventListener('touchend', () => {
+    if(startX === null) return;
+    startX = null;
+    pausedUntil = Date.now() + 3000;
+    const th = stepPx() * 0.2;
+    if(dragX < -th){ track.style.transition = `transform ${MOVE}ms cubic-bezier(.2,.8,.2,1)`; track.style.transform = `translateX(${-stepPx()}px)`; busy = true;
+      setTimeout(() => { track.append(track.firstElementChild); settle(); pos = (pos + 1) % tiles0.length; paintDots(); busy = false; schedule(); }, MOVE); }
+    else if(dragX > th){ busy = true; track.style.transition = 'none'; track.prepend(track.lastElementChild); track.style.transform = `translateX(${dragX - stepPx()}px)`; void track.offsetWidth;
+      track.style.transition = `transform ${MOVE}ms cubic-bezier(.2,.8,.2,1)`; track.style.transform = 'translateX(0)';
+      setTimeout(() => { settle(); pos = (pos - 1 + tiles0.length) % tiles0.length; paintDots(); busy = false; schedule(); }, MOVE); }
+    else { track.style.transition = 'transform .3s ease'; track.style.transform = 'translateX(0)'; schedule(); }
+  });
+  vp.addEventListener('click', e => { if(dragged){ e.preventDefault(); e.stopPropagation(); dragged = false; } }, true);
+  document.addEventListener('visibilitychange', () => { if(document.hidden) clearTimeout(holdT); else schedule(); });
+  let rT;
+  window.addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(reset, 150); });
+  paintDots(); schedule();
+
   if('serviceWorker' in navigator && location.protocol === 'https:'){
     window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
   }
