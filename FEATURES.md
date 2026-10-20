@@ -28,7 +28,7 @@
 |---|---|
 | 右上の ≡ メニュー（HOME / WORKOUT / RUNNING / ACTIVE） | `PAGES`、`build()`、今いるページの判定は `here()` |
 | 背景の白 / 黒 | メニュー内「BACKGROUND」。黒の配色は `DARK_CSS`、切り替えは `setTheme()`。保存先 `tdiv_theme` |
-| 言語（日本語・English・한국어・中文） | メニュー内「LANGUAGE」。`setLang()`。保存先 `tdiv_lang`（全ページ共通） |
+| 言語（English・日本語・한국어・中文。最初は英語） | メニュー内「LANGUAGE」。`setLang()`。保存先 `tdiv_lang`（全ページ共通）。最初の言語は `DEFAULT_LANG` |
 | 右上の小さい Spotify ボタン | `data-menu-slot data-spotify` が付いた場所に `build()` が追加 |
 | タイマーの下の大きい Spotify ボタン | `data-spotify-btn` が付いたリンクの中身を `fillBig()` が作る |
 | ページ側から使える機能 | `window.TDIV.lang()` / `setLang()` / `theme()` / `setTheme()`。変更時に `tdiv:lang` / `tdiv:theme` イベント |

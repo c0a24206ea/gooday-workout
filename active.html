@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -459,8 +459,8 @@
     srcBreath:{ja:'呼吸ガイド', en:'breathing', ko:'호흡 가이드', zh:'呼吸引导'}
   };
   const WD = {ja:['日','月','火','水','木','金','土'], en:['S','M','T','W','T','F','S'], ko:['일','월','화','수','목','금','토'], zh:['日','一','二','三','四','五','六']};
-  let LANG = window.TDIV ? TDIV.lang() : 'ja';
-  const t = (k, v) => { const e = I18N[k]; let r = e ? (e[LANG] != null ? e[LANG] : e.ja) : k; if(v) for(const x in v) r = r.split('{' + x + '}').join(v[x]); return r; };
+  let LANG = window.TDIV ? TDIV.lang() : 'en';
+  const t = (k, v) => { const e = I18N[k]; let r = e ? (e[LANG] != null ? e[LANG] : e.en != null ? e.en : e.ja) : k; if(v) for(const x in v) r = r.split('{' + x + '}').join(v[x]); return r; };
   const BASE_TYPES = ['yoga', 'walk', 'stretch', 'meditation', 'pilates', 'cycling', 'swim', 'other'];
   const typeLabel = k => k && k.startsWith('c:') ? k.slice(2) : t(k);
   const mmss = s => { s = Math.max(0, Math.round(s)); return `${Math.floor(s / 60)}:${pad(s % 60)}`; };
@@ -503,7 +503,7 @@
   let fresh = true;
   try{ const r = JSON.parse(lsGet(KEY) || 'null'); if(r && Array.isArray(r.logs)){ fresh = false; db.logs = r.logs; db.flows = r.flows || []; db.types = r.types || []; Object.assign(db.settings, r.settings || {}); } }catch(e){}
   if(fresh){
-    db.flows = PRESETS.map(p => ({id:uid('fl'), name:p.name[LANG] || p.name.ja, type:p.type, poses:p.poses.map(([n, s]) => ({name:n[LANG] || n.ja, sec:s}))}));
+    db.flows = PRESETS.map(p => ({id:uid('fl'), name:p.name[LANG] || p.name.en, type:p.type, poses:p.poses.map(([n, s]) => ({name:n[LANG] || n.en, sec:s}))}));
   }
   const save = () => lsSet(KEY, JSON.stringify(db));
   if(fresh) save();

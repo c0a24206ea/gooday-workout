@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -272,8 +272,8 @@
     setsN:{ja:'{n}セット', en:'{n} sets', ko:'{n}세트', zh:'{n}组'}
   };
   const WD = {ja:['日','月','火','水','木','金','土'], en:['SUN','MON','TUE','WED','THU','FRI','SAT'], ko:['일','월','화','수','목','금','토'], zh:['日','一','二','三','四','五','六']};
-  let LANG = window.TDIV ? TDIV.lang() : 'ja';
-  const t = (k, v) => { const e = I18N[k]; let r = e ? (e[LANG] != null ? e[LANG] : e.ja) : k; if(v) for(const x in v) r = r.split('{' + x + '}').join(v[x]); return r; };
+  let LANG = window.TDIV ? TDIV.lang() : 'en';
+  const t = (k, v) => { const e = I18N[k]; let r = e ? (e[LANG] != null ? e[LANG] : e.en != null ? e.en : e.ja) : k; if(v) for(const x in v) r = r.split('{' + x + '}').join(v[x]); return r; };
   const pace = s => (!isFinite(s) || s <= 0) ? `--'--"` : `${Math.floor(s/60)}'${pad(Math.round(s%60) % 60)}"`;
 
   function render(){

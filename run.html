@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -348,8 +348,8 @@
     bkDone:{ja:'{n}件を読み込みました', en:'Imported {n} runs', ko:'{n}건을 가져왔습니다', zh:'已导入{n}条'}
   };
   const WD = {ja:['日','月','火','水','木','金','土'], en:['S','M','T','W','T','F','S'], ko:['일','월','화','수','목','금','토'], zh:['日','一','二','三','四','五','六']};
-  let LANG = window.TDIV ? TDIV.lang() : 'ja';
-  const t = (k, v) => { const e = I18N[k]; let r = e ? (e[LANG] != null ? e[LANG] : e.ja) : k; if(v) for(const x in v) r = r.split('{' + x + '}').join(v[x]); return r; };
+  let LANG = window.TDIV ? TDIV.lang() : 'en';
+  const t = (k, v) => { const e = I18N[k]; let r = e ? (e[LANG] != null ? e[LANG] : e.en != null ? e.en : e.ja) : k; if(v) for(const x in v) r = r.split('{' + x + '}').join(v[x]); return r; };
 
   let db = {runs:[], settings:{week_goal_km:20, gps:true}};
   try{ const r = JSON.parse(lsGet(KEY) || 'null'); if(r && Array.isArray(r.runs)){ db.runs = r.runs; Object.assign(db.settings, r.settings || {}); } }catch(e){}

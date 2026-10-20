@@ -1,6 +1,6 @@
 (function(){
 
-  const LANGS = ['ja', 'en', 'ko', 'zh'];
+  const LANGS = ['en', 'ja', 'ko', 'zh'];
   const LANG_NAME = {ja:'日本語', en:'English', ko:'한국어', zh:'中文'};
   const L = {
     home:    {ja:'ホーム', en:'Home', ko:'홈', zh:'首页'},
@@ -27,15 +27,10 @@
 
   const get = k => { try{ return localStorage.getItem(k); }catch(e){ return null; } };
   const set = (k, v) => { try{ localStorage.setItem(k, v); }catch(e){} };
-  function detect(){
-    const l = (navigator.language || 'ja').toLowerCase();
-    return l.startsWith('ko') ? 'ko' : l.startsWith('zh') ? 'zh' : l.startsWith('en') ? 'en' : 'ja';
-  }
+  const DEFAULT_LANG = 'en';
   function lang(){
     const g = get('tdiv_lang');
-    if(LANGS.includes(g)) return g;
-    try{ const d = JSON.parse(get('tdiv_v2') || 'null'); if(d && d.settings && LANGS.includes(d.settings.lang)) return d.settings.lang; }catch(e){}
-    return detect();
+    return LANGS.includes(g) ? g : DEFAULT_LANG;
   }
   function setLang(l, silent){
     if(!LANGS.includes(l)) return;
@@ -44,7 +39,7 @@
     paint();
     if(!silent) window.dispatchEvent(new CustomEvent('tdiv:lang', {detail:l}));
   }
-  const tr = k => (L[k] && (L[k][lang()] || L[k].ja)) || k;
+  const tr = k => (L[k] && (L[k][lang()] || L[k].en)) || k;
   window.TDIV = {lang, setLang, LANGS};
 
   const DARK_CSS = `
